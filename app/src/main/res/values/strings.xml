@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Walkie</string>
+    <string name="running">런닝</string>
+    <string name="community">커뮤니티</string>
+    <string name="challenge">챌린지</string>
+    <string name="my_page">마이 페이지</string>
 </resources>

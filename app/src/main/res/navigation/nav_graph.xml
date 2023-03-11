@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/running_navigation">
+
+    <include app:graph="@navigation/running_navigation" />
+    <include app:graph="@navigation/community_navigation" />
+    <include app:graph="@navigation/challenge_navigation" />
+    <include app:graph="@navigation/my_page_navigation" />
+
+</navigation>
