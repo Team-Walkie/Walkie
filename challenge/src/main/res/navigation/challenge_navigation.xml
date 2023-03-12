@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/challengeFragment"
-        android:name="com.soopeach.challenge.ChallengeFragment"
+        android:name="com.whyranoid.challenge.ChallengeFragment"
         android:label="fragment_challenge"
         tools:layout="@layout/fragment_challenge" />
 </navigation>

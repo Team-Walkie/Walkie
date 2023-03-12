@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.soopeach.challenge"
+    namespace = "com.whyranoid.challenge"
     compileSdk = 33
 
     defaultConfig {

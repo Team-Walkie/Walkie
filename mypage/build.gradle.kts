@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.soopeach.mypage"
+    namespace = "com.whyranoid.mypage"
     compileSdk = 33
 
     defaultConfig {
