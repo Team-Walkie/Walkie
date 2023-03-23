@@ -4,6 +4,7 @@ androidx-navigation = "2.5.3"
 androidx-core = "1.9.0"
 androidx-appcompat = "1.6.1"
 androidx-constraintlayout = "2.1.4"
+naver-maps-android-sdk = "3.16.2"
 
 android-material = "1.8.0"
 
@@ -24,6 +25,8 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
+
+naver-maps-android-sdk = { module = "com.naver.maps:map-sdk", version.ref = "naver-maps-android-sdk" }
 
 [bundles]
 navigation = ["androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx", "androidx-navigation-dynamic-features-fragment"]
