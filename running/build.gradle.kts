@@ -1,8 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+val naverMapClientId: String = properties.getProperty("naver.map.client.id")
+
+@Suppress("UnstableApiUsage")
 android {
     namespace = "com.whyranoid.running"
     compileSdk = 33
@@ -13,6 +20,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        manifestPlaceholders["naverMapClientId"] = naverMapClientId
     }
 
     buildTypes {
@@ -20,7 +29,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -44,4 +53,5 @@ dependencies {
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.test.android)
 
+    implementation(libs.naver.maps.android.sdk)
 }
