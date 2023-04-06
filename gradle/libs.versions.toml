@@ -5,6 +5,8 @@ androidx-core = "1.9.0"
 androidx-appcompat = "1.6.1"
 androidx-constraintlayout = "2.1.4"
 naver-maps-android-sdk = "3.16.2"
+hilt = "2.44"
+javax-inject = "1"
 
 android-material = "1.8.0"
 
@@ -27,6 +29,11 @@ androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "andro
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
 
 naver-maps-android-sdk = { module = "com.naver.maps:map-sdk", version.ref = "naver-maps-android-sdk" }
+
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-complier = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 
 [bundles]
 navigation = ["androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx", "androidx-navigation-dynamic-features-fragment"]
