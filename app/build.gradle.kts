@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -21,10 +23,10 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
             )
         }
-
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -52,4 +54,11 @@ dependencies {
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.test.android)
 
+    implementation(libs.hilt)
+    kapt(libs.hilt.complier)
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
