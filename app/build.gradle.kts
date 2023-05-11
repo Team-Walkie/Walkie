@@ -1,8 +1,8 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -33,32 +33,51 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
+
     buildFeatures {
-        viewBinding = true
+        compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.0"
+    }
+
 }
 
 dependencies {
 
-    implementation(project(":running"))
-    implementation(project(":community"))
-    implementation(project(":challenge"))
-    implementation(project(":mypage"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
 
     implementation(libs.bundles.android.base)
-    implementation(libs.bundles.navigation)
-    implementation(libs.androidx.constraintlayout)
 
-    testImplementation(libs.bundles.test)
-    androidTestImplementation(libs.bundles.test.android)
+    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
-    implementation(libs.hilt)
-    kapt(libs.hilt.complier)
+    // Material Design 2
+    implementation("androidx.compose.material:material")
+
+    // Android Studio Preview support
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // custom design system based on Foundation)
+    implementation("androidx.compose.material:material-icons-core")
+    // Optional - Add full set of material icons
+    implementation("androidx.compose.material:material-icons-extended")
+    // Optional - Add window size utils
+    implementation("androidx.compose.material3:material3-window-size-class")
+
+    // Optional - Integration with activities
+    implementation("androidx.activity:activity-compose:1.7.1")
+    // Optional - Integration with ViewModels
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
 }
 
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
-}
