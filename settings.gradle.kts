@@ -18,7 +18,4 @@ rootProject.name = "Walkie"
 include(":app")
 include(":data")
 include(":domain")
-include(":running")
-include(":community")
-include(":challenge")
-include(":mypage")
+include(":presentation")
