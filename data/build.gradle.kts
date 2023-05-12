@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -34,8 +36,15 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation(libs.bundles.android.base)
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.test.android)
+
+    val koinVersion = "3.4.0"
+    // koin-core
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-test:$koinVersion")
 
 }

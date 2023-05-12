@@ -44,6 +44,8 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation(libs.bundles.android.base)
 
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
@@ -79,4 +81,15 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.1")
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+
+    val koinVersion = "3.4.0"
+    // koin-core
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-test:$koinVersion")
+
+    // koin-android
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-android-compat:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
 }
