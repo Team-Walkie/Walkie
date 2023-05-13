@@ -102,4 +102,8 @@ dependencies {
     implementation("org.orbit-mvi:orbit-compose:$orbitVersion")
     // Tests
     testImplementation("org.orbit-mvi:orbit-test:$orbitVersion")
+
+    // coil
+    val coilVersion = "2.3.0"
+    implementation("io.coil-kt:coil-compose:$coilVersion")
 }
