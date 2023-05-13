@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="running">running</string>
-    <string name="community">community</string>
-    <string name="challenge">challenge</string>
-    <string name="my_page">my_page</string>
+    <string name="running">런닝</string>
+    <string name="community">커뮤니티</string>
+    <string name="challenge_main">챌린지</string>
+    <string name="my_page">마이페이지</string>
 
 </resources>
