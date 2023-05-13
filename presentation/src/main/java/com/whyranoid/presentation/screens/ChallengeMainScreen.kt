@@ -35,7 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-fun ChallengeScreen(
+fun ChallengeMainScreen(
     navController: NavController
 ) {
 
@@ -43,7 +43,7 @@ fun ChallengeScreen(
 
     val state by viewModel.collectAsState()
 
-    ChallengeContent(
+    ChallengeMainContent(
         state,
         onChallengeItemClicked = {
 
@@ -56,7 +56,7 @@ fun ChallengeScreen(
 }
 
 @Composable
-fun ChallengeContent(
+fun ChallengeMainContent(
     state: ChallengeState,
     onChallengeItemClicked: () -> Unit = {},
     onExpandButtonClicked: () -> Unit = {},

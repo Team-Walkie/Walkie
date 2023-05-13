@@ -65,8 +65,8 @@ fun AppScreen() {
             composable(Screen.Community.route) {
                 CommunityScreen(navController)
             }
-            composable(Screen.Challenge.route) {
-                ChallengeScreen(navController)
+            composable(Screen.ChallengeMainScreen.route) {
+                ChallengeMainScreen(navController)
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(navController)
