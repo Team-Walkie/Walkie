@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.whyranoid.presentation.reusable.TextWithImageSpaceBetween
 import com.whyranoid.presentation.util.bouncingClickable
@@ -27,7 +26,7 @@ import com.whyranoid.presentation.util.conditional
 fun ChallengingItem(
     text: String,
     progress: Float,
-    badgeImage: Painter,
+    imageUrl: String,
     onClicked: () -> Unit = {}
 ) {
     Column(
@@ -55,7 +54,7 @@ fun ChallengingItem(
                 .fillMaxWidth()
                 .padding(horizontal = 26.dp, vertical = 20.dp),
             text = text,
-            image = badgeImage,
+            imageUrl = imageUrl,
             imageSize = 50.dp,
             paddingValues = PaddingValues(end = 10.dp)
         )
