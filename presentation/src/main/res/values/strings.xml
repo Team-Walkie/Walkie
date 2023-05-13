@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="running">running</string>
+    <string name="community">community</string>
+    <string name="challenge">challenge</string>
+    <string name="my_page">my_page</string>
+
+</resources>
