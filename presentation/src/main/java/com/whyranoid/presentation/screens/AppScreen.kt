@@ -54,17 +54,18 @@ fun AppScreen() {
             startDestination = Screen.Running.route,
             Modifier.padding(innerPadding)
         ) {
+
             composable(Screen.Running.route) {
-                RunningScreen()
+                RunningScreen(navController)
             }
             composable(Screen.Community.route) {
-                CommunityScreen()
+                CommunityScreen(navController)
             }
             composable(Screen.Challenge.route) {
-                ChallengeScreen()
+                ChallengeScreen(navController)
             }
             composable(Screen.MyPage.route) {
-                MyPageScreen()
+                MyPageScreen(navController)
             }
 
         }
