@@ -27,12 +27,13 @@ import com.whyranoid.presentation.util.conditional
 fun ChallengingItem(
     text: String,
     progress: Float,
-    badgeImage: Painter
+    badgeImage: Painter,
+    onClicked: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .bouncingClickable {
-
+                onClicked()
             }
             .fillMaxWidth()
             .height(105.dp)
