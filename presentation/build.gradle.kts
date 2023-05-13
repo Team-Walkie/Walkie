@@ -82,6 +82,8 @@ dependencies {
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
+    val navVersion = "2.5.3"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
 
     val koinVersion = "3.4.0"
     // koin-core
