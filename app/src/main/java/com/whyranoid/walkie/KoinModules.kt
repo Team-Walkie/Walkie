@@ -4,13 +4,14 @@ import com.whyranoid.data.datasource.ChallengeDataSourceImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.repository.ChallengeRepository
+import com.whyranoid.domain.usecase.GetChallengeDetailUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
-import com.whyranoid.presentation.viewmodel.ChallengeViewModel
+import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    single { ChallengeViewModel(get(), get()) }
+    single { ChallengeMainViewModel(get(), get()) }
 }
 
 val repositoryModule = module {
@@ -24,4 +25,5 @@ val dataSourceModule = module {
 val useCaseModule = module {
     single { GetNewChallengePreviewsUseCase(get()) }
     single { GetChallengingPreviewsUseCase(get()) }
+    single { GetChallengeDetailUseCase(get()) }
 }

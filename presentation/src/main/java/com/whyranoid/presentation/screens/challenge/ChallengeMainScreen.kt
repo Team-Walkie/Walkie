@@ -1,4 +1,4 @@
-package com.whyranoid.presentation.screens
+package com.whyranoid.presentation.screens.challenge
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,8 +29,8 @@ import androidx.navigation.NavController
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
 import com.whyranoid.presentation.util.chunkedList
-import com.whyranoid.presentation.viewmodel.ChallengeState
-import com.whyranoid.presentation.viewmodel.ChallengeViewModel
+import com.whyranoid.presentation.viewmodel.ChallengeMainState
+import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -39,7 +39,7 @@ fun ChallengeMainScreen(
     navController: NavController
 ) {
 
-    val viewModel = koinViewModel<ChallengeViewModel>()
+    val viewModel = koinViewModel<ChallengeMainViewModel>()
 
     val state by viewModel.collectAsState()
 
@@ -57,7 +57,7 @@ fun ChallengeMainScreen(
 
 @Composable
 fun ChallengeMainContent(
-    state: ChallengeState,
+    state: ChallengeMainState,
     onChallengeItemClicked: () -> Unit = {},
     onExpandButtonClicked: () -> Unit = {},
 ) {
@@ -87,8 +87,8 @@ fun ChallengeMainContent(
                     horizontalArrangement = Arrangement.spacedBy(13.dp)
                 ) {
 
-                    if (state.newChallengePreviews.isNotEmpty()) {
-                        state.newChallengePreviews.forEach {
+                    state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
+                        newChallengePreviews.forEach {
                             item {
                                 ChallengeItem(
                                     Modifier.fillParentMaxWidth(0.9f),
@@ -98,7 +98,7 @@ fun ChallengeMainContent(
                                 }
                             }
                         }
-                    } else {
+                    } ?: run {
                         item {
                             Box(
                                 modifier = Modifier.fillParentMaxWidth(),
@@ -108,6 +108,7 @@ fun ChallengeMainContent(
                             }
                         }
                     }
+
                 }
                 Spacer(modifier = Modifier.height(44.dp))
             }
@@ -125,8 +126,8 @@ fun ChallengeMainContent(
             item {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    if (state.challengingPreviews.isNotEmpty()) {
-                        state.challengingPreviews.take(4).forEach {
+                    state.challengingPreviewsState.getDataOrNull()?.let { challengingPreviews ->
+                        challengingPreviews.take(4).forEach {
                             ChallengingItem(
                                 text = it.title,
                                 progress = it.progress!!,
@@ -147,8 +148,7 @@ fun ChallengeMainContent(
                                 contentDescription = "도전중인 챌린지 더보기"
                             )
                         }
-
-                    } else {
+                    } ?: run {
                         Box(
                             modifier = Modifier.fillParentMaxWidth(),
                             contentAlignment = Alignment.Center
@@ -187,8 +187,8 @@ fun ChallengeMainContent(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(13.dp)
                 ) {
-                    if (state.newChallengePreviews.isNotEmpty()) {
-                        state.newChallengePreviews.chunkedList(3).forEach { list ->
+                    state.newChallengePreviewsState.getDataOrNull()?.let{ newChallengePreviews ->
+                        newChallengePreviews.chunkedList(3).forEach { list ->
                             item {
                                 Column() {
                                     list.forEach {
@@ -204,7 +204,7 @@ fun ChallengeMainContent(
                             }
                         }
 
-                    } else {
+                    } ?: run {
                         item {
                             Box(
                                 modifier = Modifier.fillParentMaxWidth(),

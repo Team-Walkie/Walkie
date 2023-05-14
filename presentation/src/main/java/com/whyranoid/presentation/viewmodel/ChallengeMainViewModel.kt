@@ -5,27 +5,28 @@ import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
+import com.whyranoid.presentation.model.UiState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
-sealed class ChallengeSideEffect {
+sealed class ChallengeMainSideEffect {
 
 }
 
-data class ChallengeState(
-    val newChallengePreviews: List<ChallengePreview> = emptyList(),
-    val challengingPreviews: List<ChallengePreview> = emptyList(),
+data class ChallengeMainState(
+    val newChallengePreviewsState: UiState<List<ChallengePreview>> = UiState.Idle,
+    val challengingPreviewsState: UiState<List<ChallengePreview>> = UiState.Idle,
 )
 
-class ChallengeViewModel(
+class ChallengeMainViewModel(
     private val getNewChallengePreviewsUseCase: GetNewChallengePreviewsUseCase,
     private val getChallengingPreviewsUseCase: GetChallengingPreviewsUseCase
-) : ViewModel(), ContainerHost<ChallengeState, ChallengeSideEffect> {
+) : ViewModel(), ContainerHost<ChallengeMainState, ChallengeMainSideEffect> {
 
-    override val container = container<ChallengeState, ChallengeSideEffect>(ChallengeState())
+    override val container = container<ChallengeMainState, ChallengeMainSideEffect>(ChallengeMainState())
 
     init {
         getNewChallengeItems()
@@ -34,10 +35,13 @@ class ChallengeViewModel(
 
     private fun getNewChallengeItems() = intent {
         viewModelScope.launch {
+            reduce {
+                state.copy(newChallengePreviewsState = UiState.Loading)
+            }
             val newChallengePreviews = getNewChallengePreviewsUseCase()
             reduce {
                 state.copy(
-                    newChallengePreviews = newChallengePreviews
+                    newChallengePreviewsState = UiState.Success(newChallengePreviews)
                 )
             }
         }
@@ -45,10 +49,13 @@ class ChallengeViewModel(
 
     private fun getChallengingItems() = intent {
         viewModelScope.launch {
+            reduce {
+                state.copy(challengingPreviewsState = UiState.Loading)
+            }
             val challengingPreviews = getChallengingPreviewsUseCase()
             reduce {
                 state.copy(
-                    challengingPreviews = challengingPreviews
+                    challengingPreviewsState = UiState.Success(challengingPreviews)
                 )
             }
         }
