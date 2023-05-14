@@ -33,9 +33,11 @@ data class ChallengePreview(
             1f,
         )
 
+        private val DUMMY_ID_LIST = (0..10000L).toList()
+
         val DUMMY
             get() = ChallengePreview(
-                id = 0,
+                id = DUMMY_ID_LIST.shuffled().first(),
                 title = DUMMY_NAME_LIST.shuffled().first(),
                 badgeImageUrl = "https://picsum.photos/250/250",
                 progress = DUMMY_PROGRESS_LIST.shuffled().first(),
