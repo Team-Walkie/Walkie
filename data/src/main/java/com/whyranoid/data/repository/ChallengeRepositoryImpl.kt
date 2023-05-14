@@ -1,6 +1,7 @@
 package com.whyranoid.data.repository
 
 import com.whyranoid.domain.datasource.ChallengeDataSource
+import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.repository.ChallengeRepository
 
@@ -13,5 +14,9 @@ class ChallengeRepositoryImpl(
 
     override suspend fun getChallengingPreviews(): List<ChallengePreview> {
         return challengeDataSource.getChallengingPreviews()
+    }
+
+    override suspend fun getChallengeDetail(challengeId: Long): Challenge {
+        return challengeDataSource.getChallengeDetail(challengeId)
     }
 }
