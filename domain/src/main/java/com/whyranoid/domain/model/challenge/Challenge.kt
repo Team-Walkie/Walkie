@@ -19,8 +19,9 @@ data class Challenge(
         val DUMMY = Challenge(
             id = 1,
             imageUrl = "https://picsum.photos/250/250",
-            title = "챌린지 제목",
-            contents = "챌린지 내용",
+            title = "햄버거 세트 불태우기",
+            contents = "햄버거 세트의 평균 칼로리는 1110kcal 에요.\n" +
+                    "일주일 동안 걷기로 햄버거 세트 태우기 도전!",
             period = 7,
             challengeType = ChallengeType.A,
             badge = Badge(
@@ -29,8 +30,8 @@ data class Challenge(
                 imageUrl = "https://picsum.photos/250/250",
             ),
 
-            participantCount = 10,
-            participants = emptyList(),
+            participantCount = 12,
+            participants = List(12) { User.DUMMY},
             process = 50,
         )
     }

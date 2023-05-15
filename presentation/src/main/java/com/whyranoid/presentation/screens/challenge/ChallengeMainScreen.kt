@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
 import com.whyranoid.presentation.util.chunkedList
@@ -46,7 +47,8 @@ fun ChallengeMainScreen(
     ChallengeMainContent(
         state,
         onChallengeItemClicked = {
-
+            val route = "challengeDetail/${it.id}"
+            navController.navigate(route)
         },
         onExpandButtonClicked = {
 
@@ -58,7 +60,7 @@ fun ChallengeMainScreen(
 @Composable
 fun ChallengeMainContent(
     state: ChallengeMainState,
-    onChallengeItemClicked: () -> Unit = {},
+    onChallengeItemClicked: (ChallengePreview) -> Unit = {},
     onExpandButtonClicked: () -> Unit = {},
 ) {
 
@@ -94,7 +96,7 @@ fun ChallengeMainContent(
                                     Modifier.fillParentMaxWidth(0.9f),
                                     text = it.title
                                 ) {
-                                    onChallengeItemClicked()
+                                    onChallengeItemClicked(it)
                                 }
                             }
                         }
@@ -133,7 +135,7 @@ fun ChallengeMainContent(
                                 progress = it.progress!!,
                                 imageUrl = it.badgeImageUrl,
                             ) {
-                                onChallengeItemClicked()
+                                onChallengeItemClicked(it)
                             }
                             Spacer(modifier = Modifier.height(10.dp))
                         }
@@ -196,7 +198,7 @@ fun ChallengeMainContent(
                                             Modifier.fillParentMaxWidth(0.9f),
                                             text = it.title
                                         ) {
-                                            onChallengeItemClicked()
+                                            onChallengeItemClicked(it)
                                         }
                                         Spacer(modifier = Modifier.height(10.dp))
                                     }
