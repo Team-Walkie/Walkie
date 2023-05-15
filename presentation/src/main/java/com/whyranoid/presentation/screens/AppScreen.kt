@@ -17,6 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
+import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
+import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 
 @Composable
 fun AppScreen() {
@@ -34,9 +36,9 @@ fun AppScreen() {
                     bottomNavigationItems.forEach { screen ->
                         BottomNavigationItem(
                             icon = {
-                                Icon(screen.icon, contentDescription = null)
+                                Icon(requireNotNull(screen.icon), contentDescription = null)
                             },
-                            label = { Text(stringResource(screen.resourceId)) },
+                            label = { Text(stringResource(requireNotNull(screen.resourceId))) },
                             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                             onClick = {
                                 navController.navigate(screen.route) {
@@ -70,6 +72,12 @@ fun AppScreen() {
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(navController)
+            }
+
+            composable(Screen.ChallengeDetailScreen.route, Screen.ChallengeDetailScreen.arguments) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val challengeId = arguments.getLong("challengeId")
+                ChallengeDetailScreen(navController, challengeId)
             }
 
         }
