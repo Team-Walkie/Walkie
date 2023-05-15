@@ -94,4 +94,16 @@ dependencies {
     implementation("io.insert-koin:koin-android:$koinVersion")
     implementation("io.insert-koin:koin-android-compat:$koinVersion")
     implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+
+    // orbit
+    // TODO: change To Core For Compose Multiplatform
+    val orbitVersion = "4.6.1"
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbitVersion")
+    implementation("org.orbit-mvi:orbit-compose:$orbitVersion")
+    // Tests
+    testImplementation("org.orbit-mvi:orbit-test:$orbitVersion")
+
+    // coil
+    val coilVersion = "2.3.0"
+    implementation("io.coil-kt:coil-compose:$coilVersion")
 }
