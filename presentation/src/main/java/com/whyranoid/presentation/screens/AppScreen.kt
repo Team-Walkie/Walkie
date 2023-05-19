@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
+import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
 fun AppScreen() {
@@ -32,7 +33,9 @@ fun AppScreen() {
             val currentDestination = navBackStackEntry?.destination
 
             if (currentDestination?.route in bottomNavigationItems.map { it.route }) {
-                BottomNavigation {
+                BottomNavigation(
+                    backgroundColor = WalkieColor.Primary,
+                ) {
                     bottomNavigationItems.forEach { screen ->
                         BottomNavigationItem(
                             icon = {
