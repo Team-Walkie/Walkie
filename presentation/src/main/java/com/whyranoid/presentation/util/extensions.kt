@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.util
 
 import kotlin.math.min
+import kotlin.random.Random
 
 fun <T> List<T>.chunkedList(size: Int): List<List<T>> {
     val newList = mutableListOf<List<T>>()
@@ -11,4 +12,8 @@ fun <T> List<T>.chunkedList(size: Int): List<List<T>> {
         index += size
     }
     return newList
+}
+
+fun ClosedFloatingPointRange<Float>.random(): Float {
+    return Random.nextDouble(start.toDouble(), endInclusive.toDouble()).toFloat()
 }
