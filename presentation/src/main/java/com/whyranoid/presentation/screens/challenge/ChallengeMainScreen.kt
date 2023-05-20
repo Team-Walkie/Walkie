@@ -3,7 +3,6 @@ package com.whyranoid.presentation.screens.challenge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -36,6 +34,7 @@ import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
+import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.chunkedList
 import com.whyranoid.presentation.viewmodel.ChallengeMainState
@@ -114,12 +113,7 @@ fun ChallengeMainContent(
                         }
                     } ?: run {
                         item {
-                            Box(
-                                modifier = Modifier.fillParentMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
+                            WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                         }
                     }
 
@@ -163,12 +157,7 @@ fun ChallengeMainContent(
                             )
                         }
                     } ?: run {
-                        Box(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
+                        WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -220,12 +209,7 @@ fun ChallengeMainContent(
 
                     } ?: run {
                         item {
-                            Box(
-                                modifier = Modifier.fillParentMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
+                            WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                         }
                     }
 
@@ -288,14 +272,7 @@ fun ChallengeMainContent(
                                     Spacer(modifier = Modifier.height(10.dp))
                                 }
                             }
-                        } ?: run {
-                        Box(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
+                        } ?: run { WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth()) }
 
                 }
             }
