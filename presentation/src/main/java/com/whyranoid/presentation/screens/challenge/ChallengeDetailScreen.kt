@@ -1,7 +1,6 @@
 package com.whyranoid.presentation.screens.challenge
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +32,7 @@ import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.ChallengeGoalContent
 import com.whyranoid.presentation.component.UserIcon
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
+import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.viewmodel.ChallengeDetailState
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -178,13 +177,7 @@ fun ChallengeDetailContent(
                 }
             }
         } ?: run {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            WalkieCircularProgressIndicator(Modifier.fillMaxSize())
         }
     }
 

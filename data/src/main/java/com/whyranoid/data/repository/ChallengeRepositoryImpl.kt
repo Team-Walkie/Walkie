@@ -3,6 +3,7 @@ package com.whyranoid.data.repository
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.domain.model.challenge.ChallengePreview
+import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.domain.repository.ChallengeRepository
 
 class ChallengeRepositoryImpl(
@@ -18,5 +19,9 @@ class ChallengeRepositoryImpl(
 
     override suspend fun getChallengeDetail(challengeId: Long): Challenge {
         return challengeDataSource.getChallengeDetail(challengeId)
+    }
+
+    override suspend fun getChallengePreviewsByType(type: ChallengeType): List<ChallengePreview> {
+        return challengeDataSource.getChallengePreviewsByType(type)
     }
 }

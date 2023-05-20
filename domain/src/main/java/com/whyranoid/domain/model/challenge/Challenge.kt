@@ -23,7 +23,7 @@ data class Challenge(
             contents = "햄버거 세트의 평균 칼로리는 1110kcal 에요.\n" +
                     "일주일 동안 걷기로 햄버거 세트 태우기 도전!",
             period = 7,
-            challengeType = ChallengeType.A,
+            challengeType = ChallengeType.values().toList().shuffled().first(),
             badge = Badge(
                 id = 1,
                 name = "뱃지 이름",
