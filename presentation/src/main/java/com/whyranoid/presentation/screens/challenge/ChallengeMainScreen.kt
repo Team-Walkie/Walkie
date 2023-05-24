@@ -54,8 +54,8 @@ fun ChallengeMainScreen(
 
     ChallengeMainContent(
         state,
-        onChallengeItemClicked = {
-            val route = "challengeDetail/${it.id}"
+        onChallengeItemClicked = { challengePreview, isChallenging ->
+            val route = "challengeDetail/${challengePreview.id}/$isChallenging"
             navController.navigate(route)
         },
         onExpandButtonClicked = {
@@ -69,7 +69,7 @@ fun ChallengeMainScreen(
 @Composable
 fun ChallengeMainContent(
     state: ChallengeMainState,
-    onChallengeItemClicked: (ChallengePreview) -> Unit = {},
+    onChallengeItemClicked: (ChallengePreview, Boolean) -> Unit = { _, _ -> },
     onExpandButtonClicked: () -> Unit = {},
 ) {
 
@@ -107,7 +107,7 @@ fun ChallengeMainContent(
                                     Modifier.fillParentMaxWidth(0.9f),
                                     text = it.title
                                 ) {
-                                    onChallengeItemClicked(it)
+                                    onChallengeItemClicked(it, false)
                                 }
                             }
                         }
@@ -141,7 +141,7 @@ fun ChallengeMainContent(
                                 progress = it.progress!!,
                                 imageUrl = it.badgeImageUrl,
                             ) {
-                                onChallengeItemClicked(it)
+                                onChallengeItemClicked(it, true)
                             }
                             Spacer(modifier = Modifier.height(10.dp))
                         }
@@ -199,7 +199,7 @@ fun ChallengeMainContent(
                                             Modifier.fillParentMaxWidth(0.9f),
                                             text = it.title
                                         ) {
-                                            onChallengeItemClicked(it)
+                                            onChallengeItemClicked(it, false)
                                         }
                                         Spacer(modifier = Modifier.height(10.dp))
                                     }
@@ -267,7 +267,7 @@ fun ChallengeMainContent(
                                     ChallengeItem(
                                         text = challengePreview.title
                                     ) {
-                                        onChallengeItemClicked(challengePreview)
+                                        onChallengeItemClicked(challengePreview, false)
                                     }
                                     Spacer(modifier = Modifier.height(10.dp))
                                 }

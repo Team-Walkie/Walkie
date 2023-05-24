@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.screens.challenge
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -33,6 +35,8 @@ import com.whyranoid.presentation.component.ChallengeGoalContent
 import com.whyranoid.presentation.component.UserIcon
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
+import com.whyranoid.presentation.theme.SystemColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.ChallengeDetailState
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -41,7 +45,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun ChallengeDetailScreen(
     navController: NavController,
-    challengeId: Long
+    challengeId: Long,
+    isChallenging: Boolean
 ) {
 
     val viewModel = koinViewModel<ChallengeDetailViewModel>()
@@ -52,12 +57,13 @@ fun ChallengeDetailScreen(
 
     val state by viewModel.collectAsState()
 
-    ChallengeDetailContent(state)
+    ChallengeDetailContent(state, isChallenging)
 }
 
 @Composable
 fun ChallengeDetailContent(
     state: ChallengeDetailState,
+    isChallenging: Boolean
 ) {
 
     Scaffold() { paddingValues ->
@@ -170,9 +176,27 @@ fun ChallengeDetailContent(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(28.dp))
+                    if (isChallenging) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(130.dp))
+                            Text(
+                                modifier = Modifier.clickable {
 
-                    WalkiePositiveButton(text = "도전하기")
+                                },
+                                text = "그만할래요",
+                                style = WalkieTypography.Body1.copy(SystemColor.Negative),
+                                textDecoration = TextDecoration.Underline
+                            )
+                            Spacer(modifier = Modifier.height(40.dp))
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(28.dp))
+                        WalkiePositiveButton(text = "도전하기")
+                    }
 
                 }
             }
