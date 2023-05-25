@@ -23,12 +23,10 @@ import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
 fun AppScreen() {
-
     val navController = rememberNavController()
 
     Scaffold(
         bottomBar = {
-
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
 
@@ -51,19 +49,18 @@ fun AppScreen() {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-                            }
+                            },
                         )
                     }
                 }
             }
-        }
+        },
     ) { innerPadding ->
         NavHost(
             navController,
             startDestination = Screen.Running.route,
-            Modifier.padding(innerPadding)
+            Modifier.padding(innerPadding),
         ) {
-
             composable(Screen.Running.route) {
                 RunningScreen(navController)
             }
@@ -77,12 +74,14 @@ fun AppScreen() {
                 MyPageScreen(navController)
             }
 
-            composable(Screen.ChallengeDetailScreen.route, Screen.ChallengeDetailScreen.arguments) { backStackEntry ->
+            composable(
+                Screen.ChallengeDetailScreen.route,
+                Screen.ChallengeDetailScreen.arguments,
+            ) { backStackEntry ->
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
                 ChallengeDetailScreen(navController, challengeId)
             }
-
         }
     }
 }
