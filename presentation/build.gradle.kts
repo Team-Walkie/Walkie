@@ -1,10 +1,16 @@
 @file:Suppress("UnstableApiUsage")
+import java.util.Properties
 
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+val naverMapClientId: String = properties.getProperty("naver.map.client.id")
+
+@Suppress("UnstableApiUsage")
 android {
     namespace = "com.whyranoid.presentation"
     compileSdk = 33
@@ -15,6 +21,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        manifestPlaceholders["naverMapClientId"] = naverMapClientId
     }
 
     buildTypes {
@@ -106,4 +114,7 @@ dependencies {
     // coil
     val coilVersion = "2.3.0"
     implementation("io.coil-kt:coil-compose:$coilVersion")
+
+    val naverMapComposeVersion = "1.3.3"
+    implementation("io.github.fornewid:naver-map-compose:$naverMapComposeVersion")
 }
