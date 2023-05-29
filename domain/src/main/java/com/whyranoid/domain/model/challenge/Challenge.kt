@@ -26,7 +26,7 @@ data class Challenge(
             challengeType = ChallengeType.values().toList().shuffled().first(),
             badge = Badge(
                 id = 1,
-                name = "뱃지 이름",
+                name = "햄버거",
                 imageUrl = "https://picsum.photos/250/250",
             ),
 
