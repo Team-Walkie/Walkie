@@ -18,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
+import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.theme.WalkieColor
 
@@ -82,6 +83,12 @@ fun AppScreen() {
                 val challengeId = arguments.getLong("challengeId")
                 val isChallenging = arguments.getBoolean("isChallenging")
                 ChallengeDetailScreen(navController, challengeId, isChallenging)
+            }
+
+            composable(Screen.ChallengeExitScreen.route, Screen.ChallengeExitScreen.arguments) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val challengeId = arguments.getLong("challengeId")
+                ChallengeExitScreen(navController, challengeId)
             }
 
         }
