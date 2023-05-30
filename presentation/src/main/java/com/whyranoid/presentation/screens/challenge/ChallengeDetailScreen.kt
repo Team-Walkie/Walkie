@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.ChallengeGoalContent
 import com.whyranoid.presentation.component.UserIcon
@@ -80,8 +79,6 @@ fun ChallengeDetailContent(
     onNegativeButtonClicked: (Long) -> Unit = {},
 ) {
 
-    val challenge = Challenge.DUMMY
-
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -89,19 +86,19 @@ fun ChallengeDetailContent(
         skipHalfExpanded = true
     )
 
-    ChallengeExitModalBottomSheetContainer(
-        challenge = challenge,
-        coroutineScope = coroutineScope,
-        modalSheetState = modalSheetState,
-        onNegativeButtonClicked = {
-            onNegativeButtonClicked(challenge.id)
-        }
-    ) {
-        Scaffold() { paddingValues ->
+    state.challenge.getDataOrNull()?.let { challenge ->
 
-            val scrollState = rememberScrollState()
+        ChallengeExitModalBottomSheetContainer(
+            challenge = challenge,
+            coroutineScope = coroutineScope,
+            modalSheetState = modalSheetState,
+            onNegativeButtonClicked = {
+                onNegativeButtonClicked(challenge.id)
+            }
+        ) {
+            Scaffold() { paddingValues ->
 
-            state.challenge.getDataOrNull()?.let { challenge ->
+                val scrollState = rememberScrollState()
 
                 Column(
                     modifier = Modifier
@@ -233,10 +230,10 @@ fun ChallengeDetailContent(
 
                     }
                 }
-            } ?: run {
-                WalkieCircularProgressIndicator(Modifier.fillMaxSize())
             }
         }
+    } ?: run {
+        WalkieCircularProgressIndicator(Modifier.fillMaxSize())
     }
 
 
