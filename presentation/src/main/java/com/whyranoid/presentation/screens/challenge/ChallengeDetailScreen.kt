@@ -64,14 +64,20 @@ fun ChallengeDetailScreen(
 
     val state by viewModel.collectAsState()
 
-    ChallengeDetailContent(state, isChallenging)
+    ChallengeDetailContent(state, isChallenging,
+        onNegativeButtonClicked = {
+            navController.navigate(
+                "challengeExit/${challengeId}"
+            )
+        })
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChallengeDetailContent(
     state: ChallengeDetailState,
-    isChallenging: Boolean
+    isChallenging: Boolean,
+    onNegativeButtonClicked: (Long) -> Unit = {},
 ) {
 
     val challenge = Challenge.DUMMY
@@ -86,7 +92,10 @@ fun ChallengeDetailContent(
     ChallengeExitModalBottomSheetContainer(
         challenge = challenge,
         coroutineScope = coroutineScope,
-        modalSheetState = modalSheetState
+        modalSheetState = modalSheetState,
+        onNegativeButtonClicked = {
+            onNegativeButtonClicked(challenge.id)
+        }
     ) {
         Scaffold() { paddingValues ->
 
