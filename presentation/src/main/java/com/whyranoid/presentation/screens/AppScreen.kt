@@ -80,7 +80,8 @@ fun AppScreen() {
             ) { backStackEntry ->
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
-                ChallengeDetailScreen(navController, challengeId)
+                val isChallenging = arguments.getBoolean("isChallenging")
+                ChallengeDetailScreen(navController, challengeId, isChallenging)
             }
         }
     }

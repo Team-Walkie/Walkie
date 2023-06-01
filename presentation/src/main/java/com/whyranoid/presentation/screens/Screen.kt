@@ -27,9 +27,10 @@ sealed class Screen(
     object MyPage : Screen("myPage", R.string.my_page, Icons.Rounded.Person)
 
     object ChallengeDetailScreen : Screen(
-        route = "challengeDetail/{challengeId}",
+        route = "challengeDetail/{challengeId}/{isChallenging}",
         arguments = listOf(
-            navArgument("challengeId") { type = NavType.LongType }
+            navArgument("challengeId") { type = NavType.LongType },
+            navArgument("isChallenging") { type = NavType.BoolType },
         ))
 
     companion object {
