@@ -105,7 +105,7 @@ fun EditProfileScreen(name: String = "", nick: String = "") {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CustomTextField(
+        CheckableCustomTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(34.dp)
@@ -140,7 +140,7 @@ fun EditProfileScreen(name: String = "", nick: String = "") {
             mutableStateOf(null)
         }
 
-        CustomTextField(
+        CheckableCustomTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(34.dp)
@@ -206,8 +206,9 @@ fun CircularIconButton(
     }
 }
 
+// TODO: 커스텀 텍스트 필드 변경 요망, 텍스트를 외부로 부터 받고 안내 메세지도 받도록 변경해야 함
 @Composable
-private fun CustomTextField(
+private fun CheckableCustomTextField(
     modifier: Modifier = Modifier,
     initialText: String = "",
     leadingIcon: (@Composable () -> Unit)? = null,
