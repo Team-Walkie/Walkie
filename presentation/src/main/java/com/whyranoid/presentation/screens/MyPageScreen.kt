@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun MyPageScreen(
-    navController: NavController
+    navController: NavController,
 ) {
-
+    EditProfileScreen()
 }
