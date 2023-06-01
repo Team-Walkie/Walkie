@@ -100,16 +100,16 @@ fun ChallengeExitModalBottomSheetContainer(
                 Spacer(modifier = Modifier.height(37.dp))
 
                 WalkiePositiveButton(text = "계속하기") {
-                    onPositiveButtonClicked(challenge)
                     coroutineScope.launch {
                         modalSheetState.hide()
+                        onPositiveButtonClicked(challenge)
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 WalkieNegativeButton(text = "그만하기") {
-                    onNegativeButtonClicked(challenge)
                     coroutineScope.launch {
                         modalSheetState.hide()
+                        onNegativeButtonClicked(challenge)
                     }
                 }
                 Spacer(modifier = Modifier.height(19.dp))

@@ -9,12 +9,14 @@ import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
+import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
     single { ChallengeMainViewModel(get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
+    single { ChallengeExitViewModel(get()) }
 }
 
 val repositoryModule = module {
