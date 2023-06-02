@@ -1,4 +1,4 @@
-package com.whyranoid.presentation.screens
+package com.whyranoid.presentation.screens.mypage
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
