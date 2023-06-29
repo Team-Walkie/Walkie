@@ -118,4 +118,9 @@ dependencies {
 
     val naverMapComposeVersion = "1.3.3"
     implementation("io.github.fornewid:naver-map-compose:$naverMapComposeVersion")
+
+    // ComposeCalendar
+    val composeCalendarVersion = "1.1.0"
+    implementation("io.github.boguszpawlowski.composecalendar:composecalendar:$composeCalendarVersion")
+    implementation("io.github.boguszpawlowski.composecalendar:kotlinx-datetime:$composeCalendarVersion")
 }
