@@ -16,10 +16,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
+import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
@@ -71,8 +73,10 @@ fun AppScreen() {
             composable(Screen.ChallengeMainScreen.route) {
                 ChallengeMainScreen(navController)
             }
+
+            // TODO: repo, viewModel로 하여금 uid를 받아오도록 변경 or MyPageScreen 내부적으로 uid 보관하도록 변경
             composable(Screen.MyPage.route) {
-                MyPageScreen(navController)
+                MyPageScreen(navController, User.DUMMY.uid)
             }
 
             composable(
@@ -84,7 +88,10 @@ fun AppScreen() {
                 val isChallenging = arguments.getBoolean("isChallenging")
                 ChallengeDetailScreen(navController, challengeId, isChallenging)
             }
-            composable(Screen.ChallengeExitScreen.route, Screen.ChallengeExitScreen.arguments) { backStackEntry ->
+            composable(
+                Screen.ChallengeExitScreen.route,
+                Screen.ChallengeExitScreen.arguments,
+            ) { backStackEntry ->
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
                 ChallengeExitScreen(navController, challengeId)

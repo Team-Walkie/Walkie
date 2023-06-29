@@ -1,11 +1,11 @@
-package com.whyranoid.domain.repository
+package com.whyranoid.domain.datasource
 
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.challenge.ChallengeType
 
-interface ChallengeRepository {
+interface ChallengeDataSource {
 
     suspend fun getNewChallengePreviews(): List<ChallengePreview>
 
