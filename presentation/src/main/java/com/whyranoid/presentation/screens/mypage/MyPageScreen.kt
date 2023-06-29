@@ -41,6 +41,7 @@ import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.UserPageState
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import kotlinx.coroutines.launch
@@ -103,23 +104,24 @@ fun MyPageContent(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        // TODO: 스트링 리소스 분리
                         TextWithCountSpaceBetween(
                             text = "게시물",
                             count = userDetail.postCount,
-                            textSize = 14,
-                            countSize = 16,
+                            textStyle = WalkieTypography.Body1_Normal,
+                            countTextStyle = WalkieTypography.SubTitle,
                         )
                         TextWithCountSpaceBetween(
                             text = "팔로워",
                             count = userDetail.followerCount,
-                            textSize = 14,
-                            countSize = 16,
+                            textStyle = WalkieTypography.Body1_Normal,
+                            countTextStyle = WalkieTypography.SubTitle,
                         )
                         TextWithCountSpaceBetween(
                             text = "팔로잉",
                             count = userDetail.followingCount,
-                            textSize = 14,
-                            countSize = 16,
+                            textStyle = WalkieTypography.Body1_Normal,
+                            countTextStyle = WalkieTypography.SubTitle,
                         )
                     }
                 }
