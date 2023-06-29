@@ -31,6 +31,18 @@ object WalkieTypography {
         fontSize = 14.sp,
     )
 
+    val Body1_SemiBold = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+    )
+
+    val Body1_ExtraBold = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 14.sp,
+    )
+
     val Body2 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
