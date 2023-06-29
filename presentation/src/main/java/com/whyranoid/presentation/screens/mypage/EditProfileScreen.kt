@@ -4,7 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,10 +37,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
-fun EditProfileScreen(name: String = "", nick: String = "") {
+fun EditProfileScreen(name: String = "", nick: String = "", navController: NavController) {
+    EditProfileContent(name = name, nick = nick) {
+        navController.popBackStack()
+    }
+}
+
+@Composable
+fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +73,9 @@ fun EditProfileScreen(name: String = "", nick: String = "") {
                 contentDescription = "close button",
                 modifier = Modifier
                     .size(24.dp)
-                    .align(Alignment.CenterStart),
+                    .align(Alignment.CenterStart)
+                    .clickable {
+                    },
             )
         }
 
@@ -171,9 +191,17 @@ fun EditProfileScreen(name: String = "", nick: String = "") {
         Spacer(modifier = Modifier.height(16.dp))
 
         if (nickCheckState == true) {
-            Text(text = "사용 가능한 닉네임입니다.", color = Color.Blue, fontSize = WalkieTypography.Body2.fontSize)
+            Text(
+                text = "사용 가능한 닉네임입니다.",
+                color = Color.Blue,
+                fontSize = WalkieTypography.Body2.fontSize,
+            )
         } else if (nickCheckState == false) {
-            Text(text = "이미 사용 중인 닉네임입니다.", color = Color.Red, fontSize = WalkieTypography.Body2.fontSize)
+            Text(
+                text = "이미 사용 중인 닉네임입니다.",
+                color = Color.Red,
+                fontSize = WalkieTypography.Body2.fontSize,
+            )
         }
     }
 }

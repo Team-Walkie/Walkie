@@ -63,6 +63,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
+import com.whyranoid.presentation.screens.Screen
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.UserPageState
@@ -93,7 +94,9 @@ fun MyPageScreen(
 
     val state by viewModel.collectAsState()
 
-    MyPageContent(state, onSettingsClicked = { })
+    MyPageContent(state, onProfileEditClicked = {
+        navController.navigate(Screen.EditProfileScreen.route)
+    })
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -233,10 +236,9 @@ fun MyPageContent(
                 when (pagerNum) {
                     0 -> state.userPostPreviewsState.getDataOrNull()?.let { postPreviews ->
                         PostPage(
-                            postPreviews = postPreviews,
+                            postPreviews,
                             onPostPreviewClicked,
                             onPostCreateClicked,
-
                         )
                     }
                     1 -> HistoryPage(onDayClicked = {}) // TODO: 해당 날짜 데이터 로드
