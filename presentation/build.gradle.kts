@@ -118,9 +118,4 @@ dependencies {
 
     val naverMapComposeVersion = "1.3.3"
     implementation("io.github.fornewid:naver-map-compose:$naverMapComposeVersion")
-
-    // ViewPager for Compose
-    val viewPagerVersion = "0.28.0"
-    implementation("com.google.accompanist:accompanist-pager:$viewPagerVersion")
-    implementation("com.google.accompanist:accompanist-pager-indicators:$viewPagerVersion")
 }

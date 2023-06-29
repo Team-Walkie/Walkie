@@ -1,15 +1,28 @@
 package com.whyranoid.presentation.screens.mypage
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,10 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.theme.WalkieColor
@@ -56,7 +65,7 @@ fun MyPageScreen(
     MyPageContent(state, onPostPreviewClicked = {})
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyPageContent(
     state: UserPageState,
@@ -87,7 +96,6 @@ fun MyPageContent(
                         contentDescription = "유저 프로필 이미지",
                         modifier = Modifier.clip(shape = CircleShape).size(70.dp),
                     )
-
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Row(
@@ -147,8 +155,7 @@ fun MyPageContent(
                 backgroundColor = Color.White,
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
-                        Modifier
-                            .pagerTabIndicatorOffset(pagerState, tabPositions),
+                        Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
                         color = WalkieColor.Primary,
                     )
                 },
@@ -171,7 +178,11 @@ fun MyPageContent(
                 }
             }
 
-            HorizontalPager(count = pagerList.size, state = pagerState, contentPadding = PaddingValues(top = 4.dp)) { pagerNum ->
+            HorizontalPager(
+                pageCount = pagerList.size,
+                state = pagerState,
+                contentPadding = PaddingValues(top = 4.dp),
+            ) { pagerNum ->
                 when (pagerNum) {
                     0 -> state.userPostPreviewsState.getDataOrNull()?.let { postPreviews ->
                         PostPage(postPreviews = postPreviews)
