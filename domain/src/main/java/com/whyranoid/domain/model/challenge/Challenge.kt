@@ -32,7 +32,7 @@ data class Challenge(
 
             participantCount = 12,
             participants = List(12) { User.DUMMY},
-            process = 50,
+            process = (0..100).random(),
         )
     }
 }
