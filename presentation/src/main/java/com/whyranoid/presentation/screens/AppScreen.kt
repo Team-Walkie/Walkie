@@ -21,6 +21,7 @@ import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
+import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.theme.WalkieColor
 
@@ -77,6 +78,10 @@ fun AppScreen() {
             // TODO: repo, viewModel로 하여금 uid를 받아오도록 변경 or MyPageScreen 내부적으로 uid 보관하도록 변경
             composable(Screen.MyPage.route) {
                 MyPageScreen(navController, User.DUMMY.uid)
+            }
+
+            composable(Screen.EditProfileScreen.route) {
+                EditProfileScreen(navController = navController)
             }
 
             composable(

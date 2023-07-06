@@ -7,6 +7,8 @@ object WalkieColor {
     val Primary = Color(0xFFFB8947)
     val Secondary = Color(0xFFE75300)
     val Tertiary = Color(0xFFFAC03A)
+    val GrayDisable = Color(0xFFECECEC)
+    val GrayDefault = Color(0xFFD9D9D9)
 }
 
 object SystemColor {
