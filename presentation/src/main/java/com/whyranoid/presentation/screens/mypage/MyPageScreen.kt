@@ -105,27 +105,6 @@ fun MyPageContent(
         },
     ) { paddingValues ->
 
-//        val view = LocalView.current
-//        val context = LocalContext.current
-//
-//        LaunchedEffect(true) {
-//            val bmp = Bitmap.createBitmap(
-//                view.width, view.height,
-//                Bitmap.Config.ARGB_8888
-//            ).applyCanvas {
-//                view.draw(this)
-//            }
-//            bmp.let { bm ->
-//                File(context.filesDir, "my-screenshot.png").also {
-//                    it.outputStream().use { out ->
-//                        bm.compress(Bitmap.CompressFormat.PNG, 85, out)
-//                        out.flush()
-//                    }
-//                    Log.d("tag RunningScreen",  it.absolutePath)
-//                }
-//            }
-//        }
-
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
