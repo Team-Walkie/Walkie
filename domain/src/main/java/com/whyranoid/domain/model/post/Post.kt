@@ -8,6 +8,7 @@ data class Post(
     val likeCount: Int,
     val contents: String,
     val author: User,
+    val date: Long = 0L,
 ) {
     companion object {
         val DUMMY = Post(

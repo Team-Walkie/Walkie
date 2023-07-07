@@ -3,6 +3,7 @@ package com.whyranoid.domain.model.post
 data class PostPreview(
     val id: Long,
     val imageUrl: String,
+    val date: Long = 0L,
 ) {
     companion object {
         val DUMMY_LIST = listOf(

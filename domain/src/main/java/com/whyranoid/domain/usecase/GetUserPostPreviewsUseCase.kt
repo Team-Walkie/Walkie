@@ -9,4 +9,13 @@ class GetUserPostPreviewsUseCase(
     suspend operator fun invoke(uid: String): Result<List<PostPreview>> {
         return postRepository.getUserPostPreviews(uid)
     }
+
+    suspend operator fun invoke(
+        uid: String,
+        year: Int,
+        month: Int,
+        day: Int,
+    ): Result<List<PostPreview>> {
+        return postRepository.getUserPostPreviews(uid, year, month, day)
+    }
 }

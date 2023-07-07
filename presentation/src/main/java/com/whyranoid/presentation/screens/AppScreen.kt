@@ -23,10 +23,11 @@ import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
+import com.whyranoid.presentation.screens.running.RunningScreen
 import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
-fun AppScreen() {
+fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -66,7 +67,7 @@ fun AppScreen() {
             Modifier.padding(innerPadding),
         ) {
             composable(Screen.Running.route) {
-                RunningScreen(navController)
+                RunningScreen(navController, startWorker)
             }
             composable(Screen.Community.route) {
                 CommunityScreen(navController)

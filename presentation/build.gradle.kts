@@ -123,4 +123,7 @@ dependencies {
     val composeCalendarVersion = "1.1.0"
     implementation("io.github.boguszpawlowski.composecalendar:composecalendar:$composeCalendarVersion")
     implementation("io.github.boguszpawlowski.composecalendar:kotlinx-datetime:$composeCalendarVersion")
+
+    // RunningModule
+    implementation("io.github.bngsh:runningdata:0.0.5")
 }
