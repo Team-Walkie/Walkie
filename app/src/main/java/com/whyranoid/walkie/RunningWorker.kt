@@ -92,7 +92,7 @@ class RunningWorker(
     }
 
     private fun createChannel() {
-        val name = "활동 추적"
+        val name = "활동 추적" // TODO 리소스 분리
         val descriptionText = "달리기 활동을 추적하는 알림 채널입니다."
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
@@ -136,7 +136,7 @@ class RunningWorker(
     companion object {
         const val WORKER_NAME = "runningWorker"
         const val NOTIFICATION_ID = 1000
-        const val CHANNEL_ID = "모각런"
+        const val CHANNEL_ID = "Walkie Channel"
         const val UPDATE_INTERVAL_MS = 1000L
     }
 }
