@@ -12,6 +12,15 @@ class PostRepositoryImpl(
         return postDataSource.getPostPreviews(uid)
     }
 
+    override suspend fun getUserPostPreviews(
+        uid: String,
+        year: Int,
+        month: Int,
+        day: Int,
+    ): Result<List<PostPreview>> {
+        return postDataSource.getPostPreviews(uid, year, month, day)
+    }
+
     override suspend fun getPost(postId: Long): Result<Post> {
         return postDataSource.getPost(postId)
     }
