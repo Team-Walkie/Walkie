@@ -42,7 +42,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
     }
-
 }
 
 dependencies {
@@ -90,5 +89,14 @@ dependencies {
     implementation("io.insert-koin:koin-android-compat:$koinVersion")
     implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
 
-}
+    // WorkManager dependency
+    val workManagerVersion = "2.8.1"
+    implementation("androidx.work:work-runtime-ktx:$workManagerVersion")
 
+    // Google Location
+    val googleLocationVersion = "21.0.1"
+    implementation("com.google.android.gms:play-services-location:$googleLocationVersion")
+
+    // RunningModule
+    implementation("io.github.bngsh:runningdata:0.0.5")
+}
