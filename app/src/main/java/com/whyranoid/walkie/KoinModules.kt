@@ -12,10 +12,22 @@ import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.UserRepository
-import com.whyranoid.domain.usecase.*
+import com.whyranoid.domain.usecase.GetChallengeDetailUseCase
+import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
+import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
+import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
+import com.whyranoid.domain.usecase.GetPostUseCase
+import com.whyranoid.domain.usecase.GetUserBadgesUseCase
+import com.whyranoid.domain.usecase.GetUserDetailUseCase
+import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
+import com.whyranoid.domain.usecase.running.RunningFinishUseCase
+import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
+import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
+import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import org.koin.dsl.module
 
@@ -24,6 +36,7 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get()) }
+    single { RunningViewModel(get(), get(), get(), get()) }
 }
 
 val repositoryModule = module {
@@ -47,4 +60,8 @@ val useCaseModule = module {
     single { GetUserPostPreviewsUseCase(get()) }
     single { GetUserBadgesUseCase(get()) }
     single { GetUserDetailUseCase(get()) }
+    single { GetRunningFollowerUseCase() }
+    single { RunningFinishUseCase() }
+    single { RunningPauseOrResumeUseCase() }
+    single { RunningStartUseCase() }
 }

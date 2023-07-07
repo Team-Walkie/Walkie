@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WalkieTheme {
-                AppScreen()
+                AppScreen { startWorker(this) }
             }
         }
     }
