@@ -1,12 +1,7 @@
 package com.whyranoid.presentation.screens
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DirectionsRun
-import androidx.compose.material.icons.rounded.Forum
-import androidx.compose.material.icons.rounded.MilitaryTech
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -15,16 +10,40 @@ import com.whyranoid.presentation.R
 sealed class Screen(
     val route: String,
     @StringRes val resourceId: Int? = null,
-    val icon: ImageVector? = null,
+    @DrawableRes val icon: Int? = null,
+    @DrawableRes val iconSelected: Int? = null,
     val arguments: List<NamedNavArgument> = emptyList(),
 ) {
 
-    object Running : Screen("running", R.string.running, Icons.Rounded.DirectionsRun)
-    object Community : Screen("community", R.string.community, Icons.Rounded.Forum)
-    object ChallengeMainScreen :
-        Screen("challengeMain", R.string.challenge_main, Icons.Rounded.MilitaryTech)
+    object Running : Screen(
+        "running",
+        R.string.running,
+        R.drawable.ic_running_screen,
+        R.drawable.ic_running_screen_selected,
+    )
 
-    object MyPage : Screen("myPage", R.string.my_page, Icons.Rounded.Person)
+    object Community : Screen(
+        "community",
+        R.string.community,
+        R.drawable.ic_community_screen,
+        R.drawable.ic_community_screen_selected,
+    )
+
+    object ChallengeMainScreen :
+        Screen(
+            "challengeMain",
+            R.string.challenge_main,
+            R.drawable.ic_challenge_screen,
+            R.drawable.ic_challenge_screen_selected,
+        )
+
+    object MyPage : Screen(
+        "myPage",
+        R.string.my_page,
+        R.drawable.ic_mypage_screen,
+        R.drawable.ic_mypage_screen_selected,
+    )
+
     object EditProfileScreen : Screen(
         route = "editProfileScreen",
         arguments = listOf(

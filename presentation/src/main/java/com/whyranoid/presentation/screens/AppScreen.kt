@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -9,7 +10,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -37,15 +42,22 @@ fun AppScreen(startWorker: () -> Unit) {
 
             if (currentDestination?.route in bottomNavigationItems.map { it.route }) {
                 BottomNavigation(
-                    backgroundColor = WalkieColor.Primary,
+                    modifier = Modifier.height(60.dp),
+                    backgroundColor = Color.White,
+                    elevation = 5.dp,
                 ) {
                     bottomNavigationItems.forEach { screen ->
+                        val selected =
+                            currentDestination?.hierarchy?.any { it.route == screen.route } == true
                         BottomNavigationItem(
                             icon = {
-                                Icon(requireNotNull(screen.icon), contentDescription = null)
+                                Icon(
+                                    ImageVector.vectorResource(requireNotNull(if (selected) screen.iconSelected else screen.icon)),
+                                    contentDescription = null,
+                                )
                             },
                             label = { Text(stringResource(requireNotNull(screen.resourceId))) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
@@ -55,6 +67,7 @@ fun AppScreen(startWorker: () -> Unit) {
                                     restoreState = true
                                 }
                             },
+                            selectedContentColor = WalkieColor.Primary,
                         )
                     }
                 }
