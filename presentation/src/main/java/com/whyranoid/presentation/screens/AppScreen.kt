@@ -1,5 +1,9 @@
 package com.whyranoid.presentation.screens
 
+import android.Manifest
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,10 +13,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -31,10 +37,40 @@ import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.util.checkAndRequestPermissions
+import com.whyranoid.presentation.util.showPermissionRequestDialog
 
 @Composable
 fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
+
+    // TODO 권한 요청 위치
+    val context = LocalContext.current
+    val launcherMultiplePermissions = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { permissionsMap ->
+        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+        if (areGranted) {
+            Log.d("test5", "권한이 동의되었습니다.")
+        }
+        /** 권한 요청시 거부 했을 경우 **/
+        /** 권한 요청시 거부 했을 경우 **/
+        else {
+            Log.d("test5", "권한이 거부되었습니다.")
+            showPermissionRequestDialog(context)
+        }
+    }
+
+    SideEffect {
+        checkAndRequestPermissions(
+            context,
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            ),
+            launcherMultiplePermissions,
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -58,7 +94,13 @@ fun AppScreen(startWorker: () -> Unit) {
                                     modifier = Modifier.size(24.dp),
                                 )
                             },
-                            label = { Text(stringResource(requireNotNull(screen.resourceId)), modifier = Modifier.height(15.dp), color = Color.Black) },
+                            label = {
+                                Text(
+                                    stringResource(requireNotNull(screen.resourceId)),
+                                    modifier = Modifier.height(15.dp),
+                                    color = Color.Black,
+                                )
+                            },
                             selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
