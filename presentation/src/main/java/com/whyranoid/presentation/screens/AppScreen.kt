@@ -1,7 +1,10 @@
 package com.whyranoid.presentation.screens
 
 import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.height
@@ -22,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -37,14 +41,12 @@ import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
 import com.whyranoid.presentation.theme.WalkieColor
-import com.whyranoid.presentation.util.checkAndRequestPermissions
-import com.whyranoid.presentation.util.showPermissionRequestDialog
 
 @Composable
 fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
 
-    // TODO 권한 요청 위치
+    // TODO 권한 요청 위치 Splash 화면 이동
     val context = LocalContext.current
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -54,10 +56,9 @@ fun AppScreen(startWorker: () -> Unit) {
             Log.d("test5", "권한이 동의되었습니다.")
         }
         /** 권한 요청시 거부 했을 경우 **/
-        /** 권한 요청시 거부 했을 경우 **/
         else {
-            Log.d("test5", "권한이 거부되었습니다.")
-            showPermissionRequestDialog(context)
+            Log.d("test5", "권한이 거부되었습니다~~.")
+            // TODO SHOW DIALOG
         }
     }
 
@@ -65,7 +66,6 @@ fun AppScreen(startWorker: () -> Unit) {
         checkAndRequestPermissions(
             context,
             arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
             ),
             launcherMultiplePermissions,
@@ -160,5 +160,27 @@ fun AppScreen(startWorker: () -> Unit) {
                 ChallengeExitScreen(navController, challengeId)
             }
         }
+    }
+}
+
+fun checkAndRequestPermissions(
+    context: Context,
+    permissions: Array<String>,
+    launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
+) {
+    if (permissions.all {
+            ContextCompat.checkSelfPermission(
+                context,
+                it,
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    ) {
+        Log.d("test5", "권한이 이미 존재합니다.")
+    }
+
+    /** 권한이 없는 경우 **/
+    else {
+        launcher.launch(permissions)
+        Log.d("test5", "권한을 요청하였습니다.")
     }
 }
