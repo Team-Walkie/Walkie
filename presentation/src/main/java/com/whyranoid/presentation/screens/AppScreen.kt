@@ -2,6 +2,7 @@ package com.whyranoid.presentation.screens
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -54,9 +55,10 @@ fun AppScreen(startWorker: () -> Unit) {
                                 Icon(
                                     ImageVector.vectorResource(requireNotNull(if (selected) screen.iconSelected else screen.icon)),
                                     contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
                                 )
                             },
-                            label = { Text(stringResource(requireNotNull(screen.resourceId))) },
+                            label = { Text(stringResource(requireNotNull(screen.resourceId)), modifier = Modifier.height(15.dp), color = Color.Black) },
                             selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
