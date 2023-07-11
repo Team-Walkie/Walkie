@@ -47,7 +47,7 @@ class RunningWorker(
             runningDataManager.finishRunning()
             return Result.failure()
         }
-
+        Log.d("RunningWorker", "start worker") // TODO remove
         setForeground(createForegroundInfo("모여서 각자 러닝 중~"))
 
         while ((runningDataManager.runningState.value is RunningState.NotRunning).not()) {
@@ -106,10 +106,6 @@ class RunningWorker(
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { location ->
-                    Log.d(
-                        "tag startWorker",
-                        "location callback ${location.longitude}",
-                    ) // TODO REMOVE
                     runningDataManager.setRunningState(location)
                 } ?: run {
                     runningDataManager.pauseRunning()
