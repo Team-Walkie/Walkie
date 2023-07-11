@@ -133,8 +133,8 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
                     modifier = Modifier
                         .padding(2.dp)
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(4.dp)
+                        .aspectRatio(1.2f)
+                        .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = true)
                         .clip(CircleShape)
                         .background(if (isSelected) WalkieColor.Primary else Color.Transparent)
                         .clickable {
