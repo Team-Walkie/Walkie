@@ -2,6 +2,7 @@ package com.whyranoid.presentation.screens.running
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -188,17 +194,37 @@ fun RunningMapScreen(
                 }
             }
         }
-        Button(onClick = {
-            state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
-                if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
-                    cameraPositionState.move(
-                        CameraUpdate.scrollTo(LatLng(location)),
-                    )
-                }
+        Row(modifier = Modifier.wrapContentSize().align(Alignment.BottomEnd).padding(16.dp)) {
+            Icon(
+                modifier = Modifier.clip(CircleShape).clickable {
+                    state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
+                        if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
+                            cameraPositionState.move(
+                                CameraUpdate.scrollTo(LatLng(location)),
+                            )
+                        }
+                    }
+                    onClickTrackingModeButton()
+                }.background(Color.White).size(32.dp)
+                    .padding(4.dp),
+                imageVector = Icons.Default.MyLocation,
+                contentDescription = "",
+                tint = WalkieColor.Primary,
+            )
+
+            Row(
+                modifier = Modifier.padding(start = 8.dp).clip(RoundedCornerShape(8.dp)).clickable { /* TODO */ }
+                    .background(Color.White).height(32.dp).wrapContentWidth()
+                    .padding(4.dp),
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxHeight(),
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "",
+                    tint = WalkieColor.Primary,
+                )
+                Text(text = "0")
             }
-            onClickTrackingModeButton()
-        }) {
-            Text("Tracking Mode, current: ${state.trackingModeState.getDataOrNull()}")
         }
     }
 }
