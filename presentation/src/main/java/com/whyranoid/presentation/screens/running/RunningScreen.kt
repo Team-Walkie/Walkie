@@ -1,12 +1,27 @@
 package com.whyranoid.presentation.screens.running
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +30,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -30,10 +50,15 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.TrackingMode
+import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.util.toPace
+import com.whyranoid.presentation.util.toRunningTime
 import com.whyranoid.presentation.viewmodel.RunningScreenState
 import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel.Companion.MAP_MAX_ZOOM
 import com.whyranoid.presentation.viewmodel.RunningViewModel.Companion.MAP_MIN_ZOOM
+import com.whyranoid.runningdata.model.RunningState
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -44,8 +69,9 @@ fun RunningScreen(
 ) {
     val viewModel = koinViewModel<RunningViewModel>().apply { this.startWorker = startWorker }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(viewModel) {
         viewModel.getRunningState()
+        viewModel.onTrackingButtonClicked()
     }
 
     val state by viewModel.collectAsState()
@@ -55,6 +81,9 @@ fun RunningScreen(
         viewModel::startRunning,
         viewModel::onTrackingButtonClicked,
         viewModel::onTrackingCanceledByGesture,
+        viewModel::pauseRunning,
+        viewModel::resumeRunning,
+        viewModel::finishRunning,
     )
 }
 
@@ -64,16 +93,29 @@ fun RunningContent(
     onStartRunning: () -> Unit,
     onClickTrackingModeButton: () -> Unit,
     onTrackingCanceledByGesture: () -> Unit,
+    onPauseRunning: () -> Unit,
+    onResumeRunning: () -> Unit,
+    onFinishRunning: () -> Unit,
 ) {
-    Box() {
-        Column {
-            RunningMapScreen(state, onClickTrackingModeButton, onTrackingCanceledByGesture)
-            RunningInfoScreen(state = state)
+    Box {
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+        ) {
+            RunningMapScreen(
+                modifier = Modifier.weight(1f, false),
+                state,
+                onClickTrackingModeButton,
+                onTrackingCanceledByGesture,
+            )
+            RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
         }
         RunningBottomButton(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.height(46.dp).width(80.dp),
             state = state,
             onStartRunning = onStartRunning,
+            onPauseRunning = onPauseRunning,
+            onResumeRunning = onResumeRunning,
+            onFinishRunning = onFinishRunning,
         )
     }
 }
@@ -81,6 +123,7 @@ fun RunningContent(
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun RunningMapScreen(
+    modifier: Modifier = Modifier,
     state: RunningScreenState,
     onClickTrackingModeButton: () -> Unit,
     onTrackingCanceledByGesture: () -> Unit,
@@ -110,7 +153,6 @@ fun RunningMapScreen(
         )
     }
 
-    // 카메라 위치 TODO 수정
     val cameraPositionState = rememberCameraPositionState()
         .apply {
             state.trackingModeState.getDataOrNull()?.let { trackingMode ->
@@ -122,12 +164,10 @@ fun RunningMapScreen(
             }
         }
 
-    Box(Modifier.wrapContentSize()) {
+    Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.6f),
+            modifier = modifier,
             properties = mapProperties,
             uiSettings = mapUiSettings,
             locationSource = rememberCustomLocationSource(),
@@ -135,7 +175,7 @@ fun RunningMapScreen(
             state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
                 LocationOverlay(
                     position = LatLng(location),
-                    icon = OverlayImage.fromResource(R.drawable.ic_running_screen),
+                    icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
                 )
             }
 
@@ -158,7 +198,7 @@ fun RunningMapScreen(
             }
             onClickTrackingModeButton()
         }) {
-            Text("Tracking Mode")
+            Text("Tracking Mode, current: ${state.trackingModeState.getDataOrNull()}")
         }
     }
 }
@@ -168,7 +208,112 @@ fun RunningInfoScreen(
     state: RunningScreenState,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .padding(bottom = 66.dp)
+            .background(Color.White),
+    ) {
+        // 거리, 런닝 시간
+        Row(modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 20.dp)) {
+            Column(
+                Modifier.wrapContentHeight().weight(0.4f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    text = "거리",
+                    style = WalkieTypography.Caption,
+                )
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "${state.runningInfoState.getDataOrNull()?.distance ?: 0.0}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 32.sp,
+                    )
+                    Text(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        text = "km",
+                        style = WalkieTypography.Body2,
+                    )
+                }
+            }
+
+            Column(
+                Modifier.wrapContentHeight().weight(0.6f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    text = "런닝시간",
+                    style = WalkieTypography.Caption,
+                )
+                Text(
+                    text = state.runningInfoState.getDataOrNull()?.runningTime?.toRunningTime()
+                        ?: "00:00:00",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 32.sp,
+                )
+            }
+        }
+
+        // 페이스 칼로리 걸음수
+        Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+            Column(
+                Modifier.wrapContentHeight().weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "페이스",
+                    style = WalkieTypography.Caption,
+                )
+                Text(
+                    text = state.runningInfoState.getDataOrNull()?.pace?.toPace()
+                        ?: "0`00``",
+                    style = WalkieTypography.SubTitle,
+                )
+            }
+
+            Column(
+                Modifier.wrapContentHeight().weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "칼로리",
+                    style = WalkieTypography.Caption,
+                )
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "${state.runningInfoState.getDataOrNull()?.calories ?: 0.0}",
+                        style = WalkieTypography.SubTitle,
+                    )
+                    Text(
+                        text = "kcal",
+                        style = WalkieTypography.SubTitle,
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+            }
+
+            Column(
+                Modifier.wrapContentHeight().weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "걸음수",
+                    style = WalkieTypography.Caption,
+                )
+                Text(
+                    text = state.runningInfoState.getDataOrNull()?.steps?.let { it.toString() }
+                        ?: "0",
+                    style = WalkieTypography.SubTitle,
+                )
+            }
+        }
     }
     state.runningState.getDataOrNull()?.let {
         it.runningData.lastLocation?.let { location ->
@@ -181,14 +326,66 @@ fun RunningBottomButton(
     modifier: Modifier = Modifier,
     state: RunningScreenState,
     onStartRunning: () -> Unit,
+    onPauseRunning: () -> Unit,
+    onResumeRunning: () -> Unit,
+    onFinishRunning: () -> Unit,
 ) {
     Box(
-        modifier = modifier,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        Button(onClick = onStartRunning) {
-            Text("Start Running, CS: ${state.trackingModeState.getDataOrNull()}")
-            // Log.d("RunningBottomButton tag", " ${state.trackingModeState.getDataOrNull()}") TODO REMOVE
+        state.runningFinishState.getDataOrNull()?.let { finState ->
+            Button(onClick = { }) { "확인" }
+        } ?: state.runningState.getDataOrNull()?.let { runningState ->
+            when (runningState) {
+                is RunningState.NotRunning -> {
+                    Button(
+                        modifier = Modifier.height(50.dp).width(160.dp),
+                        onClick = onStartRunning,
+                    ) {
+                        Text("러닝 시작", style = WalkieTypography.Title)
+                    }
+                }
+                is RunningState.Paused -> {
+                    Row(
+                        Modifier
+                            .wrapContentSize()
+                            .border(
+                                width = 1.dp,
+                                color = WalkieColor.GrayDefault,
+                                shape = CircleShape,
+                            ).clip(CircleShape).background(Color.White),
+                    ) {
+                        IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
+                            Icon(Icons.Default.PlayArrow, contentDescription = "")
+                        }
+                        IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
+                            Icon(Icons.Default.Stop, contentDescription = "")
+                        }
+                    }
+                }
+                is RunningState.Running -> {
+                    Row(
+                        Modifier
+                            .wrapContentSize()
+                            .border(
+                                width = 1.dp,
+                                color = WalkieColor.GrayDefault,
+                                shape = CircleShape,
+                            )
+                            .clip(CircleShape).background(Color.White),
+                    ) {
+                        IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
+                            Icon(Icons.Default.Pause, contentDescription = "")
+                        }
+                        IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
+                            Icon(Icons.Default.Stop, contentDescription = "")
+                        }
+                    }
+                }
+            }
         }
     }
 }
