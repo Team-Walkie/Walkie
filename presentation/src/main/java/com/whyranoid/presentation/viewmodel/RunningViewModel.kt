@@ -28,6 +28,7 @@ data class RunningScreenState(
     val runningInfoState: UiState<RunningInfo> = UiState.Idle,
     val runningResultInfoState: UiState<RunningInfo> = UiState.Idle,
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
+    val runningFinishState: UiState<RunningState> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -37,6 +38,7 @@ class RunningViewModel(
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
 
+    private val runningDataManager = RunningDataManager.getInstance()
     var startWorker: (() -> Unit)? = null
 
     override val container = container<RunningScreenState, RunningScreenSideEffect>(
@@ -45,7 +47,7 @@ class RunningViewModel(
 
     fun getRunningState() {
         viewModelScope.launch {
-            RunningDataManager.getInstance().runningState.collect { runningState ->
+            runningDataManager.runningState.collect { runningState ->
                 intent {
                     reduce {
                         val runningInfo =
@@ -53,6 +55,9 @@ class RunningViewModel(
                         state.copy(
                             runningState = UiState.Success(runningState),
                             runningInfoState = UiState.Success(runningInfo),
+                            trackingModeState = UiState.Success(
+                                state.trackingModeState.getDataOrNull() ?: TrackingMode.FOLLOW,
+                            ),
                         )
                     }
                 }
@@ -69,10 +74,24 @@ class RunningViewModel(
         }
     }
 
-    fun pauseOrResumeRunning() {
+    fun pauseRunning() {
+        runningDataManager.pauseRunning()
+    }
+
+    fun resumeRunning() {
+        runningDataManager.resumeRunning().onSuccess {
+            intent {
+                reduce {
+                    state.copy(trackingModeState = UiState.Success(TrackingMode.FOLLOW))
+                }
+            }
+        }
     }
 
     fun finishRunning() {
+        runningDataManager.finishRunning().onSuccess { runningFinishData ->
+            // TODO
+        }
     }
 
     fun onTrackingButtonClicked() {
@@ -87,8 +106,11 @@ class RunningViewModel(
                             TrackingMode.NO_FOLLOW -> {
                                 TrackingMode.FOLLOW
                             }
-                            else -> {
+                            TrackingMode.FOLLOW -> {
                                 TrackingMode.NONE
+                            }
+                            else -> {
+                                TrackingMode.FOLLOW
                             }
                         },
                     ),
