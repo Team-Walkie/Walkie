@@ -17,3 +17,15 @@ fun <T> List<T>.chunkedList(size: Int): List<List<T>> {
 fun ClosedFloatingPointRange<Float>.random(): Float {
     return Random.nextDouble(start.toDouble(), endInclusive.toDouble()).toFloat()
 }
+
+fun Int.toRunningTime(): String {
+    return "${"%02d".format(this.div(3600))}:${
+        "%02d".format(
+            this.rem(3600).div(60),
+        )
+    }:${"%02d".format(this.rem(60))}"
+}
+
+fun Double.toPace(): String {
+    return "%.1f".format(this).replace('.', '`') + "``"
+}
