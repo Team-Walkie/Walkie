@@ -110,7 +110,7 @@ fun RunningContent(
             RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
         }
         RunningBottomButton(
-            modifier = Modifier.height(46.dp).width(80.dp),
+            modifier = Modifier.height(50.dp).width(80.dp),
             state = state,
             onStartRunning = onStartRunning,
             onPauseRunning = onPauseRunning,
@@ -362,7 +362,11 @@ fun RunningBottomButton(
                             Icon(Icons.Default.PlayArrow, contentDescription = "")
                         }
                         IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
-                            Icon(Icons.Default.Stop, contentDescription = "")
+                            Icon(
+                                Icons.Default.Stop,
+                                contentDescription = "",
+                                tint = WalkieColor.Primary,
+                            )
                         }
                     }
                 }
@@ -381,7 +385,11 @@ fun RunningBottomButton(
                             Icon(Icons.Default.Pause, contentDescription = "")
                         }
                         IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
-                            Icon(Icons.Default.Stop, contentDescription = "")
+                            Icon(
+                                Icons.Default.Stop,
+                                contentDescription = "",
+                                tint = WalkieColor.Primary,
+                            )
                         }
                     }
                 }
