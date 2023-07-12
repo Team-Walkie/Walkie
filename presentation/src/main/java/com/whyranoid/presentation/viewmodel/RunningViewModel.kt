@@ -141,8 +141,8 @@ fun MogakRunningData.toWalikeRunningData(): WalkieRunningData {
         distance = this.totalDistance,
         pace = this.pace,
         totalRunningTime = this.runningTime,
-        calories = 0,
-        steps = 0,
+        calories = (this.totalDistance * 0.07).toInt(),
+        steps = (this.totalDistance * 1.312).toInt(),
         paths = this.runningPositionList.map { list ->
             list.map { runningPosition ->
                 RunningPosition(
@@ -160,7 +160,7 @@ fun WalkieRunningData.toRunningInfo(): RunningInfo {
         pace = this.pace,
         runningTime = this.totalRunningTime,
         calories = this.calories.toDouble(),
-        steps = 0,
+        steps = this.steps,
     )
 }
 

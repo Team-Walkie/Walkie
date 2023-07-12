@@ -313,7 +313,7 @@ fun RunningInfoScreen(
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "${state.runningInfoState.getDataOrNull()?.calories ?: 0.0}",
+                        text = "${state.runningInfoState.getDataOrNull()?.calories?.toInt() ?: 0}",
                         style = WalkieTypography.SubTitle,
                     )
                     Text(
