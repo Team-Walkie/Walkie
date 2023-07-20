@@ -1,15 +1,31 @@
 package com.whyranoid.presentation.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -30,6 +46,32 @@ import com.whyranoid.presentation.theme.WalkieColor
 fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
 
+    // TODO 권한 요청 위치 Splash 화면 이동
+    val context = LocalContext.current
+    val launcherMultiplePermissions = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { permissionsMap ->
+        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+        if (areGranted) {
+            Log.d("test5", "권한이 동의되었습니다.")
+        }
+        /** 권한 요청시 거부 했을 경우 **/
+        else {
+            Log.d("test5", "권한이 거부되었습니다~~.")
+            // TODO SHOW DIALOG
+        }
+    }
+
+    SideEffect {
+        checkAndRequestPermissions(
+            context,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            ),
+            launcherMultiplePermissions,
+        )
+    }
+
     Scaffold(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -37,15 +79,29 @@ fun AppScreen(startWorker: () -> Unit) {
 
             if (currentDestination?.route in bottomNavigationItems.map { it.route }) {
                 BottomNavigation(
-                    backgroundColor = WalkieColor.Primary,
+                    modifier = Modifier.height(60.dp),
+                    backgroundColor = Color.White,
+                    elevation = 5.dp,
                 ) {
                     bottomNavigationItems.forEach { screen ->
+                        val selected =
+                            currentDestination?.hierarchy?.any { it.route == screen.route } == true
                         BottomNavigationItem(
                             icon = {
-                                Icon(requireNotNull(screen.icon), contentDescription = null)
+                                Icon(
+                                    ImageVector.vectorResource(requireNotNull(if (selected) screen.iconSelected else screen.icon)),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                )
                             },
-                            label = { Text(stringResource(requireNotNull(screen.resourceId))) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            label = {
+                                Text(
+                                    stringResource(requireNotNull(screen.resourceId)),
+                                    modifier = Modifier.height(15.dp),
+                                    color = Color.Black,
+                                )
+                            },
+                            selected = selected,
                             onClick = {
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
@@ -55,6 +111,7 @@ fun AppScreen(startWorker: () -> Unit) {
                                     restoreState = true
                                 }
                             },
+                            selectedContentColor = WalkieColor.Primary,
                         )
                     }
                 }
@@ -103,5 +160,27 @@ fun AppScreen(startWorker: () -> Unit) {
                 ChallengeExitScreen(navController, challengeId)
             }
         }
+    }
+}
+
+fun checkAndRequestPermissions(
+    context: Context,
+    permissions: Array<String>,
+    launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
+) {
+    if (permissions.all {
+            ContextCompat.checkSelfPermission(
+                context,
+                it,
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    ) {
+        Log.d("test5", "권한이 이미 존재합니다.")
+    }
+
+    /** 권한이 없는 경우 **/
+    else {
+        launcher.launch(permissions)
+        Log.d("test5", "권한을 요청하였습니다.")
     }
 }

@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
@@ -48,7 +47,7 @@ class RunningWorker(
             return Result.failure()
         }
 
-        setForeground(createForegroundInfo("모여서 각자 러닝 중~"))
+        setForeground(createForegroundInfo("워키 러닝 중~"))
 
         while ((runningDataManager.runningState.value is RunningState.NotRunning).not()) {
             delay(UPDATE_INTERVAL_MS)
@@ -77,10 +76,17 @@ class RunningWorker(
             .setTicker(title)
             .setContentText(progress)
             .setContentIntent(pendingIntent)
-            .setSmallIcon(com.google.android.material.R.drawable.ic_mtrl_chip_checked_circle)
+            .setSmallIcon(com.whyranoid.presentation.R.drawable.ic_running_screen_selected)
             .setOngoing(true)
             .build()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return ForegroundInfo(
+                NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION,
+            )
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return ForegroundInfo(
                 NOTIFICATION_ID,
@@ -92,7 +98,7 @@ class RunningWorker(
     }
 
     private fun createChannel() {
-        val name = "활동 추적"
+        val name = "활동 추적" // TODO 리소스 분리
         val descriptionText = "달리기 활동을 추적하는 알림 채널입니다."
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
@@ -106,10 +112,6 @@ class RunningWorker(
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { location ->
-                    Log.d(
-                        "tag startWorker",
-                        "location callback ${location.longitude}",
-                    ) // TODO REMOVE
                     runningDataManager.setRunningState(location)
                 } ?: run {
                     runningDataManager.pauseRunning()
@@ -134,10 +136,10 @@ class RunningWorker(
     }
 
     companion object {
-        const val WORKER_NAME = "runningWorker"
-        const val NOTIFICATION_ID = 1000
-        const val CHANNEL_ID = "모각런"
-        const val UPDATE_INTERVAL_MS = 1000L
+        const val WORKER_NAME = "RunningWorker"
+        const val NOTIFICATION_ID = 2000
+        const val CHANNEL_ID = "Walkie Channel"
+        const val UPDATE_INTERVAL_MS = 2000L
     }
 }
 

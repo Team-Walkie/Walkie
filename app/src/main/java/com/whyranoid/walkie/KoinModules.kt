@@ -36,7 +36,7 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get()) }
-    single { RunningViewModel(get(), get(), get(), get()) }
+    factory { RunningViewModel(get(), get(), get(), get()) }
 }
 
 val repositoryModule = module {
