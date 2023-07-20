@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.running.RunningPosition
@@ -12,7 +13,9 @@ import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.runningdata.RunningDataManager
+import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -28,7 +31,7 @@ data class RunningScreenState(
     val runningInfoState: UiState<RunningInfo> = UiState.Idle,
     val runningResultInfoState: UiState<RunningInfo> = UiState.Idle,
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
-    val runningFinishState: UiState<RunningState> = UiState.Idle,
+    val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -46,6 +49,7 @@ class RunningViewModel(
     )
 
     fun getRunningState() {
+        Log.d("vtag", "viewModelScope isActive = ${viewModelScope.isActive}")
         viewModelScope.launch {
             runningDataManager.runningState.collect { runningState ->
                 intent {
@@ -75,6 +79,7 @@ class RunningViewModel(
     }
 
     fun pauseRunning() {
+        Log.d("vtag RunningViewModel", "pauseRunning") // TODO remove
         runningDataManager.pauseRunning()
     }
 
@@ -90,7 +95,11 @@ class RunningViewModel(
 
     fun finishRunning() {
         runningDataManager.finishRunning().onSuccess { runningFinishData ->
-            // TODO
+            intent {
+                reduce {
+                    state.copy(runningFinishState = UiState.Success(runningFinishData))
+                }
+            }
         }
     }
 
@@ -132,7 +141,6 @@ class RunningViewModel(
     companion object {
         const val MAP_MAX_ZOOM = 18.0
         const val MAP_MIN_ZOOM = 10.0
-        const val MAP_ICON_SIZE = 50
     }
 }
 
