@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens.running
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +47,6 @@ import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationSource
-import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationOverlay
 import com.naver.maps.map.compose.LocationTrackingMode
@@ -76,7 +77,8 @@ fun RunningScreen(
 ) {
     val viewModel = koinViewModel<RunningViewModel>().apply { this.startWorker = startWorker }
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(LocalLifecycleOwner.current) {
+        Log.d("vtag", "launched")
         viewModel.getRunningState()
         viewModel.onTrackingButtonClicked()
     }
@@ -181,6 +183,7 @@ fun RunningMapScreen(
             uiSettings = mapUiSettings,
             locationSource = rememberCustomLocationSource(),
         ) {
+            if (cameraPositionState.cameraUpdateReason.value == CameraUpdate.REASON_GESTURE) onTrackingCanceledByGesture()
             state.runningState.getDataOrNull()?.let {
                 it.runningData.lastLocation?.let { location ->
                     LocationOverlay(
@@ -203,15 +206,6 @@ fun RunningMapScreen(
                             outlineWidth = 0.dp,
                         )
                     }
-                }
-            }
-
-            DisposableMapEffect(true) { naverMap ->
-                naverMap.addOnCameraChangeListener { reason, _ ->
-                    if (reason == CameraUpdate.REASON_GESTURE) onTrackingCanceledByGesture()
-                }
-
-                onDispose {
                 }
             }
         }
@@ -400,10 +394,6 @@ fun RunningInfoScreen(
             }
         }
     }
-    state.runningState.getDataOrNull()?.let {
-        it.runningData.lastLocation?.let { location ->
-        }
-    }
 }
 
 @Composable
@@ -422,7 +412,15 @@ fun RunningBottomButton(
         contentAlignment = Alignment.BottomCenter,
     ) {
         state.runningFinishState.getDataOrNull()?.let { finState ->
-            Button(onClick = { }) { "확인" }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
+                Button(modifier = Modifier.height(50.dp).fillMaxWidth().padding(horizontal = 20.dp), onClick = { }, shape = RoundedCornerShape(12.dp)) {
+                    Text(
+                        "저장",
+                        style = WalkieTypography.Title,
+                    )
+                }
+            }
         } ?: state.runningState.getDataOrNull()?.let { runningState ->
             when (runningState) {
                 is RunningState.NotRunning -> {
