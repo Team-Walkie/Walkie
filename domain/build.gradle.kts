@@ -10,4 +10,7 @@ java {
 
 dependencies {
     implementation(libs.javax.inject)
+
+    // Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 }

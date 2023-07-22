@@ -1,6 +1,6 @@
 package com.whyranoid.presentation.screens.running
 
-import android.util.Log
+import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,6 +56,7 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
+import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.presentation.theme.WalkieColor
@@ -75,10 +76,10 @@ fun RunningScreen(
     navController: NavController,
     startWorker: () -> Unit,
 ) {
-    val viewModel = koinViewModel<RunningViewModel>().apply { this.startWorker = startWorker }
+    val viewModel = koinViewModel<RunningViewModel>()
 
     LaunchedEffect(LocalLifecycleOwner.current) {
-        Log.d("vtag", "launched")
+        viewModel.startWorker = startWorker
         viewModel.getRunningState()
         viewModel.onTrackingButtonClicked()
     }
@@ -119,9 +120,7 @@ fun RunningContent(
             RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
         }
         RunningBottomButton(
-            modifier = Modifier
-                .height(50.dp)
-                .width(80.dp),
+            modifier = Modifier.height(50.dp).width(80.dp),
             state = state,
             onStartRunning = onStartRunning,
             onPauseRunning = onPauseRunning,
@@ -144,11 +143,10 @@ fun RunningMapScreen(
             MapProperties(
                 maxZoom = MAP_MAX_ZOOM,
                 minZoom = MAP_MIN_ZOOM,
-                locationTrackingMode =
-                when (state.trackingModeState.getDataOrNull()) {
+                locationTrackingMode = when (state.trackingModeState.getDataOrNull()) {
                     TrackingMode.FOLLOW -> LocationTrackingMode.Follow
                     TrackingMode.NO_FOLLOW -> LocationTrackingMode.NoFollow
-                    else -> LocationTrackingMode.None
+                    else -> LocationTrackingMode.Follow
                 },
             ),
         )
@@ -164,17 +162,17 @@ fun RunningMapScreen(
         )
     }
 
-    val cameraPositionState = rememberCameraPositionState()
-        .apply {
-            state.trackingModeState.getDataOrNull()?.let { trackingMode ->
-                state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
-                    if (trackingMode == TrackingMode.FOLLOW) {
-                        move(CameraUpdate.scrollTo(LatLng(location)))
-                    }
+    val cameraPositionState = rememberCameraPositionState().apply {
+        state.trackingModeState.getDataOrNull()?.let { trackingMode ->
+            state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
+                if (trackingMode == TrackingMode.FOLLOW) {
+                    move(CameraUpdate.scrollTo(LatLng(location)))
                 }
             }
         }
+    }
 
+    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 4. 러닝 시작 전에도 위치 추적, 5. 갤러리 구현, 6. 저장하기 구현
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -184,6 +182,25 @@ fun RunningMapScreen(
             locationSource = rememberCustomLocationSource(),
         ) {
             if (cameraPositionState.cameraUpdateReason.value == CameraUpdate.REASON_GESTURE) onTrackingCanceledByGesture()
+
+            state.userLocationState.getDataOrNull()?.let {
+                if (it is UserLocation.Tracking) {
+                    val location = Location("").apply {
+                        latitude = it.lat
+                        longitude = it.lng
+                    }
+                    LaunchedEffect(Unit) {
+                        cameraPositionState.move(
+                            CameraUpdate.scrollTo(LatLng(location)),
+                        )
+                    }
+                    LocationOverlay(
+                        position = LatLng(location),
+                        icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
+                    )
+                }
+            }
+
             state.runningState.getDataOrNull()?.let {
                 it.runningData.lastLocation?.let { location ->
                     LocationOverlay(
@@ -210,46 +227,31 @@ fun RunningMapScreen(
             }
         }
         Row(
-            modifier = Modifier
-                .wrapContentSize()
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
+            modifier = Modifier.wrapContentSize().align(Alignment.BottomEnd).padding(16.dp),
         ) {
             Icon(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable {
-                        state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
-                            if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
-                                cameraPositionState.move(
-                                    CameraUpdate.scrollTo(LatLng(location)),
-                                )
-                            }
+                modifier = Modifier.clip(CircleShape).clickable {
+                    state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
+                        if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
+                            cameraPositionState.move(
+                                CameraUpdate.scrollTo(LatLng(location)),
+                            )
                         }
-                        onClickTrackingModeButton()
                     }
-                    .background(Color.White)
-                    .size(32.dp)
-                    .padding(4.dp),
+                    onClickTrackingModeButton()
+                }.background(Color.White).size(32.dp).padding(4.dp),
                 imageVector = Icons.Default.MyLocation,
                 contentDescription = "",
                 tint = WalkieColor.Primary,
             )
 
             Row(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { /* TODO */ }
-                    .background(Color.White)
-                    .height(32.dp)
-                    .wrapContentWidth()
-                    .padding(4.dp),
+                modifier = Modifier.padding(start = 8.dp).clip(RoundedCornerShape(8.dp))
+                    .clickable { /* TODO */ }.background(Color.White).height(32.dp)
+                    .wrapContentWidth().padding(4.dp),
             ) {
                 Icon(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(end = 4.dp),
+                    modifier = Modifier.fillMaxHeight().padding(end = 4.dp),
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "",
                     tint = WalkieColor.Primary,
@@ -266,21 +268,14 @@ fun RunningInfoScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .padding(bottom = 66.dp)
-            .background(Color.White),
+        modifier = modifier.padding(bottom = 66.dp).background(Color.White),
     ) {
         // 거리, 런닝 시간
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(top = 20.dp),
+            modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 20.dp),
         ) {
             Column(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(0.4f),
+                Modifier.wrapContentHeight().weight(0.4f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -292,7 +287,8 @@ fun RunningInfoScreen(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = "%.2f".format(
-                            (state.runningInfoState.getDataOrNull()?.distance?.div(1000.toDouble()))
+                            state.runningResultInfoState.getDataOrNull()?.distance?.div(1000.toDouble())
+                                ?: state.runningInfoState.getDataOrNull()?.distance?.div(1000.toDouble())
                                 ?: 0.00,
                         ),
                         fontWeight = FontWeight.Bold,
@@ -307,9 +303,7 @@ fun RunningInfoScreen(
             }
 
             Column(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(0.6f),
+                Modifier.wrapContentHeight().weight(0.6f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -319,7 +313,8 @@ fun RunningInfoScreen(
                     style = WalkieTypography.Caption,
                 )
                 Text(
-                    text = state.runningInfoState.getDataOrNull()?.runningTime?.toRunningTime()
+                    text = state.runningResultInfoState.getDataOrNull()?.runningTime?.toRunningTime()
+                        ?: state.runningInfoState.getDataOrNull()?.runningTime?.toRunningTime()
                         ?: "00:00:00",
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
@@ -329,14 +324,10 @@ fun RunningInfoScreen(
 
         // 페이스 칼로리 걸음수
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         ) {
             Column(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(1f),
+                Modifier.wrapContentHeight().weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -345,16 +336,14 @@ fun RunningInfoScreen(
                     style = WalkieTypography.Caption,
                 )
                 Text(
-                    text = state.runningInfoState.getDataOrNull()?.pace?.toPace()
-                        ?: "0`00``",
+                    text = state.runningResultInfoState.getDataOrNull()?.pace?.toPace()
+                        ?: state.runningInfoState.getDataOrNull()?.pace?.toPace() ?: "0`00``",
                     style = WalkieTypography.SubTitle,
                 )
             }
 
             Column(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(1f),
+                Modifier.wrapContentHeight().weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -364,7 +353,7 @@ fun RunningInfoScreen(
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "${state.runningInfoState.getDataOrNull()?.calories?.toInt() ?: 0}",
+                        text = "${state.runningResultInfoState.getDataOrNull()?.calories?.toInt() ?: state.runningInfoState.getDataOrNull()?.calories?.toInt() ?: 0}",
                         style = WalkieTypography.SubTitle,
                     )
                     Text(
@@ -376,9 +365,7 @@ fun RunningInfoScreen(
             }
 
             Column(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(1f),
+                Modifier.wrapContentHeight().weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -387,7 +374,8 @@ fun RunningInfoScreen(
                     style = WalkieTypography.Caption,
                 )
                 Text(
-                    text = state.runningInfoState.getDataOrNull()?.steps?.let { it.toString() }
+                    text = state.runningResultInfoState.getDataOrNull()?.steps?.let { it.toString() }
+                        ?: state.runningInfoState.getDataOrNull()?.steps?.let { it.toString() }
                         ?: "0",
                     style = WalkieTypography.SubTitle,
                 )
@@ -406,15 +394,17 @@ fun RunningBottomButton(
     onFinishRunning: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 20.dp),
+        modifier = Modifier.fillMaxSize().padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         state.runningFinishState.getDataOrNull()?.let { finState ->
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
-                Button(modifier = Modifier.height(50.dp).fillMaxWidth().padding(horizontal = 20.dp), onClick = { }, shape = RoundedCornerShape(12.dp)) {
+                Button(
+                    modifier = Modifier.height(50.dp).fillMaxWidth().padding(horizontal = 20.dp),
+                    onClick = { },
+                    shape = RoundedCornerShape(12.dp),
+                ) {
                     Text(
                         "저장",
                         style = WalkieTypography.Title,
@@ -425,9 +415,7 @@ fun RunningBottomButton(
             when (runningState) {
                 is RunningState.NotRunning -> {
                     Button(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .width(160.dp),
+                        modifier = Modifier.height(50.dp).width(160.dp),
                         onClick = onStartRunning,
                     ) {
                         Text("러닝 시작", style = WalkieTypography.Title)
@@ -435,15 +423,11 @@ fun RunningBottomButton(
                 }
                 is RunningState.Paused -> {
                     Row(
-                        Modifier
-                            .wrapContentSize()
-                            .border(
-                                width = 1.dp,
-                                color = WalkieColor.GrayDefault,
-                                shape = CircleShape,
-                            )
-                            .clip(CircleShape)
-                            .background(Color.White),
+                        Modifier.wrapContentSize().border(
+                            width = 1.dp,
+                            color = WalkieColor.GrayDefault,
+                            shape = CircleShape,
+                        ).clip(CircleShape).background(Color.White),
                     ) {
                         IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
                             Icon(Icons.Default.PlayArrow, contentDescription = "")
@@ -459,15 +443,11 @@ fun RunningBottomButton(
                 }
                 is RunningState.Running -> {
                     Row(
-                        Modifier
-                            .wrapContentSize()
-                            .border(
-                                width = 1.dp,
-                                color = WalkieColor.GrayDefault,
-                                shape = CircleShape,
-                            )
-                            .clip(CircleShape)
-                            .background(Color.White),
+                        Modifier.wrapContentSize().border(
+                            width = 1.dp,
+                            color = WalkieColor.GrayDefault,
+                            shape = CircleShape,
+                        ).clip(CircleShape).background(Color.White),
                     ) {
                         IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
                             Icon(Icons.Default.Pause, contentDescription = "")

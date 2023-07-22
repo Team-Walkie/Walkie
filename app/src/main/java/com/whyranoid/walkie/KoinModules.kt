@@ -5,12 +5,14 @@ import com.whyranoid.data.datasource.PostDataSourceImpl
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
+import com.whyranoid.data.repository.RunningRepositoryImpl
 import com.whyranoid.data.repository.UserRepositoryImpl
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.datasource.PostDataSource
 import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.PostRepository
+import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.repository.UserRepository
 import com.whyranoid.domain.usecase.GetChallengeDetailUseCase
 import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
@@ -36,13 +38,14 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get()) }
-    factory { RunningViewModel(get(), get(), get(), get()) }
+    factory { RunningViewModel(get(), get(), get(), get(), get()) }
 }
 
 val repositoryModule = module {
     single<ChallengeRepository> { ChallengeRepositoryImpl(get()) }
     single<PostRepository> { PostRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
+    single<RunningRepository> { RunningRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {

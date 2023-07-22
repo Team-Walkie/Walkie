@@ -126,4 +126,8 @@ dependencies {
 
     // RunningModule
     implementation("io.github.bngsh:runningdata:0.0.5")
+
+    // Google Location
+    val googleLocationVersion = "21.0.1"
+    implementation("com.google.android.gms:play-services-location:$googleLocationVersion")
 }

@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.running.RunningPosition
+import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
@@ -15,7 +17,6 @@ import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -32,6 +33,7 @@ data class RunningScreenState(
     val runningResultInfoState: UiState<RunningInfo> = UiState.Idle,
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
+    val userLocationState: UiState<UserLocation> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -39,6 +41,7 @@ class RunningViewModel(
     val runningPauseOrResumeUseCase: RunningPauseOrResumeUseCase,
     val runningFinishUseCase: RunningFinishUseCase,
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
+    private val runningRepository: RunningRepository,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
 
     private val runningDataManager = RunningDataManager.getInstance()
@@ -49,7 +52,16 @@ class RunningViewModel(
     )
 
     fun getRunningState() {
-        Log.d("vtag", "viewModelScope isActive = ${viewModelScope.isActive}")
+        runningRepository.listenLocation()
+        viewModelScope.launch {
+            runningRepository.userLocationState.collect {
+                intent {
+                    reduce {
+                        state.copy(userLocationState = UiState.Success(it))
+                    }
+                }
+            }
+        }
         viewModelScope.launch {
             runningDataManager.runningState.collect { runningState ->
                 intent {
@@ -71,6 +83,7 @@ class RunningViewModel(
 
     fun startRunning() {
         startWorker?.invoke()
+        runningRepository.removeListener()
         intent {
             reduce {
                 state.copy(trackingModeState = UiState.Success(TrackingMode.FOLLOW))
@@ -94,6 +107,13 @@ class RunningViewModel(
     }
 
     fun finishRunning() {
+        intent {
+            state.runningInfoState.getDataOrNull()?.let {
+                reduce {
+                    state.copy(runningResultInfoState = UiState.Success(it))
+                }
+            }
+        }
         runningDataManager.finishRunning().onSuccess { runningFinishData ->
             intent {
                 reduce {
