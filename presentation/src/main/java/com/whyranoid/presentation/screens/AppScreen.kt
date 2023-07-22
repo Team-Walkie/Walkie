@@ -92,6 +92,7 @@ fun AppScreen(startWorker: () -> Unit) {
                                     ImageVector.vectorResource(requireNotNull(if (selected) screen.iconSelected else screen.icon)),
                                     contentDescription = null,
                                     modifier = Modifier.size(24.dp),
+                                    tint = if (selected) WalkieColor.Primary else WalkieColor.GrayDefault,
                                 )
                             },
                             label = {
