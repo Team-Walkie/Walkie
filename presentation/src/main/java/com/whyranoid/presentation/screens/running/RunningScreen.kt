@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -161,6 +162,7 @@ fun RunningMapScreen(
                 isZoomControlEnabled = false,
                 isCompassEnabled = false,
                 isLogoClickEnabled = false,
+                logoMargin = PaddingValues(bottom = 44.dp, start = 18.dp),
             ),
         )
     }
@@ -175,7 +177,7 @@ fun RunningMapScreen(
         }
     }
 
-    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 5. 갤러리 구현, 6. 저장하기 구현
+    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 4. 네이버 로고 위치 변경, 5. 갤러리 구현, 6. 저장하기 구현
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -230,12 +232,27 @@ fun RunningMapScreen(
             }
         }
         state.runningFinishState.getDataOrNull()?.let { finData ->
-            // 러닝 종료
+            // 러닝 종료 시
+            // 탑 앱바
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .background(Color.White),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+//                Icon()
+//                Text()
+//                Icon()
+            }
+
+            // 지도 하단 정보
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(16.dp),
+                    .padding(bottom = 12.dp)
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 listOf(
@@ -253,10 +270,32 @@ fun RunningMapScreen(
             // 러닝 중
             Row(
                 modifier = Modifier
-                    .wrapContentSize()
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { /* TODO */ }
+                        .background(Color.White)
+                        .height(24.dp)
+                        .wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(4.dp),
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "",
+                        tint = WalkieColor.Primary,
+                    )
+                    Text(text = "0", style = WalkieTypography.Body1, modifier = Modifier.padding(end = 4.dp))
+                }
+
                 Icon(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -271,33 +310,12 @@ fun RunningMapScreen(
                             onClickTrackingModeButton()
                         }
                         .background(Color.White)
-                        .size(32.dp)
+                        .size(24.dp)
                         .padding(4.dp),
                     imageVector = Icons.Default.MyLocation,
                     contentDescription = "",
                     tint = WalkieColor.Primary,
                 )
-
-                Row(
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { /* TODO */ }
-                        .background(Color.White)
-                        .height(32.dp)
-                        .wrapContentWidth()
-                        .padding(4.dp),
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(end = 4.dp),
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "",
-                        tint = WalkieColor.Primary,
-                    )
-                    Text(text = "0")
-                }
             }
         }
     }
