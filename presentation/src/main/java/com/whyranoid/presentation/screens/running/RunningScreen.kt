@@ -120,7 +120,9 @@ fun RunningContent(
             RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
         }
         RunningBottomButton(
-            modifier = Modifier.height(50.dp).width(80.dp),
+            modifier = Modifier
+                .height(50.dp)
+                .width(80.dp),
             state = state,
             onStartRunning = onStartRunning,
             onPauseRunning = onPauseRunning,
@@ -158,6 +160,7 @@ fun RunningMapScreen(
                 isScaleBarEnabled = false,
                 isZoomControlEnabled = false,
                 isCompassEnabled = false,
+                isLogoClickEnabled = false,
             ),
         )
     }
@@ -172,7 +175,7 @@ fun RunningMapScreen(
         }
     }
 
-    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 4. 러닝 시작 전에도 위치 추적, 5. 갤러리 구현, 6. 저장하기 구현
+    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 5. 갤러리 구현, 6. 저장하기 구현
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -226,37 +229,75 @@ fun RunningMapScreen(
                 }
             }
         }
-        Row(
-            modifier = Modifier.wrapContentSize().align(Alignment.BottomEnd).padding(16.dp),
-        ) {
-            Icon(
-                modifier = Modifier.clip(CircleShape).clickable {
-                    state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
-                        if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
-                            cameraPositionState.move(
-                                CameraUpdate.scrollTo(LatLng(location)),
-                            )
-                        }
-                    }
-                    onClickTrackingModeButton()
-                }.background(Color.White).size(32.dp).padding(4.dp),
-                imageVector = Icons.Default.MyLocation,
-                contentDescription = "",
-                tint = WalkieColor.Primary,
-            )
-
+        state.runningFinishState.getDataOrNull()?.let { finData ->
+            // 러닝 종료
             Row(
-                modifier = Modifier.padding(start = 8.dp).clip(RoundedCornerShape(8.dp))
-                    .clickable { /* TODO */ }.background(Color.White).height(32.dp)
-                    .wrapContentWidth().padding(4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                listOf(
+                    "%.2f".format(finData.runningHistory.totalDistance.div(1000.toDouble())),
+                    finData.runningHistory.totalRunningTime.toRunningTime(),
+                    finData.runningHistory.pace.toPace(),
+                ).forEach {
+                    Text(
+                        it,
+                        style = WalkieTypography.Title,
+                    )
+                }
+            }
+        } ?: run {
+            // 러닝 중
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
             ) {
                 Icon(
-                    modifier = Modifier.fillMaxHeight().padding(end = 4.dp),
-                    imageVector = Icons.Default.Favorite,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable {
+                            state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
+                                if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
+                                    cameraPositionState.move(
+                                        CameraUpdate.scrollTo(LatLng(location)),
+                                    )
+                                }
+                            }
+                            onClickTrackingModeButton()
+                        }
+                        .background(Color.White)
+                        .size(32.dp)
+                        .padding(4.dp),
+                    imageVector = Icons.Default.MyLocation,
                     contentDescription = "",
                     tint = WalkieColor.Primary,
                 )
-                Text(text = "0")
+
+                Row(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { /* TODO */ }
+                        .background(Color.White)
+                        .height(32.dp)
+                        .wrapContentWidth()
+                        .padding(4.dp),
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(end = 4.dp),
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "",
+                        tint = WalkieColor.Primary,
+                    )
+                    Text(text = "0")
+                }
             }
         }
     }
@@ -268,14 +309,21 @@ fun RunningInfoScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(bottom = 66.dp).background(Color.White),
+        modifier = modifier
+            .padding(bottom = 66.dp)
+            .background(Color.White),
     ) {
         // 거리, 런닝 시간
         Row(
-            modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .padding(top = 20.dp),
         ) {
             Column(
-                Modifier.wrapContentHeight().weight(0.4f),
+                Modifier
+                    .wrapContentHeight()
+                    .weight(0.4f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -303,7 +351,9 @@ fun RunningInfoScreen(
             }
 
             Column(
-                Modifier.wrapContentHeight().weight(0.6f),
+                Modifier
+                    .wrapContentHeight()
+                    .weight(0.6f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -324,10 +374,14 @@ fun RunningInfoScreen(
 
         // 페이스 칼로리 걸음수
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
         ) {
             Column(
-                Modifier.wrapContentHeight().weight(1f),
+                Modifier
+                    .wrapContentHeight()
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -343,7 +397,9 @@ fun RunningInfoScreen(
             }
 
             Column(
-                Modifier.wrapContentHeight().weight(1f),
+                Modifier
+                    .wrapContentHeight()
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -365,7 +421,9 @@ fun RunningInfoScreen(
             }
 
             Column(
-                Modifier.wrapContentHeight().weight(1f),
+                Modifier
+                    .wrapContentHeight()
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -394,14 +452,19 @@ fun RunningBottomButton(
     onFinishRunning: () -> Unit,
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(bottom = 20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         state.runningFinishState.getDataOrNull()?.let { finState ->
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
                 Button(
-                    modifier = Modifier.height(50.dp).fillMaxWidth().padding(horizontal = 20.dp),
+                    modifier = Modifier
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                     onClick = { },
                     shape = RoundedCornerShape(12.dp),
                 ) {
@@ -415,7 +478,9 @@ fun RunningBottomButton(
             when (runningState) {
                 is RunningState.NotRunning -> {
                     Button(
-                        modifier = Modifier.height(50.dp).width(160.dp),
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(160.dp),
                         onClick = onStartRunning,
                     ) {
                         Text("러닝 시작", style = WalkieTypography.Title)
@@ -423,11 +488,15 @@ fun RunningBottomButton(
                 }
                 is RunningState.Paused -> {
                     Row(
-                        Modifier.wrapContentSize().border(
-                            width = 1.dp,
-                            color = WalkieColor.GrayDefault,
-                            shape = CircleShape,
-                        ).clip(CircleShape).background(Color.White),
+                        Modifier
+                            .wrapContentSize()
+                            .border(
+                                width = 1.dp,
+                                color = WalkieColor.GrayDefault,
+                                shape = CircleShape,
+                            )
+                            .clip(CircleShape)
+                            .background(Color.White),
                     ) {
                         IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
                             Icon(Icons.Default.PlayArrow, contentDescription = "")
@@ -443,11 +512,15 @@ fun RunningBottomButton(
                 }
                 is RunningState.Running -> {
                     Row(
-                        Modifier.wrapContentSize().border(
-                            width = 1.dp,
-                            color = WalkieColor.GrayDefault,
-                            shape = CircleShape,
-                        ).clip(CircleShape).background(Color.White),
+                        Modifier
+                            .wrapContentSize()
+                            .border(
+                                width = 1.dp,
+                                color = WalkieColor.GrayDefault,
+                                shape = CircleShape,
+                            )
+                            .clip(CircleShape)
+                            .background(Color.White),
                     ) {
                         IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
                             Icon(Icons.Default.Pause, contentDescription = "")
