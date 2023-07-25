@@ -29,6 +29,7 @@ import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
+import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import org.koin.dsl.module
@@ -39,6 +40,7 @@ val viewModelModule = module {
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get()) }
+    factory { RunningEditViewModel() }
 }
 
 val repositoryModule = module {

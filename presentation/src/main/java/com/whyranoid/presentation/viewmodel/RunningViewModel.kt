@@ -34,6 +34,7 @@ data class RunningScreenState(
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
     val userLocationState: UiState<UserLocation> = UiState.Idle,
+    val editState: UiState<Unit> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -156,6 +157,25 @@ class RunningViewModel(
                 )
             }
         }
+    }
+
+    fun openEdit() {
+        intent {
+            reduce {
+                state.copy(editState = UiState.Success(Unit))
+            }
+        }
+    }
+
+    fun closeEdit() {
+        intent {
+            reduce {
+                state.copy(editState = UiState.Idle)
+            }
+        }
+    }
+
+    fun editBackground() {
     }
 
     companion object {

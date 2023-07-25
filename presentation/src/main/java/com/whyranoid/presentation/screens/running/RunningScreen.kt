@@ -22,11 +22,13 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +62,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.TrackingMode
+import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.toPace
@@ -95,6 +98,8 @@ fun RunningScreen(
         viewModel::pauseRunning,
         viewModel::resumeRunning,
         viewModel::finishRunning,
+        viewModel::openEdit,
+        viewModel::closeEdit,
     )
 }
 
@@ -107,6 +112,8 @@ fun RunningContent(
     onPauseRunning: () -> Unit,
     onResumeRunning: () -> Unit,
     onFinishRunning: () -> Unit,
+    onEditOpen: () -> Unit,
+    onEditClose: () -> Unit,
 ) {
     Box {
         Column(
@@ -117,6 +124,8 @@ fun RunningContent(
                 state,
                 onClickTrackingModeButton,
                 onTrackingCanceledByGesture,
+                onEditOpen,
+                onEditClose,
             )
             RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
         }
@@ -129,6 +138,7 @@ fun RunningContent(
             onPauseRunning = onPauseRunning,
             onResumeRunning = onResumeRunning,
             onFinishRunning = onFinishRunning,
+            onEditClose = onEditClose,
         )
     }
 }
@@ -140,6 +150,8 @@ fun RunningMapScreen(
     state: RunningScreenState,
     onClickTrackingModeButton: () -> Unit,
     onTrackingCanceledByGesture: () -> Unit,
+    onEditOpen: () -> Unit,
+    onEditClose: () -> Unit,
 ) {
     val mapProperties by remember {
         mutableStateOf(
@@ -231,19 +243,44 @@ fun RunningMapScreen(
                 }
             }
         }
-        state.runningFinishState.getDataOrNull()?.let { finData ->
-            // 러닝 종료 시
+        // 편집 중
+        state.editState.getDataOrNull()?.let { editState ->
             // 탑 앱바
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .background(Color.White),
+                    .background(Color.White)
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-//                Icon()
-//                Text()
-//                Icon()
+                Icon(
+                    Icons.Default.Close,
+                    "close",
+                    modifier = Modifier.clickable { onEditClose() },
+                )
+                Text("이미지", style = WalkieTypography.SubTitle)
+                Icon(
+                    Icons.Outlined.PhotoCamera,
+                    "camera",
+                    modifier = Modifier.clickable {
+                        /* TODO */
+                    },
+                )
+            }
+        }
+
+        // 러닝 종료 시
+        state.runningFinishState.getDataOrNull()?.let { finData ->
+            state.editState.getDataOrNull() ?: kotlin.run {
+                Text(
+                    text = "편집",
+                    style = WalkieTypography.SubTitle,
+                    modifier = Modifier.clickable { onEditOpen() }.padding(8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.White).padding(8.dp)
+                        .align(Alignment.TopEnd),
+                )
             }
 
             // 지도 하단 정보
@@ -293,7 +330,11 @@ fun RunningMapScreen(
                         contentDescription = "",
                         tint = WalkieColor.Primary,
                     )
-                    Text(text = "0", style = WalkieTypography.Body1, modifier = Modifier.padding(end = 4.dp))
+                    Text(
+                        text = "0",
+                        style = WalkieTypography.Body1,
+                        modifier = Modifier.padding(end = 4.dp),
+                    )
                 }
 
                 Icon(
@@ -326,6 +367,17 @@ fun RunningInfoScreen(
     state: RunningScreenState,
     modifier: Modifier = Modifier,
 ) {
+    state.editState.getDataOrNull()?.let { editState ->
+        GalleryGrid(
+            column = 3,
+            modifier = modifier
+                .padding(bottom = 66.dp)
+                .background(Color.White),
+        ) { uri ->
+            // TODO 이미지 보여주기 onImageSelected()
+        }
+        return
+    }
     Column(
         modifier = modifier
             .padding(bottom = 66.dp)
@@ -468,6 +520,7 @@ fun RunningBottomButton(
     onPauseRunning: () -> Unit,
     onResumeRunning: () -> Unit,
     onFinishRunning: () -> Unit,
+    onEditClose: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -475,7 +528,24 @@ fun RunningBottomButton(
             .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        state.runningFinishState.getDataOrNull()?.let { finState ->
+        // 편집 중
+        state.editState.getDataOrNull()?.let { editState ->
+            if (true) { // TODO editState.backgroundSelected
+                Button(
+                    modifier = Modifier
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    onClick = { onEditClose() },
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Text(
+                        "확인",
+                        style = WalkieTypography.Title,
+                    )
+                }
+            }
+        } ?: state.runningFinishState.getDataOrNull()?.let { finState -> // 종료 시
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
                 Button(
@@ -483,7 +553,9 @@ fun RunningBottomButton(
                         .height(50.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
-                    onClick = { },
+                    onClick = {
+                        /* TODO 저장하기 */
+                    },
                     shape = RoundedCornerShape(12.dp),
                 ) {
                     Text(
@@ -492,7 +564,7 @@ fun RunningBottomButton(
                     )
                 }
             }
-        } ?: state.runningState.getDataOrNull()?.let { runningState ->
+        } ?: state.runningState.getDataOrNull()?.let { runningState -> // 러닝 시작 전
             when (runningState) {
                 is RunningState.NotRunning -> {
                     Button(
