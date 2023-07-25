@@ -67,6 +67,7 @@ fun AppScreen(startWorker: () -> Unit) {
             context,
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
             ),
             launcherMultiplePermissions,
         )
