@@ -410,7 +410,7 @@ fun RunningMapScreen(
             }
         }
 
-        // 러닝 종료 시
+        // 러닝 종료 시 오버레이 Overlay  제외
         state.runningFinishState.getDataOrNull()?.let { finData ->
             if (state.editState.getDataOrNull() != true) {
                 Text(
@@ -488,6 +488,12 @@ fun RunningMapScreen(
                                 if (state.trackingModeState.getDataOrNull() == TrackingMode.NONE) {
                                     cameraPositionState.move(
                                         CameraUpdate.scrollTo(LatLng(location)),
+                                    )
+                                }
+                            } ?: state.userLocationState.getDataOrNull()?.let { location ->
+                                if (location is UserLocation.Tracking) {
+                                    cameraPositionState.move(
+                                        CameraUpdate.scrollTo(LatLng(location.lat, location.lng)),
                                     )
                                 }
                             }
