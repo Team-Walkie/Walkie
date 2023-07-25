@@ -14,6 +14,7 @@ import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.model.UiState
 import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
+import com.whyranoid.presentation.model.running.SelectedImage
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
@@ -35,7 +36,7 @@ data class RunningScreenState(
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
     val userLocationState: UiState<UserLocation> = UiState.Idle,
-    val editState: UiState<Uri?> = UiState.Idle,
+    val editState: UiState<SelectedImage> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -163,7 +164,7 @@ class RunningViewModel(
     fun openEdit() {
         intent {
             reduce {
-                state.copy(editState = UiState.Success(null))
+                state.copy(editState = UiState.Success(SelectedImage.None))
             }
         }
     }
@@ -179,7 +180,7 @@ class RunningViewModel(
     fun selectImage(uri: Uri) {
         intent {
             reduce {
-                state.copy(editState = UiState.Success(uri))
+                state.copy(editState = UiState.Success(SelectedImage.Selected(uri)))
             }
         }
     }

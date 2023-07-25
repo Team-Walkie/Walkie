@@ -62,6 +62,7 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.model.running.SelectedImage
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.theme.WalkieColor
@@ -196,7 +197,7 @@ fun RunningMapScreen(
         }
     }
 
-    // TODO 2. 종료시 화면 고정(모각런 참고), 6. 저장하기 구현
+    // TODO 2. 종료시 화면 고정(모각런 참고), 6. 저장하기 구현, 7. 갤러리 아래 패딩 및 버튼 변경
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -375,11 +376,10 @@ fun RunningInfoScreen(
     modifier: Modifier = Modifier,
     onSelectImage: (Uri) -> Unit,
 ) {
-    state.editState.getDataOrNull()?.let { editState ->
+    state.editState.getDataOrNull()?.let { _ ->
         GalleryGrid(
             column = 3,
             modifier = modifier
-                .padding(bottom = 66.dp)
                 .background(Color.White),
         ) { uri -> onSelectImage(uri) }
         return
@@ -536,7 +536,7 @@ fun RunningBottomButton(
     ) {
         // 편집 중
         state.editState.getDataOrNull()?.let { editState ->
-            if (true) { // TODO editState.backgroundSelected
+            if (editState is SelectedImage.Selected) {
                 Button(
                     modifier = Modifier
                         .height(50.dp)
