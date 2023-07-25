@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,7 +35,7 @@ data class RunningScreenState(
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
     val userLocationState: UiState<UserLocation> = UiState.Idle,
-    val editState: UiState<Unit> = UiState.Idle,
+    val editState: UiState<Uri?> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -162,7 +163,7 @@ class RunningViewModel(
     fun openEdit() {
         intent {
             reduce {
-                state.copy(editState = UiState.Success(Unit))
+                state.copy(editState = UiState.Success(null))
             }
         }
     }
@@ -175,7 +176,12 @@ class RunningViewModel(
         }
     }
 
-    fun editBackground() {
+    fun selectImage(uri: Uri) {
+        intent {
+            reduce {
+                state.copy(editState = UiState.Success(uri))
+            }
+        }
     }
 
     companion object {

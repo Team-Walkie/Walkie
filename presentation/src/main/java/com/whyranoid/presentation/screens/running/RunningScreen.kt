@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.screens.running
 
 import android.location.Location
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -100,6 +101,7 @@ fun RunningScreen(
         viewModel::finishRunning,
         viewModel::openEdit,
         viewModel::closeEdit,
+        viewModel::selectImage,
     )
 }
 
@@ -114,6 +116,7 @@ fun RunningContent(
     onFinishRunning: () -> Unit,
     onEditOpen: () -> Unit,
     onEditClose: () -> Unit,
+    selectImage: (Uri) -> Unit,
 ) {
     Box {
         Column(
@@ -127,7 +130,11 @@ fun RunningContent(
                 onEditOpen,
                 onEditClose,
             )
-            RunningInfoScreen(modifier = Modifier.height(280.dp), state = state)
+            RunningInfoScreen(
+                modifier = Modifier.height(280.dp),
+                state = state,
+                onSelectImage = selectImage,
+            )
         }
         RunningBottomButton(
             modifier = Modifier
@@ -189,7 +196,7 @@ fun RunningMapScreen(
         }
     }
 
-    // TODO 1. 종료시 아이콘 사라짐, 2. 종료시 화면 고정(모각런 참고), 3. 종료시 상단바 생성, 4. 네이버 로고 위치 변경, 5. 갤러리 구현, 6. 저장하기 구현
+    // TODO 2. 종료시 화면 고정(모각런 참고), 6. 저장하기 구현
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -366,6 +373,7 @@ fun RunningMapScreen(
 fun RunningInfoScreen(
     state: RunningScreenState,
     modifier: Modifier = Modifier,
+    onSelectImage: (Uri) -> Unit,
 ) {
     state.editState.getDataOrNull()?.let { editState ->
         GalleryGrid(
@@ -373,9 +381,7 @@ fun RunningInfoScreen(
             modifier = modifier
                 .padding(bottom = 66.dp)
                 .background(Color.White),
-        ) { uri ->
-            // TODO 이미지 보여주기 onImageSelected()
-        }
+        ) { uri -> onSelectImage(uri) }
         return
     }
     Column(
