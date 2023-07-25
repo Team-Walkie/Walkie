@@ -130,4 +130,9 @@ dependencies {
     // Google Location
     val googleLocationVersion = "21.0.1"
     implementation("com.google.android.gms:play-services-location:$googleLocationVersion")
+
+    // Paging
+    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-compose:3.2.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 }
