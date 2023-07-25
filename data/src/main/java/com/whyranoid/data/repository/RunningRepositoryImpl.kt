@@ -2,7 +2,6 @@ package com.whyranoid.data.repository
 
 import android.content.Context
 import android.os.Looper
-import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -48,7 +47,6 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
                 locationResult.lastLocation?.let { location ->
                     userLocationState.value =
                         UserLocation.Tracking(location.latitude, location.longitude)
-                    Log.d("listenLocation", "listenLocation")
                 } ?: run {
                     removeListener()
                 }
@@ -68,7 +66,10 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
     }
 
     override fun removeListener() {
-        userLocationState.value = UserLocation.NotTracking
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    override fun removeUserLocation() {
+        userLocationState.value = UserLocation.NotTracking
     }
 }

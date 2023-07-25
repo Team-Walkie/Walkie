@@ -1,7 +1,12 @@
 package com.whyranoid.presentation.screens.running
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.location.Location
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,41 +44,52 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationSource
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.GroundOverlay
 import com.naver.maps.map.compose.LocationOverlay
 import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapEffect
 import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.NaverMapComposable
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.presentation.R
-import com.whyranoid.presentation.model.running.SelectedImage
+import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.util.dpToPx
 import com.whyranoid.presentation.util.toPace
 import com.whyranoid.presentation.util.toRunningTime
 import com.whyranoid.presentation.viewmodel.RunningScreenState
 import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel.Companion.MAP_MAX_ZOOM
 import com.whyranoid.presentation.viewmodel.RunningViewModel.Companion.MAP_MIN_ZOOM
+import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
+import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -103,6 +119,8 @@ fun RunningScreen(
         viewModel::openEdit,
         viewModel::closeEdit,
         viewModel::selectImage,
+        viewModel::saveHistory,
+        viewModel::takeSnapShot,
     )
 }
 
@@ -118,37 +136,39 @@ fun RunningContent(
     onEditOpen: () -> Unit,
     onEditClose: () -> Unit,
     selectImage: (Uri) -> Unit,
+    saveHistory: (Bitmap, RunningFinishData) -> Unit,
+    onTakeSnapShot: (RunningFinishData) -> Unit,
 ) {
-    Box {
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-        ) {
-            RunningMapScreen(
-                modifier = Modifier.weight(1f, false),
-                state,
-                onClickTrackingModeButton,
-                onTrackingCanceledByGesture,
-                onEditOpen,
-                onEditClose,
-            )
-            RunningInfoScreen(
-                modifier = Modifier.height(280.dp),
-                state = state,
-                onSelectImage = selectImage,
-            )
-        }
-        RunningBottomButton(
-            modifier = Modifier
-                .height(50.dp)
-                .width(80.dp),
+    Column(
+        modifier = Modifier.fillMaxHeight(),
+    ) {
+        RunningMapScreen(
+            modifier = Modifier.weight(1f, false),
+            state,
+            onClickTrackingModeButton,
+            onTrackingCanceledByGesture,
+            onEditOpen,
+            onEditClose,
+            saveHistory,
+        )
+        RunningInfoScreen(
+            modifier = Modifier.height(280.dp),
             state = state,
-            onStartRunning = onStartRunning,
-            onPauseRunning = onPauseRunning,
-            onResumeRunning = onResumeRunning,
-            onFinishRunning = onFinishRunning,
-            onEditClose = onEditClose,
+            onSelectImage = selectImage,
         )
     }
+    RunningBottomButton(
+        modifier = Modifier
+            .height(50.dp)
+            .width(80.dp),
+        state = state,
+        onStartRunning = onStartRunning,
+        onPauseRunning = onPauseRunning,
+        onResumeRunning = onResumeRunning,
+        onFinishRunning = onFinishRunning,
+        onEditClose = onEditClose,
+        onTakeSnapShot = onTakeSnapShot,
+    )
 }
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -160,21 +180,19 @@ fun RunningMapScreen(
     onTrackingCanceledByGesture: () -> Unit,
     onEditOpen: () -> Unit,
     onEditClose: () -> Unit,
+    onSaveHistory: (Bitmap, RunningFinishData) -> Unit,
 ) {
-    val mapProperties by remember {
+    var mapProperties by remember {
         mutableStateOf(
             MapProperties(
                 maxZoom = MAP_MAX_ZOOM,
                 minZoom = MAP_MIN_ZOOM,
-                locationTrackingMode = when (state.trackingModeState.getDataOrNull()) {
-                    TrackingMode.FOLLOW -> LocationTrackingMode.Follow
-                    TrackingMode.NO_FOLLOW -> LocationTrackingMode.NoFollow
-                    else -> LocationTrackingMode.Follow
-                },
+                locationTrackingMode = LocationTrackingMode.Follow,
             ),
         )
     }
-    val mapUiSettings by remember {
+
+    var mapUiSettings by remember {
         mutableStateOf(
             MapUiSettings(
                 isLocationButtonEnabled = false,
@@ -187,17 +205,57 @@ fun RunningMapScreen(
         )
     }
 
+    mapUiSettings = MapUiSettings(
+        isScrollGesturesEnabled = state.runningFinishState.getDataOrNull() == null,
+        isZoomGesturesEnabled = state.runningFinishState.getDataOrNull() == null,
+        isLocationButtonEnabled = false,
+        isScaleBarEnabled = false,
+        isZoomControlEnabled = false,
+        isCompassEnabled = false,
+        isLogoClickEnabled = false,
+        logoMargin = PaddingValues(bottom = 44.dp, start = 18.dp),
+    )
+
+    mapProperties = MapProperties(
+        mapType = if (state.selectedImage.getDataOrNull() != null) MapType.None else MapType.Basic,
+        maxZoom = MAP_MAX_ZOOM,
+        minZoom = MAP_MIN_ZOOM,
+        locationTrackingMode = LocationTrackingMode.Follow,
+    )
+
     val cameraPositionState = rememberCameraPositionState().apply {
-        state.trackingModeState.getDataOrNull()?.let { trackingMode ->
-            state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
-                if (trackingMode == TrackingMode.FOLLOW) {
-                    move(CameraUpdate.scrollTo(LatLng(location)))
+        state.runningFinishState.getDataOrNull()?.let { runningFinishData ->
+            var maxLat = Double.MIN_VALUE
+            var minLat = Double.MAX_VALUE
+            var maxLng = Double.MIN_VALUE
+            var minLng = Double.MAX_VALUE
+            runningFinishData.runningPositionList.flatten().map { position ->
+                maxLat = maxOf(maxLat, position.latitude)
+                minLat = minOf(minLat, position.latitude)
+                maxLng = maxOf(maxLng, position.longitude)
+                minLng = minOf(minLng, position.longitude)
+            }
+            val cameraUpdate = CameraUpdate.fitBounds(
+                LatLngBounds(
+                    LatLng(maxLat, maxLng),
+                    LatLng(minLat, minLng),
+                ),
+                100.dpToPx(LocalContext.current),
+            )
+            move(cameraUpdate)
+        } ?: run {
+            // 러닝중일 때 카메라 위치
+            state.trackingModeState.getDataOrNull()?.let { trackingMode ->
+                state.runningState.getDataOrNull()?.runningData?.lastLocation?.let { location ->
+                    if (trackingMode == TrackingMode.FOLLOW) {
+                        move(CameraUpdate.scrollTo(LatLng(location)))
+                    }
                 }
             }
         }
     }
 
-    // TODO 2. 종료시 화면 고정(모각런 참고), 6. 저장하기 구현, 7. 갤러리 아래 패딩 및 버튼 변경
+    // TODO 6. 저장하기 구현, 8.bitmap 위 글자(날짜), 10. 사진 비율
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -208,6 +266,18 @@ fun RunningMapScreen(
         ) {
             if (cameraPositionState.cameraUpdateReason.value == CameraUpdate.REASON_GESTURE) onTrackingCanceledByGesture()
 
+            MapEffect(state.savingState) { map ->
+                state.savingState.getDataOrNull()?.let { savingState ->
+                    if (savingState is SavingState.Start) {
+                        map.takeSnapshot { bitmap ->
+                            Log.d("MapEffect", "MapEffect: $bitmap")
+                            onSaveHistory(bitmap, savingState.runningFinishData)
+                        }
+                    }
+                }
+            }
+
+            // 러닝 시작전 사용자 위치
             state.userLocationState.getDataOrNull()?.let {
                 if (it is UserLocation.Tracking) {
                     val location = Location("").apply {
@@ -226,6 +296,7 @@ fun RunningMapScreen(
                 }
             }
 
+            // 러닝 중 사용자 경로 표시
             state.runningState.getDataOrNull()?.let {
                 it.runningData.lastLocation?.let { location ->
                     LocationOverlay(
@@ -234,59 +305,123 @@ fun RunningMapScreen(
                     )
                 }
 
-                it.runningData.runningPositionList.forEach { path ->
-                    if (path.size > 2) {
-                        PathOverlay(
-                            coords = path.map { position ->
-                                LatLng(
-                                    position.latitude,
-                                    position.longitude,
-                                )
-                            },
-                            color = WalkieColor.Primary,
-                            width = 12.dp,
-                            outlineWidth = 0.dp,
-                        )
+                DrawPath(it.runningData.runningPositionList)
+            }
+
+            // 러닝 종료 후 그림
+            state.runningFinishState.getDataOrNull()?.let { finData ->
+                // 경로
+                DrawPath(finData.runningPositionList)
+            }
+
+            state.selectedImage.getDataOrNull()?.let { uri ->
+                cameraPositionState.contentBounds?.let { ll ->
+                    val imageOverlay = OverlayImage.fromBitmap(
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            ImageDecoder.decodeBitmap(
+                                ImageDecoder.createSource(
+                                    LocalContext.current.contentResolver,
+                                    uri,
+                                ),
+                            )
+                        } else {
+                            MediaStore.Images.Media.getBitmap(
+                                LocalContext.current.contentResolver,
+                                uri,
+                            )
+                        },
+                    )
+                    var bounds = ll
+                    val width = imageOverlay.getIntrinsicWidth(LocalContext.current)
+                    val height = imageOverlay.getIntrinsicHeight(LocalContext.current)
+
+                    if (width != 0 && height != 0) {
+                        // TODO 비율 맞춰서 사진 확장
+                        // TODO 백그라운드
+                        val n = ll.northLatitude
+                        val s = ll.southLatitude
+                        val e = ll.eastLongitude
+                        val w = ll.westLongitude
+                        val imageRatio = height / width.toDouble()
+                        val mapRatio = (n - s) / (e - w)
+                        if (imageRatio > mapRatio) { // 높이가 높은 사진
+                            val h = n - s
+                            val center = (n + s) / 2
+                            val weight = ((h / 2) * (imageRatio / mapRatio))
+                            bounds = LatLngBounds(
+                                LatLng(center - weight, (w + e) / 2 - ((e - w) / 2) * 1.2),
+                                LatLng(center + weight, (w + e) / 2 + ((e - w) / 2) * 1.2),
+                            )
+
+                            Log.d(
+                                "imageRatio",
+                                "$imageRatio ,${
+                                    (
+                                        bounds.northLatitude - bounds.southLatitude
+                                        ) / (bounds.eastLongitude - bounds.westLongitude)
+                                }",
+                            )
+                        } else {
+                            val wi = e - w
+                            val center = (e + w) / 2
+                            val weight = ((wi / 2) * ((mapRatio / imageRatio)))
+                            bounds = LatLngBounds(
+                                LatLng(s, center - weight * 1.2),
+                                LatLng(n, center + weight * 1.2),
+                            )
+                        }
                     }
+
+                    GroundOverlay(
+                        bounds = bounds,
+                        image = imageOverlay,
+                    )
                 }
             }
-        }
+        } // End Of NaverMap
+
+        // Out of NaverMap
         // 편집 중
         state.editState.getDataOrNull()?.let { editState ->
-            // 탑 앱바
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .background(Color.White)
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    "close",
-                    modifier = Modifier.clickable { onEditClose() },
-                )
-                Text("이미지", style = WalkieTypography.SubTitle)
-                Icon(
-                    Icons.Outlined.PhotoCamera,
-                    "camera",
-                    modifier = Modifier.clickable {
-                        /* TODO */
-                    },
-                )
+            if (editState) {
+                // 탑 앱바
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .background(Color.White)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        "close",
+                        modifier = Modifier.clickable { onEditClose() },
+                    )
+                    Text("이미지", style = WalkieTypography.SubTitle)
+                    Icon(
+                        Icons.Outlined.PhotoCamera,
+                        "camera",
+                        modifier = Modifier.clickable {
+                            /* TODO */
+                        },
+                    )
+                }
             }
         }
 
         // 러닝 종료 시
         state.runningFinishState.getDataOrNull()?.let { finData ->
-            state.editState.getDataOrNull() ?: kotlin.run {
+            if (state.editState.getDataOrNull() != true) {
                 Text(
                     text = "편집",
                     style = WalkieTypography.SubTitle,
-                    modifier = Modifier.clickable { onEditOpen() }.padding(8.dp)
+                    modifier = Modifier
+                        .clickable { onEditOpen() }
+                        .padding(8.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Color.White).padding(8.dp)
+                        .background(Color.White)
+                        .padding(8.dp)
                         .align(Alignment.TopEnd),
                 )
             }
@@ -312,7 +447,7 @@ fun RunningMapScreen(
                 }
             }
         } ?: run {
-            // 러닝 중
+            // 러닝 중 지도 위 아이콘 및 정보
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -375,8 +510,9 @@ fun RunningInfoScreen(
     state: RunningScreenState,
     modifier: Modifier = Modifier,
     onSelectImage: (Uri) -> Unit,
+    scope: CoroutineScope = rememberCoroutineScope(),
 ) {
-    state.editState.getDataOrNull()?.let { _ ->
+    if (state.editState.getDataOrNull() == true) {
         GalleryGrid(
             column = 3,
             modifier = modifier
@@ -527,6 +663,7 @@ fun RunningBottomButton(
     onResumeRunning: () -> Unit,
     onFinishRunning: () -> Unit,
     onEditClose: () -> Unit,
+    onTakeSnapShot: (RunningFinishData) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -535,98 +672,96 @@ fun RunningBottomButton(
         contentAlignment = Alignment.BottomCenter,
     ) {
         // 편집 중
-        state.editState.getDataOrNull()?.let { editState ->
-            if (editState is SelectedImage.Selected) {
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    onClick = { onEditClose() },
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Text(
-                        "확인",
-                        style = WalkieTypography.Title,
-                    )
-                }
+        if (state.editState.getDataOrNull() == true) {
+            Button(
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                onClick = { onEditClose() },
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Text(
+                    "확인",
+                    style = WalkieTypography.Title,
+                )
             }
-        } ?: state.runningFinishState.getDataOrNull()?.let { finState -> // 종료 시
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    onClick = {
-                        /* TODO 저장하기 */
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Text(
-                        "저장",
-                        style = WalkieTypography.Title,
-                    )
-                }
-            }
-        } ?: state.runningState.getDataOrNull()?.let { runningState -> // 러닝 시작 전
-            when (runningState) {
-                is RunningState.NotRunning -> {
+        } else {
+            state.runningFinishState.getDataOrNull()?.let { finState -> // 종료 시
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
                     Button(
                         modifier = Modifier
                             .height(50.dp)
-                            .width(160.dp),
-                        onClick = onStartRunning,
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        onClick = { onTakeSnapShot(finState) },
+                        shape = RoundedCornerShape(12.dp),
                     ) {
-                        Text("러닝 시작", style = WalkieTypography.Title)
+                        Text(
+                            "저장",
+                            style = WalkieTypography.Title,
+                        )
                     }
                 }
-                is RunningState.Paused -> {
-                    Row(
-                        Modifier
-                            .wrapContentSize()
-                            .border(
-                                width = 1.dp,
-                                color = WalkieColor.GrayDefault,
-                                shape = CircleShape,
-                            )
-                            .clip(CircleShape)
-                            .background(Color.White),
-                    ) {
-                        IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "")
-                        }
-                        IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
-                            Icon(
-                                Icons.Default.Stop,
-                                contentDescription = "",
-                                tint = WalkieColor.Primary,
-                            )
+            } ?: state.runningState.getDataOrNull()?.let { runningState -> // 러닝 시작 전
+                when (runningState) {
+                    is RunningState.NotRunning -> {
+                        Button(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .width(160.dp),
+                            onClick = onStartRunning,
+                        ) {
+                            Text("러닝 시작", style = WalkieTypography.Title)
                         }
                     }
-                }
-                is RunningState.Running -> {
-                    Row(
-                        Modifier
-                            .wrapContentSize()
-                            .border(
-                                width = 1.dp,
-                                color = WalkieColor.GrayDefault,
-                                shape = CircleShape,
-                            )
-                            .clip(CircleShape)
-                            .background(Color.White),
-                    ) {
-                        IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
-                            Icon(Icons.Default.Pause, contentDescription = "")
+                    is RunningState.Paused -> {
+                        Row(
+                            Modifier
+                                .wrapContentSize()
+                                .border(
+                                    width = 1.dp,
+                                    color = WalkieColor.GrayDefault,
+                                    shape = CircleShape,
+                                )
+                                .clip(CircleShape)
+                                .background(Color.White),
+                        ) {
+                            IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = "")
+                            }
+                            IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
+                                Icon(
+                                    Icons.Default.Stop,
+                                    contentDescription = "",
+                                    tint = WalkieColor.Primary,
+                                )
+                            }
                         }
-                        IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
-                            Icon(
-                                Icons.Default.Stop,
-                                contentDescription = "",
-                                tint = WalkieColor.Primary,
-                            )
+                    }
+                    is RunningState.Running -> {
+                        Row(
+                            Modifier
+                                .wrapContentSize()
+                                .border(
+                                    width = 1.dp,
+                                    color = WalkieColor.GrayDefault,
+                                    shape = CircleShape,
+                                )
+                                .clip(CircleShape)
+                                .background(Color.White),
+                        ) {
+                            IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
+                                Icon(Icons.Default.Pause, contentDescription = "")
+                            }
+                            IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
+                                Icon(
+                                    Icons.Default.Stop,
+                                    contentDescription = "",
+                                    tint = WalkieColor.Primary,
+                                )
+                            }
                         }
                     }
                 }
@@ -649,6 +784,26 @@ fun rememberCustomLocationSource(): LocationSource {
             override fun deactivate() {
                 listener = null
             }
+        }
+    }
+}
+
+@Composable
+@NaverMapComposable
+fun DrawPath(paths: List<List<com.whyranoid.runningdata.model.RunningPosition>>) {
+    paths.forEach { path ->
+        if (path.size > 2) {
+            PathOverlay(
+                coords = path.map { position ->
+                    LatLng(
+                        position.latitude,
+                        position.longitude,
+                    )
+                },
+                color = WalkieColor.Primary,
+                width = 8.dp,
+                outlineWidth = 0.dp,
+            )
         }
     }
 }

@@ -14,4 +14,5 @@ interface RunningRepository {
     fun listenLocation()
 
     fun removeListener()
+    fun removeUserLocation()
 }

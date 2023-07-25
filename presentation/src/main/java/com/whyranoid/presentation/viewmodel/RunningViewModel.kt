@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,7 @@ import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.model.UiState
 import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
-import com.whyranoid.presentation.model.running.SelectedImage
+import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
@@ -36,7 +37,9 @@ data class RunningScreenState(
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
     val userLocationState: UiState<UserLocation> = UiState.Idle,
-    val editState: UiState<SelectedImage> = UiState.Idle,
+    val editState: UiState<Boolean> = UiState.Idle,
+    val selectedImage: UiState<Uri> = UiState.Idle,
+    val savingState: UiState<SavingState> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -67,6 +70,9 @@ class RunningViewModel(
         }
         viewModelScope.launch {
             runningDataManager.runningState.collect { runningState ->
+                if (runningState.runningData.lastLocation != null) {
+                    runningRepository.removeUserLocation()
+                }
                 intent {
                     reduce {
                         val runningInfo =
@@ -164,7 +170,7 @@ class RunningViewModel(
     fun openEdit() {
         intent {
             reduce {
-                state.copy(editState = UiState.Success(SelectedImage.None))
+                state.copy(editState = UiState.Success(true))
             }
         }
     }
@@ -172,7 +178,7 @@ class RunningViewModel(
     fun closeEdit() {
         intent {
             reduce {
-                state.copy(editState = UiState.Idle)
+                state.copy(editState = UiState.Success(false))
             }
         }
     }
@@ -180,7 +186,38 @@ class RunningViewModel(
     fun selectImage(uri: Uri) {
         intent {
             reduce {
-                state.copy(editState = UiState.Success(SelectedImage.Selected(uri)))
+                state.copy(selectedImage = UiState.Success(uri))
+            }
+        }
+    }
+
+    fun saveHistory(bitmap: Bitmap, finishData: RunningFinishData) {
+        intent {
+            reduce {
+                state.copy(
+                    savingState = UiState.Success(SavingState.Done),
+                )
+            }
+        }
+        // TODO 저장 완료
+        intent {
+            reduce {
+                state.copy(
+                    savingState = UiState.Idle,
+                    runningFinishState = UiState.Idle,
+                    selectedImage = UiState.Idle,
+                    editState = UiState.Idle,
+                    runningResultInfoState = UiState.Idle,
+                )
+            }
+        }
+        runningRepository.listenLocation()
+    }
+
+    fun takeSnapShot(runningFinishData: RunningFinishData) {
+        intent {
+            reduce {
+                state.copy(savingState = UiState.Success(SavingState.Start(runningFinishData)))
             }
         }
     }
