@@ -77,6 +77,7 @@ import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
+import com.whyranoid.presentation.reusable.CircleProgressWithText
 import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -169,6 +170,10 @@ fun RunningContent(
         onEditClose = onEditClose,
         onTakeSnapShot = onTakeSnapShot,
     )
+
+    state.savingState.getDataOrNull()?.let {
+        if (it is SavingState.Start) CircleProgressWithText(text = "저장 중")
+    }
 }
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -255,7 +260,6 @@ fun RunningMapScreen(
         }
     }
 
-    // TODO 6. 저장하기 구현, 8.bitmap 위 글자(날짜), 10. 사진 비율
     Box(modifier) {
         NaverMap(
             cameraPositionState = cameraPositionState,
@@ -270,7 +274,6 @@ fun RunningMapScreen(
                 state.savingState.getDataOrNull()?.let { savingState ->
                     if (savingState is SavingState.Start) {
                         map.takeSnapshot { bitmap ->
-                            Log.d("MapEffect", "MapEffect: $bitmap")
                             onSaveHistory(bitmap, savingState.runningFinishData)
                         }
                     }

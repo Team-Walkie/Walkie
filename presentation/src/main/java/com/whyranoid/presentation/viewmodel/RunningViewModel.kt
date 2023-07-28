@@ -2,11 +2,13 @@ package com.whyranoid.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.whyranoid.domain.model.running.RunningData
+import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.domain.model.running.RunningPosition
 import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
@@ -17,6 +19,7 @@ import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
+import com.whyranoid.presentation.util.BitmapConverter
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
@@ -48,6 +51,7 @@ class RunningViewModel(
     val runningFinishUseCase: RunningFinishUseCase,
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
     private val runningRepository: RunningRepository,
+    private val runningHistoryRepository: RunningHistoryRepository,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
 
     private val runningDataManager = RunningDataManager.getInstance()
@@ -101,7 +105,6 @@ class RunningViewModel(
     }
 
     fun pauseRunning() {
-        Log.d("vtag RunningViewModel", "pauseRunning") // TODO remove
         runningDataManager.pauseRunning()
     }
 
@@ -193,14 +196,34 @@ class RunningViewModel(
 
     fun saveHistory(bitmap: Bitmap, finishData: RunningFinishData) {
         intent {
+            if (state.savingState.getDataOrNull() is SavingState.Start) return@intent
+            runningHistoryRepository.saveRunningHistory(
+                RunningHistory(
+                    0L,
+                    RunningData(
+                        finishData.runningHistory.totalDistance,
+                        finishData.runningHistory.pace,
+                        finishData.runningHistory.totalRunningTime,
+                        (finishData.runningHistory.totalDistance * 0.07).toInt(),
+                        (finishData.runningHistory.totalDistance * 1.312).toInt(),
+                        finishData.runningPositionList.map { list ->
+                            list.map { runningPosition ->
+                                RunningPosition(
+                                    runningPosition.longitude,
+                                    runningPosition.latitude,
+                                )
+                            }
+                        },
+                    ),
+                    System.currentTimeMillis(),
+                    BitmapConverter.bitmapToString(bitmap),
+                ),
+            )
             reduce {
                 state.copy(
                     savingState = UiState.Success(SavingState.Done),
                 )
             }
-        }
-        // TODO 저장 완료
-        intent {
             reduce {
                 state.copy(
                     savingState = UiState.Idle,
