@@ -3,6 +3,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -99,4 +100,12 @@ dependencies {
 
     // RunningModule
     implementation("io.github.bngsh:runningdata:0.0.5")
+
+    // Room
+    val room_version = "2.5.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.code.gson:gson:2.9.1")
 }

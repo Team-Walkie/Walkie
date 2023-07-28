@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.util
 
+import android.content.Context
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -28,4 +29,20 @@ fun Int.toRunningTime(): String {
 
 fun Double.toPace(): String {
     return "%.1f".format(this).replace('.', '`') + "``"
+}
+
+fun Int.dpToPx(context: Context): Int {
+    val scale: Float = context.resources.displayMetrics.density
+    return (this * scale + 0.5f).toInt()
+}
+
+fun Int.pxToDp(context: Context): Int {
+    val scale: Float = context.resources.displayMetrics.density
+    val mul = when (scale) {
+        1.0f -> 4.0f
+        1.5f -> 8 / 3.0f
+        2.0f -> 2.0f
+        else -> 1.0f
+    }
+    return (this / (scale * mul)).toInt()
 }

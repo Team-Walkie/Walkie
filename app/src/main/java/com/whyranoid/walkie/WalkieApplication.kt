@@ -7,7 +7,6 @@ import org.koin.core.context.startKoin
 
 class WalkieApplication : Application() {
     override fun onCreate() {
-
         startKoin {
             androidLogger()
             androidContext(this@WalkieApplication)
@@ -16,8 +15,9 @@ class WalkieApplication : Application() {
                     viewModelModule,
                     repositoryModule,
                     dataSourceModule,
-                    useCaseModule
-                )
+                    useCaseModule,
+                    databaseModule,
+                ),
             )
         }
 

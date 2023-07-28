@@ -67,6 +67,7 @@ fun AppScreen(startWorker: () -> Unit) {
             context,
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
             ),
             launcherMultiplePermissions,
         )
@@ -92,6 +93,7 @@ fun AppScreen(startWorker: () -> Unit) {
                                     ImageVector.vectorResource(requireNotNull(if (selected) screen.iconSelected else screen.icon)),
                                     contentDescription = null,
                                     modifier = Modifier.size(24.dp),
+                                    tint = if (selected) WalkieColor.Primary else WalkieColor.GrayDefault,
                                 )
                             },
                             label = {

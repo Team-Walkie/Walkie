@@ -3,6 +3,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -15,6 +16,15 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true",
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -50,4 +60,15 @@ dependencies {
 
     // RunningModule
     implementation("io.github.bngsh:runningdata:0.0.5")
+
+    val googleLocationVersion = "21.0.1"
+    implementation("com.google.android.gms:play-services-location:$googleLocationVersion")
+
+    // Room
+    val room_version = "2.5.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.code.gson:gson:2.9.1")
 }

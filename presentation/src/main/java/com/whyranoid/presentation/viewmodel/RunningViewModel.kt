@@ -1,9 +1,15 @@
 package com.whyranoid.presentation.viewmodel
 
-import android.util.Log
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.whyranoid.domain.model.running.RunningData
+import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.domain.model.running.RunningPosition
+import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.domain.repository.RunningHistoryRepository
+import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
@@ -11,11 +17,12 @@ import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.model.UiState
 import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
+import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
+import com.whyranoid.presentation.util.BitmapConverter
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -32,6 +39,10 @@ data class RunningScreenState(
     val runningResultInfoState: UiState<RunningInfo> = UiState.Idle,
     val trackingModeState: UiState<TrackingMode> = UiState.Idle,
     val runningFinishState: UiState<RunningFinishData> = UiState.Idle,
+    val userLocationState: UiState<UserLocation> = UiState.Idle,
+    val editState: UiState<Boolean> = UiState.Idle,
+    val selectedImage: UiState<Uri> = UiState.Idle,
+    val savingState: UiState<SavingState> = UiState.Idle,
 )
 
 class RunningViewModel(
@@ -39,6 +50,8 @@ class RunningViewModel(
     val runningPauseOrResumeUseCase: RunningPauseOrResumeUseCase,
     val runningFinishUseCase: RunningFinishUseCase,
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
+    private val runningRepository: RunningRepository,
+    private val runningHistoryRepository: RunningHistoryRepository,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
 
     private val runningDataManager = RunningDataManager.getInstance()
@@ -49,9 +62,21 @@ class RunningViewModel(
     )
 
     fun getRunningState() {
-        Log.d("vtag", "viewModelScope isActive = ${viewModelScope.isActive}")
+        runningRepository.listenLocation()
+        viewModelScope.launch {
+            runningRepository.userLocationState.collect {
+                intent {
+                    reduce {
+                        state.copy(userLocationState = UiState.Success(it))
+                    }
+                }
+            }
+        }
         viewModelScope.launch {
             runningDataManager.runningState.collect { runningState ->
+                if (runningState.runningData.lastLocation != null) {
+                    runningRepository.removeUserLocation()
+                }
                 intent {
                     reduce {
                         val runningInfo =
@@ -71,6 +96,7 @@ class RunningViewModel(
 
     fun startRunning() {
         startWorker?.invoke()
+        runningRepository.removeListener()
         intent {
             reduce {
                 state.copy(trackingModeState = UiState.Success(TrackingMode.FOLLOW))
@@ -79,7 +105,6 @@ class RunningViewModel(
     }
 
     fun pauseRunning() {
-        Log.d("vtag RunningViewModel", "pauseRunning") // TODO remove
         runningDataManager.pauseRunning()
     }
 
@@ -94,6 +119,13 @@ class RunningViewModel(
     }
 
     fun finishRunning() {
+        intent {
+            state.runningInfoState.getDataOrNull()?.let {
+                reduce {
+                    state.copy(runningResultInfoState = UiState.Success(it))
+                }
+            }
+        }
         runningDataManager.finishRunning().onSuccess { runningFinishData ->
             intent {
                 reduce {
@@ -134,6 +166,81 @@ class RunningViewModel(
                 state.copy(
                     trackingModeState = UiState.Success(TrackingMode.NONE),
                 )
+            }
+        }
+    }
+
+    fun openEdit() {
+        intent {
+            reduce {
+                state.copy(editState = UiState.Success(true))
+            }
+        }
+    }
+
+    fun closeEdit() {
+        intent {
+            reduce {
+                state.copy(editState = UiState.Success(false))
+            }
+        }
+    }
+
+    fun selectImage(uri: Uri) {
+        intent {
+            reduce {
+                state.copy(selectedImage = UiState.Success(uri))
+            }
+        }
+    }
+
+    fun saveHistory(bitmap: Bitmap, finishData: RunningFinishData) {
+        intent {
+            if (state.savingState.getDataOrNull() is SavingState.Start) return@intent
+            runningHistoryRepository.saveRunningHistory(
+                RunningHistory(
+                    0L,
+                    RunningData(
+                        finishData.runningHistory.totalDistance,
+                        finishData.runningHistory.pace,
+                        finishData.runningHistory.totalRunningTime,
+                        (finishData.runningHistory.totalDistance * 0.07).toInt(),
+                        (finishData.runningHistory.totalDistance * 1.312).toInt(),
+                        finishData.runningPositionList.map { list ->
+                            list.map { runningPosition ->
+                                RunningPosition(
+                                    runningPosition.longitude,
+                                    runningPosition.latitude,
+                                )
+                            }
+                        },
+                    ),
+                    System.currentTimeMillis(),
+                    BitmapConverter.bitmapToString(bitmap),
+                ),
+            )
+            reduce {
+                state.copy(
+                    savingState = UiState.Success(SavingState.Done),
+                )
+            }
+            reduce {
+                state.copy(
+                    savingState = UiState.Idle,
+                    runningFinishState = UiState.Idle,
+                    selectedImage = UiState.Idle,
+                    editState = UiState.Idle,
+                    runningResultInfoState = UiState.Idle,
+                )
+            }
+        }
+        runningRepository.listenLocation()
+    }
+
+    fun takeSnapShot(runningFinishData: RunningFinishData) {
+        intent {
+            reduce {
+                state.copy(savingState = UiState.Success(SavingState.Start(runningFinishData)))
             }
         }
     }
