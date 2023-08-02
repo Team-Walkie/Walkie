@@ -71,4 +71,7 @@ dependencies {
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.code.gson:gson:2.9.1")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

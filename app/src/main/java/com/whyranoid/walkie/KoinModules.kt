@@ -2,6 +2,7 @@ package com.whyranoid.walkie
 
 import androidx.room.Room
 import com.google.gson.Gson
+import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
 import com.whyranoid.data.datasource.ChallengeDataSourceImpl
 import com.whyranoid.data.datasource.PostDataSourceImpl
@@ -60,7 +61,7 @@ val repositoryModule = module {
 val dataSourceModule = module {
     single<ChallengeDataSource> { ChallengeDataSourceImpl() }
     single<PostDataSource> { PostDataSourceImpl() }
-    single<UserDataSource> { UserDataSourceImpl() }
+    single<UserDataSource> { UserDataSourceImpl(get()) }
 }
 
 val useCaseModule = module {
@@ -92,4 +93,6 @@ val databaseModule = module {
     }
 
     single { Gson() }
+
+    single { AccountDataStore(get()) }
 }
