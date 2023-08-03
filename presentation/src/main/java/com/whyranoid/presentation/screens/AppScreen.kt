@@ -90,7 +90,7 @@ fun AppScreen(startWorker: () -> Unit) {
 
     when (splashState.value) {
         SplashState.InitialState -> SplashScreen()
-        SplashState.SignInState -> SignInScreen()
+        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
         SplashState.SignedInState -> AppScreenContent(startWorker, navController)
     }
 }

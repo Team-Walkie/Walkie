@@ -7,15 +7,15 @@ interface AccountRepository {
 
     val authId: Flow<String?>
     suspend fun signUp(
+        authId: String,
         userName: String,
-        uid: String,
-        profileUrl: String,
+        profileUrl: String?,
+        nickName: String,
         birthDay: String,
         phoneNumber: String,
         sex: Sex,
         height: Int,
         weight: Int,
-        authId: String,
         agreeGps: Boolean,
         agreeSubscription: Boolean,
     ): Result<Boolean>

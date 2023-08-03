@@ -23,6 +23,10 @@ class SplashViewModel(private val accountRepository: AccountRepository) : ViewMo
         }
     }
 
+    fun finishSignIn() {
+        _splashState.value = SplashState.SignedInState
+    }
+
     private suspend fun isSignedIn(): Boolean {
         return accountRepository.authId.first() != null
     }

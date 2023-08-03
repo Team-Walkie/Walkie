@@ -13,19 +13,25 @@ class AccountRepositoryImpl(
 
     // TODO API Call
     override suspend fun signUp(
+        authId: String,
         userName: String,
-        uid: String,
-        profileUrl: String,
+        profileUrl: String?,
+        nickName: String,
         birthDay: String,
         phoneNumber: String,
         sex: Sex,
         height: Int,
         weight: Int,
-        authId: String,
         agreeGps: Boolean,
         agreeSubscription: Boolean,
     ): Result<Boolean> {
-        return Result.success(true)
+        return kotlin.runCatching {
+            accountDataStore.updateAuthId(authId)
+            accountDataStore.updateUserName(userName)
+            accountDataStore.updateNickName(nickName)
+            profileUrl?.let { url -> accountDataStore.updateProfileUrl(url) }
+            true
+        }
     }
 
     override suspend fun signIn(): Result<Boolean> {
