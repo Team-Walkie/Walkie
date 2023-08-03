@@ -7,6 +7,7 @@ import com.whyranoid.data.AppDatabase
 import com.whyranoid.data.datasource.ChallengeDataSourceImpl
 import com.whyranoid.data.datasource.PostDataSourceImpl
 import com.whyranoid.data.datasource.UserDataSourceImpl
+import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
 import com.whyranoid.data.repository.RunningHistoryRepositoryImpl
@@ -15,6 +16,7 @@ import com.whyranoid.data.repository.UserRepositoryImpl
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.datasource.PostDataSource
 import com.whyranoid.domain.datasource.UserDataSource
+import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
@@ -37,6 +39,8 @@ import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
+import com.whyranoid.presentation.viewmodel.SignInViewModel
+import com.whyranoid.presentation.viewmodel.SplashViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -48,6 +52,8 @@ val viewModelModule = module {
     single { UserPageViewModel(get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
+    factory { SplashViewModel(get()) }
+    factory { SignInViewModel(get()) }
 }
 
 val repositoryModule = module {
@@ -56,6 +62,7 @@ val repositoryModule = module {
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<RunningRepository> { RunningRepositoryImpl(get()) }
     single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
+    single<AccountRepository> { AccountRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {
