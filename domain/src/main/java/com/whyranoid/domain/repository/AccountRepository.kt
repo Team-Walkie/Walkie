@@ -1,8 +1,11 @@
 package com.whyranoid.domain.repository
 
 import com.whyranoid.domain.model.account.Sex
+import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
+
+    val authId: Flow<String?>
     suspend fun signUp(
         userName: String,
         uid: String,
