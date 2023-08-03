@@ -18,9 +18,11 @@ fun SignInScreen(modifier: Modifier = Modifier, finishSignIn: () -> Unit) {
         is SignInState.InitialState -> SignInInitialScreen { authId, userName, imageUrl ->
             viewModel.goToAgreeState(authId, userName, imageUrl)
         }
-        is SignInState.AgreeState -> SignInAgreeScreen { viewModel.goToUserNameState() }
-        is SignInState.UserNameState -> SignInUserNameScreen { viewModel.goToInfoState() }
-        is SignInState.InfoState -> SignInInfoScreen { viewModel.goToDoneState() }
+        is SignInState.AgreeState -> SignInAgreeScreen { agreeGps, agreeMarketing ->
+            viewModel.goToUserNameState(agreeGps, agreeMarketing)
+        }
+        is SignInState.UserNameState -> SignInUserNameScreen(signInState) { viewModel.goToInfoState() }
+        is SignInState.InfoState -> SignInInfoScreen(signInState) { viewModel.goToDoneState() }
         is SignInState.Done -> SignInDoneScreen { finishSignIn() }
     }
 }

@@ -19,14 +19,14 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
         )
     }
 
-    fun goToUserNameState() {
+    fun goToUserNameState(agreeGps: Boolean, agreeMarketing: Boolean) {
         (signInState.value as? SignInState.AgreeState)?.let { state ->
             signInState.value = SignInState.UserNameState(
                 authId = state.authId,
                 name = state.userName,
                 profileUrl = state.profileUrl,
-                agreeGps = state.agreeGps,
-                agreeMarketing = state.agreeMarketing,
+                agreeGps = agreeGps,
+                agreeMarketing = agreeMarketing,
             )
         }
     }
