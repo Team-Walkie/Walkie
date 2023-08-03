@@ -43,7 +43,7 @@ import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
-import com.whyranoid.presentation.screens.splash.SignInScreen
+import com.whyranoid.presentation.screens.signin.SignInScreen
 import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.viewmodel.SplashState

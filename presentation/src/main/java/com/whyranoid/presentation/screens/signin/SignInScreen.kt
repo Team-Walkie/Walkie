@@ -1,4 +1,4 @@
-package com.whyranoid.presentation.screens.splash
+package com.whyranoid.presentation.screens.signin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
