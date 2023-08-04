@@ -40,7 +40,7 @@ fun SignInAgreeScreen(
 ) {
     val checkedList = remember { List(4) { mutableStateOf(false) } }
     val isAllChecked = checkedList.all { it.value }
-    val isEssentialChecked = checkedList[2].value && checkedList[3].value
+    val isEssentialChecked = checkedList[0].value && checkedList[1].value
 
     Column(
         modifier = modifier
