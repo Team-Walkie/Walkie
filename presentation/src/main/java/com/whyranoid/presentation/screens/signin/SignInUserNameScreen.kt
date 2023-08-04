@@ -55,7 +55,7 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(68.dp))
             Text("환영합니다!", style = WalkieTypography.Title)
             Text("회원님의 정보를 입력해주세요.", style = WalkieTypography.Body1_Normal)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 "이름",
                 style = WalkieTypography.Body1_Normal,
