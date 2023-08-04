@@ -30,6 +30,7 @@ import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
@@ -49,7 +50,7 @@ val viewModelModule = module {
     single { ChallengeMainViewModel(get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
-    single { UserPageViewModel(get(), get(), get(), get()) }
+    single { UserPageViewModel(get(), get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
@@ -84,6 +85,7 @@ val useCaseModule = module {
     single { RunningFinishUseCase() }
     single { RunningPauseOrResumeUseCase() }
     single { RunningStartUseCase() }
+    single { SignOutUseCase(get()) }
 }
 
 val databaseModule = module {

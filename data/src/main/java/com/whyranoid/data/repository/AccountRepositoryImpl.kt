@@ -14,7 +14,6 @@ class AccountRepositoryImpl(
 
     // TODO API Call
     override suspend fun signUp(
-        uid: Long,
         authId: String,
         userName: String,
         profileUrl: String?,
@@ -28,7 +27,6 @@ class AccountRepositoryImpl(
         agreeSubscription: Boolean,
     ): Result<Boolean> {
         return kotlin.runCatching {
-            accountDataStore.updateUId(uid)
             accountDataStore.updateAuthId(authId)
             accountDataStore.updateUserName(userName)
             accountDataStore.updateNickName(nickName)
@@ -42,6 +40,9 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun singOut(): Result<Boolean> {
-        return Result.success(true)
+        return kotlin.runCatching {
+            accountDataStore.removeAll()
+            true
+        }
     }
 }

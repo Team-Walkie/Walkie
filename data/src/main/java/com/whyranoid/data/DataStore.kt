@@ -26,21 +26,21 @@ class AccountDataStore(private val context: Context) {
         }
 
     private val userNameKey = stringPreferencesKey("userName")
-    val userName: Flow<String> = context.dataStore.data
+    val userName: Flow<String?> = context.dataStore.data
         .map { preferences ->
-            preferences[userNameKey] ?: "None"
+            preferences[userNameKey]
         }
 
     private val nickNameKey = stringPreferencesKey("nickName")
-    val nickName: Flow<String> = context.dataStore.data
+    val nickName: Flow<String?> = context.dataStore.data
         .map { preferences ->
-            preferences[nickNameKey] ?: "None"
+            preferences[nickNameKey]
         }
 
     private val profileUrlKey = stringPreferencesKey("profileUrl")
-    val profileUrl: Flow<String> = context.dataStore.data
+    val profileUrl: Flow<String?> = context.dataStore.data
         .map { preferences ->
-            preferences[profileUrlKey] ?: "None"
+            preferences[profileUrlKey]
         }
 
     suspend fun updateUId(uid: Long) {
@@ -70,6 +70,12 @@ class AccountDataStore(private val context: Context) {
     suspend fun updateProfileUrl(url: String) {
         context.dataStore.edit { preferences ->
             preferences[profileUrlKey] = url
+        }
+    }
+
+    suspend fun removeAll() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
         }
     }
 }

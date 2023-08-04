@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,12 @@ class SplashViewModel(private val accountRepository: AccountRepository) : ViewMo
             delay(2000)
             _splashState.value =
                 if (isSignedIn()) SplashState.SignedInState else SplashState.SignInState
+
+            accountRepository.uId.collect {
+                if (it == null) {
+                    _splashState.value = SplashState.SignInState
+                }
+            }
         }
     }
 

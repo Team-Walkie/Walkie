@@ -73,6 +73,7 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
                     .size(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
+                        onCloseClicked()
                     },
             )
         }

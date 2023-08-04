@@ -81,6 +81,8 @@ fun MyPageScreen(
 
     MyPageContent(state, onProfileEditClicked = {
         navController.navigate(Screen.EditProfileScreen.route)
+    }, onLogoutClicked = {
+        viewModel.signOut()
     })
 }
 

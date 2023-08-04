@@ -66,10 +66,7 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                 _signInState.value = state.copy(isProgress = true)
 
                 delay(1000)
-
                 accountRepository.signUp(
-                    // TODO with API, replace
-                    uid = 0L,
                     authId = state.authId,
                     userName = state.name,
                     profileUrl = state.profileUrl,
@@ -82,7 +79,9 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                     agreeGps = state.agreeGps,
                     agreeSubscription = state.agreeMarketing,
                 ).onSuccess {
-                    _signInState.value = state.copy(isProgress = false)
+                    accountRepository.signIn().onSuccess {
+                        _signInState.value = state.copy(isProgress = false)
+                    }
                 }
             }
         }

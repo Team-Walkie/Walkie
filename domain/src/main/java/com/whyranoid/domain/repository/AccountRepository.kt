@@ -8,7 +8,6 @@ interface AccountRepository {
     val authId: Flow<String?>
     val uId: Flow<Long?>
     suspend fun signUp(
-        uid: Long,
         authId: String,
         userName: String,
         profileUrl: String?,
