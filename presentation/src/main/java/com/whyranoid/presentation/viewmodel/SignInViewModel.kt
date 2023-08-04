@@ -147,5 +147,5 @@ sealed class SignInState {
         val isProgress: Boolean = false,
     ) : SignInState()
 
-    object Done : SignInState()
+    data class Done(val userName: String) : SignInState()
 }

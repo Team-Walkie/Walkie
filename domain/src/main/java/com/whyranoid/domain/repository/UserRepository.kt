@@ -4,7 +4,7 @@ import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.model.user.UserDetail
 
 interface UserRepository {
-    suspend fun getUser(uid: String): Result<User>
+    suspend fun getUser(uid: Long): Result<User>
 
-    suspend fun getUserDetail(uid: String): Result<UserDetail>
+    suspend fun getUserDetail(uid: Long): Result<UserDetail>
 }

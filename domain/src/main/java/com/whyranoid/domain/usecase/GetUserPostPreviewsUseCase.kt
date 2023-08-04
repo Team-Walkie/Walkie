@@ -6,12 +6,12 @@ import com.whyranoid.domain.repository.PostRepository
 class GetUserPostPreviewsUseCase(
     private val postRepository: PostRepository,
 ) {
-    suspend operator fun invoke(uid: String): Result<List<PostPreview>> {
+    suspend operator fun invoke(uid: Long): Result<List<PostPreview>> {
         return postRepository.getUserPostPreviews(uid)
     }
 
     suspend operator fun invoke(
-        uid: String,
+        uid: Long,
         year: Int,
         month: Int,
         day: Int,

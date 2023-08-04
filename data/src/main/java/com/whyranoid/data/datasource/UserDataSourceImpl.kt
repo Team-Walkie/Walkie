@@ -8,14 +8,19 @@ import kotlinx.coroutines.flow.first
 
 class UserDataSourceImpl(private val dataStore: AccountDataStore) : UserDataSource {
     // TODO: change to api call
-    override suspend fun getUser(uid: String): Result<User> {
-        val accountAuthId = dataStore.authId.first()
-        return if (accountAuthId == uid) {
+    override suspend fun getUser(uid: Long): Result<User> {
+        val savedUId = dataStore.uId.first()
+        return if (savedUId == uid) {
             kotlin.runCatching {
                 val name = dataStore.userName.first()
                 val nickName = dataStore.nickName.first()
                 val imageUrl = dataStore.profileUrl.first()
-                User(accountAuthId, name, nickName, imageUrl) // TODO uid 변경 사항 적용
+                User(
+                    savedUId,
+                    requireNotNull(name),
+                    requireNotNull(nickName),
+                    requireNotNull(imageUrl),
+                ) // TODO uid 변경 사항 적용
             }
         } else {
             Result.success(User.DUMMY)
@@ -23,7 +28,7 @@ class UserDataSourceImpl(private val dataStore: AccountDataStore) : UserDataSour
     }
 
     // TODO: change to api call
-    override suspend fun getUserDetail(uid: String): Result<UserDetail> {
+    override suspend fun getUserDetail(uid: Long): Result<UserDetail> {
         return Result.success(UserDetail.DUMMY)
     }
 }

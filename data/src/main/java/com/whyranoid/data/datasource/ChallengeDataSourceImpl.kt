@@ -30,7 +30,7 @@ class ChallengeDataSourceImpl : ChallengeDataSource {
     }
 
     // TODO: change to api call
-    override suspend fun getUserBadges(uid: String): Result<List<Badge>> {
+    override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
         return Result.success(Badge.DUMMY_LIST)
     }
 }

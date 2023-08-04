@@ -63,7 +63,7 @@ fun SignInInitialScreen(
                 // TODO 실제 Auth 인증 구현
                 modifier = Modifier.clickable {
                     onSuccessAuth(
-                        User.DUMMY.uid,
+                        "authId",
                         User.DUMMY.name,
                         User.DUMMY.imageUrl,
                     )
@@ -83,7 +83,7 @@ fun SignInInitialScreen(
                 // TODO 실제 Auth 인증 구현
                 modifier = Modifier.clickable {
                     onSuccessAuth(
-                        User.DUMMY.uid,
+                        "authID",
                         User.DUMMY.name,
                         User.DUMMY.imageUrl,
                     )
@@ -102,7 +102,7 @@ fun SignInInitialScreen(
                 // TODO 실제 Auth 인증 구현
                 modifier = Modifier.clickable {
                     onSuccessAuth(
-                        User.DUMMY.uid,
+                        "authId",
                         User.DUMMY.name,
                         User.DUMMY.imageUrl,
                     )

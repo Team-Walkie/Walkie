@@ -36,7 +36,7 @@ class UserPageViewModel(
     override val container =
         container<UserPageState, UserPageSideEffect>(UserPageState())
 
-    fun getUserDetail(uid: String) = intent {
+    fun getUserDetail(uid: Long) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
         }
@@ -53,7 +53,7 @@ class UserPageViewModel(
         }
     }
 
-    fun getUserBadges(uid: String) = intent {
+    fun getUserBadges(uid: Long) = intent {
         reduce {
             state.copy(userBadgesState = UiState.Loading)
         }
@@ -70,7 +70,7 @@ class UserPageViewModel(
         }
     }
 
-    fun getUserPostPreviews(uid: String) = intent {
+    fun getUserPostPreviews(uid: Long) = intent {
         reduce {
             state.copy(userPostPreviewsState = UiState.Loading)
         }

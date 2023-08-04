@@ -8,11 +8,11 @@ import com.whyranoid.domain.repository.UserRepository
 class UserRepositoryImpl(
     private val userDataSource: UserDataSource,
 ) : UserRepository {
-    override suspend fun getUser(uid: String): Result<User> {
+    override suspend fun getUser(uid: Long): Result<User> {
         return userDataSource.getUser(uid)
     }
 
-    override suspend fun getUserDetail(uid: String): Result<UserDetail> {
+    override suspend fun getUserDetail(uid: Long): Result<UserDetail> {
         return userDataSource.getUserDetail(uid)
     }
 }

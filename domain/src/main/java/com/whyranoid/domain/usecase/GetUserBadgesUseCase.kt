@@ -6,7 +6,7 @@ import com.whyranoid.domain.repository.ChallengeRepository
 class GetUserBadgesUseCase(
     private val challengeRepository: ChallengeRepository,
 ) {
-    suspend operator fun invoke(uid: String): Result<List<Badge>> {
+    suspend operator fun invoke(uid: Long): Result<List<Badge>> {
         return challengeRepository.getUserBadges(uid)
     }
 }

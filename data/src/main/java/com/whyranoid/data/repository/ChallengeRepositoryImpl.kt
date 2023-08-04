@@ -26,7 +26,7 @@ class ChallengeRepositoryImpl(
         return challengeDataSource.getChallengePreviewsByType(type)
     }
 
-    override suspend fun getUserBadges(uid: String): Result<List<Badge>> {
+    override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
         return challengeDataSource.getUserBadges(uid)
     }
 }
