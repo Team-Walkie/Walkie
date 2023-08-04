@@ -81,6 +81,7 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                 ).onSuccess {
                     accountRepository.signIn().onSuccess {
                         _signInState.value = state.copy(isProgress = false)
+                        _signInState.value = SignInState.Done(state.name)
                     }
                 }
             }

@@ -36,7 +36,11 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun signIn(): Result<Boolean> {
-        return Result.success(true)
+        return kotlin.runCatching {
+            // TODO API CALL and update
+            accountDataStore.updateUId(0L)
+            true
+        }
     }
 
     override suspend fun singOut(): Result<Boolean> {

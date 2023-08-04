@@ -47,7 +47,6 @@ fun SignInInfoScreen(onSuccess: () -> Unit) {
     val infoState = signInState.value as SignInState.InfoState
 
     Surface(modifier = Modifier.background(Color.White)) {
-        if (infoState.isProgress) CircleProgressWithText(text = "로딩 중")
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),
             horizontalAlignment = Alignment.Start,
@@ -191,6 +190,7 @@ fun SignInInfoScreen(onSuccess: () -> Unit) {
             }
         }
     }
+    if (infoState.isProgress) CircleProgressWithText(text = "로딩 중")
 }
 
 @Preview
