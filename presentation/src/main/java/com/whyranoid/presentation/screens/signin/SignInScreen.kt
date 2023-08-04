@@ -21,7 +21,7 @@ fun SignInScreen(modifier: Modifier = Modifier, finishSignIn: () -> Unit) {
         is SignInState.AgreeState -> SignInAgreeScreen { agreeGps, agreeMarketing ->
             viewModel.goToUserNameState(agreeGps, agreeMarketing)
         }
-        is SignInState.UserNameState -> SignInUserNameScreen(signInState) { viewModel.goToInfoState() }
+        is SignInState.UserNameState -> SignInUserNameScreen { viewModel.goToInfoState() }
         is SignInState.InfoState -> SignInInfoScreen(signInState) { viewModel.goToDoneState() }
         is SignInState.Done -> SignInDoneScreen { finishSignIn() }
     }
