@@ -28,7 +28,7 @@ class SplashViewModel(private val accountRepository: AccountRepository) : ViewMo
     }
 
     private suspend fun isSignedIn(): Boolean {
-        return accountRepository.authId.first() != null
+        return accountRepository.uId.first() != null
     }
 }
 

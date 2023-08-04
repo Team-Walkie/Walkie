@@ -10,9 +10,11 @@ class AccountRepositoryImpl(
 ) : AccountRepository {
 
     override val authId: Flow<String?> = accountDataStore.authId
+    override val uId: Flow<Long?> = accountDataStore.uId
 
     // TODO API Call
     override suspend fun signUp(
+        uid: Long,
         authId: String,
         userName: String,
         profileUrl: String?,
@@ -26,6 +28,7 @@ class AccountRepositoryImpl(
         agreeSubscription: Boolean,
     ): Result<Boolean> {
         return kotlin.runCatching {
+            accountDataStore.updateUId(uid)
             accountDataStore.updateAuthId(authId)
             accountDataStore.updateUserName(userName)
             accountDataStore.updateNickName(nickName)

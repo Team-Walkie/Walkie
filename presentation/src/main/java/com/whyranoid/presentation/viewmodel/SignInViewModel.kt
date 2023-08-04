@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.account.Sex
 import com.whyranoid.domain.repository.AccountRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -61,7 +62,14 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
     fun goToDoneState() {
         (signInState.value as? SignInState.InfoState)?.let { state ->
             viewModelScope.launch {
+                // TODO WITH API CALL
+                _signInState.value = state.copy(isProgress = true)
+
+                delay(1000)
+
                 accountRepository.signUp(
+                    // TODO with API, replace
+                    uid = 0L,
                     authId = state.authId,
                     userName = state.name,
                     profileUrl = state.profileUrl,
@@ -73,20 +81,22 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                     weight = requireNotNull(state.weight),
                     agreeGps = state.agreeGps,
                     agreeSubscription = state.agreeMarketing,
-                )
+                ).onSuccess {
+                    _signInState.value = state.copy(isProgress = false)
+                }
             }
         }
     }
 
     // TODO 중복 확인 로직 추가
-    fun checkDupNickName(authId: String, nickName: String) {
+    fun checkDupNickName(nickName: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
             _signInState.value = state.copy(isDuplicated = false)
         }
     }
 
     // TODO 인증 확인 로직 추가
-    fun checkValidationNumber(authId: String, number: String) {
+    fun checkValidationNumber(number: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
             _signInState.value = state.copy(isValidate = true)
         }
@@ -135,6 +145,7 @@ sealed class SignInState {
         val sex: Sex? = null,
         val height: Int? = null,
         val weight: Int? = null,
+        val isProgress: Boolean = false,
     ) : SignInState()
 
     object Done : SignInState()

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,12 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "account")
 
 class AccountDataStore(private val context: Context) {
+    private val uIdKey = longPreferencesKey("uId")
+    val uId: Flow<Long?> = context.dataStore.data
+        .map { preferences ->
+            preferences[uIdKey]
+        }
+
     private val authIdKey = stringPreferencesKey("authId")
     val authId: Flow<String?> = context.dataStore.data
         .map { preferences ->
@@ -35,9 +42,16 @@ class AccountDataStore(private val context: Context) {
         .map { preferences ->
             preferences[profileUrlKey] ?: "None"
         }
-    suspend fun updateAuthId(uid: String) {
+
+    suspend fun updateUId(uid: Long) {
         context.dataStore.edit { preferences ->
-            preferences[authIdKey] = uid
+            preferences[uIdKey] = uid
+        }
+    }
+
+    suspend fun updateAuthId(authId: String) {
+        context.dataStore.edit { preferences ->
+            preferences[authIdKey] = authId
         }
     }
 
