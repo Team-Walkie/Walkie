@@ -2,10 +2,12 @@ package com.whyranoid.walkie
 
 import androidx.room.Room
 import com.google.gson.Gson
+import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
 import com.whyranoid.data.datasource.ChallengeDataSourceImpl
 import com.whyranoid.data.datasource.PostDataSourceImpl
 import com.whyranoid.data.datasource.UserDataSourceImpl
+import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
 import com.whyranoid.data.repository.RunningHistoryRepositoryImpl
@@ -14,6 +16,7 @@ import com.whyranoid.data.repository.UserRepositoryImpl
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.datasource.PostDataSource
 import com.whyranoid.domain.datasource.UserDataSource
+import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
@@ -27,6 +30,7 @@ import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
@@ -36,6 +40,8 @@ import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
+import com.whyranoid.presentation.viewmodel.SignInViewModel
+import com.whyranoid.presentation.viewmodel.SplashViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -44,9 +50,11 @@ val viewModelModule = module {
     single { ChallengeMainViewModel(get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
-    single { UserPageViewModel(get(), get(), get(), get()) }
+    single { UserPageViewModel(get(), get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
+    factory { SplashViewModel(get()) }
+    factory { SignInViewModel(get()) }
 }
 
 val repositoryModule = module {
@@ -55,12 +63,13 @@ val repositoryModule = module {
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<RunningRepository> { RunningRepositoryImpl(get()) }
     single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
+    single<AccountRepository> { AccountRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {
     single<ChallengeDataSource> { ChallengeDataSourceImpl() }
     single<PostDataSource> { PostDataSourceImpl() }
-    single<UserDataSource> { UserDataSourceImpl() }
+    single<UserDataSource> { UserDataSourceImpl(get()) }
 }
 
 val useCaseModule = module {
@@ -76,6 +85,7 @@ val useCaseModule = module {
     single { RunningFinishUseCase() }
     single { RunningPauseOrResumeUseCase() }
     single { RunningStartUseCase() }
+    single { SignOutUseCase(get()) }
 }
 
 val databaseModule = module {
@@ -92,4 +102,6 @@ val databaseModule = module {
     }
 
     single { Gson() }
+
+    single { AccountDataStore(get()) }
 }

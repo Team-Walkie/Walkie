@@ -6,12 +6,12 @@ import com.whyranoid.domain.model.post.PostPreview
 
 class PostDataSourceImpl : PostDataSource {
     // TODO: change to api call
-    override suspend fun getPostPreviews(uid: String): Result<List<PostPreview>> {
+    override suspend fun getPostPreviews(uid: Long): Result<List<PostPreview>> {
         return Result.success(PostPreview.DUMMY_LIST)
     }
 
     override suspend fun getPostPreviews(
-        uid: String,
+        uid: Long,
         year: Int,
         month: Int,
         day: Int,

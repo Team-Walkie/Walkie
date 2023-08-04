@@ -8,12 +8,12 @@ import com.whyranoid.domain.repository.PostRepository
 class PostRepositoryImpl(
     private val postDataSource: PostDataSource,
 ) : PostRepository {
-    override suspend fun getUserPostPreviews(uid: String): Result<List<PostPreview>> {
+    override suspend fun getUserPostPreviews(uid: Long): Result<List<PostPreview>> {
         return postDataSource.getPostPreviews(uid)
     }
 
     override suspend fun getUserPostPreviews(
-        uid: String,
+        uid: Long,
         year: Int,
         month: Int,
         day: Int,

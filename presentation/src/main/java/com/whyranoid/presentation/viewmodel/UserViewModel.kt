@@ -1,11 +1,17 @@
 package com.whyranoid.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.user.UserDetail
-import com.whyranoid.domain.usecase.*
+import com.whyranoid.domain.usecase.GetPostUseCase
+import com.whyranoid.domain.usecase.GetUserBadgesUseCase
+import com.whyranoid.domain.usecase.GetUserDetailUseCase
+import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.presentation.model.UiState
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -24,12 +30,13 @@ class UserPageViewModel(
     private val getUserBadgesUseCase: GetUserBadgesUseCase,
     private val getUserPostPreviewsUseCase: GetUserPostPreviewsUseCase,
     private val getPostUseCase: GetPostUseCase,
+    private val signOutUseCase: SignOutUseCase,
 ) : ViewModel(), ContainerHost<UserPageState, UserPageSideEffect> {
 
     override val container =
         container<UserPageState, UserPageSideEffect>(UserPageState())
 
-    fun getUserDetail(uid: String) = intent {
+    fun getUserDetail(uid: Long) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
         }
@@ -46,7 +53,7 @@ class UserPageViewModel(
         }
     }
 
-    fun getUserBadges(uid: String) = intent {
+    fun getUserBadges(uid: Long) = intent {
         reduce {
             state.copy(userBadgesState = UiState.Loading)
         }
@@ -63,7 +70,7 @@ class UserPageViewModel(
         }
     }
 
-    fun getUserPostPreviews(uid: String) = intent {
+    fun getUserPostPreviews(uid: Long) = intent {
         reduce {
             state.copy(userPostPreviewsState = UiState.Loading)
         }
@@ -77,6 +84,12 @@ class UserPageViewModel(
             reduce {
                 state.copy(userPostPreviewsState = UiState.Error(it.message.toString()))
             }
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            signOutUseCase()
         }
     }
 }

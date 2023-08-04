@@ -16,6 +16,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,8 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,11 +43,17 @@ import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
+import com.whyranoid.presentation.screens.signin.SignInScreen
+import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.viewmodel.SplashState
+import com.whyranoid.presentation.viewmodel.SplashViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
+    val splashViewModel = koinViewModel<SplashViewModel>()
 
     // TODO 권한 요청 위치 Splash 화면 이동
     val context = LocalContext.current
@@ -73,6 +82,21 @@ fun AppScreen(startWorker: () -> Unit) {
         )
     }
 
+    LaunchedEffect(Unit) {
+        splashViewModel.splashStart()
+    }
+
+    val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
+
+    when (splashState.value) {
+        SplashState.InitialState -> SplashScreen()
+        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
+        SplashState.SignedInState -> AppScreenContent(startWorker, navController)
+    }
+}
+
+@Composable
+fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) {
     Scaffold(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()

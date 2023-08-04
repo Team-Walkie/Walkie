@@ -1,7 +1,7 @@
 package com.whyranoid.domain.model.user
 
 data class User(
-    val uid: String,
+    val uid: Long,
     val name: String,
     val nickname: String,
     val imageUrl: String,
@@ -26,13 +26,13 @@ data class User(
             "하늘을 달리는 소녀",
             "밥 먹고 싶은 사람",
             "배가 고픈 사람",
-            "집 가고 싶은 사람"
+            "집 가고 싶은 사람",
         )
 
         val DUMMY
             get() =
                 User(
-                    uid = "124151234",
+                    uid = 0L,
                     name = DUMMY_NAME_LIST.shuffled().first(),
                     nickname = DUMMY_NICKNAME_LIST.shuffled().first(),
                     imageUrl = "https://picsum.photos/250/250",

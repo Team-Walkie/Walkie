@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,27 +16,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.whyranoid.presentation.reusable.CheckableCustomTextField
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
@@ -75,6 +73,7 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
                     .size(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
+                        onCloseClicked()
                     },
             )
         }
@@ -125,16 +124,18 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        var nameText by rememberSaveable { mutableStateOf(name) }
+
         CheckableCustomTextField(
+            text = nameText,
+            onTextChanged = { text -> nameText = text },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(34.dp)
                 .background(
                     Color(0xFFEEEEEE),
                     RoundedCornerShape(10.dp),
-                )
-                .padding(horizontal = 8.dp),
-            initialText = name,
+                ),
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Edit,
@@ -156,20 +157,19 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // TODO 임시로 만든 변수, viewModel, uiState로 관리하도록 변경 필요(139, 171 line)
-        var nickCheckState: Boolean? by rememberSaveable {
-            mutableStateOf(null)
-        }
+        var nickCheckState: Boolean? by rememberSaveable { mutableStateOf(null) }
+        var nickName by rememberSaveable { mutableStateOf(nick) }
 
         CheckableCustomTextField(
+            text = nickName,
+            onTextChanged = { text -> nickName = text },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(34.dp)
                 .background(
                     Color(0xFFEEEEEE),
                     RoundedCornerShape(10.dp),
-                )
-                .padding(horizontal = 8.dp),
-            initialText = nick,
+                ),
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Edit,
@@ -232,61 +232,4 @@ fun CircularIconButton(
             modifier = Modifier.size(iconSize),
         )
     }
-}
-
-// TODO: 커스텀 텍스트 필드 변경 요망, 텍스트를 외부로 부터 받고 안내 메세지도 받도록 변경해야 함
-@Composable
-private fun CheckableCustomTextField(
-    modifier: Modifier = Modifier,
-    initialText: String = "",
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    placeholderText: String = "Placeholder",
-    fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
-    checkButton: (@Composable (String) -> Unit)? = null,
-) {
-    var text by rememberSaveable { mutableStateOf(initialText) }
-    BasicTextField(
-        modifier = modifier
-            .background(
-                MaterialTheme.colorScheme.surface,
-                MaterialTheme.shapes.small,
-            )
-            .fillMaxWidth(),
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = fontSize,
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (leadingIcon != null) leadingIcon()
-                Box(Modifier.weight(1f)) {
-                    if (text.isEmpty()) {
-                        Text(
-                            placeholderText,
-                            style = LocalTextStyle.current.copy(
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                                fontSize = fontSize,
-                            ),
-                        )
-                    }
-                    innerTextField()
-                }
-                if (trailingIcon != null && checkButton == null) {
-                    trailingIcon()
-                } else if (trailingIcon != null && checkButton != null && text.isEmpty()) {
-                    trailingIcon()
-                } else if (checkButton != null && text.isEmpty().not()) checkButton(text)
-            }
-        },
-    )
 }

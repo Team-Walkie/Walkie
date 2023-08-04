@@ -6,7 +6,7 @@ import com.whyranoid.domain.repository.UserRepository
 class GetUserDetailUseCase(
     private val userRepository: UserRepository,
 ) {
-    suspend operator fun invoke(uid: String): Result<UserDetail> {
+    suspend operator fun invoke(uid: Long): Result<UserDetail> {
         return userRepository.getUserDetail(uid)
     }
 }

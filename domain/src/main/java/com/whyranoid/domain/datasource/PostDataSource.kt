@@ -4,10 +4,10 @@ import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 
 interface PostDataSource {
-    suspend fun getPostPreviews(uid: String): Result<List<PostPreview>>
+    suspend fun getPostPreviews(uid: Long): Result<List<PostPreview>>
 
     suspend fun getPostPreviews(
-        uid: String,
+        uid: Long,
         year: Int,
         month: Int,
         day: Int,

@@ -67,7 +67,7 @@ import java.util.*
 @Composable
 fun MyPageScreen(
     navController: NavController,
-    uid: String,
+    uid: Long,
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
 
@@ -81,6 +81,8 @@ fun MyPageScreen(
 
     MyPageContent(state, onProfileEditClicked = {
         navController.navigate(Screen.EditProfileScreen.route)
+    }, onLogoutClicked = {
+        viewModel.signOut()
     })
 }
 
