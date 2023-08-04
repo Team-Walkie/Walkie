@@ -5,14 +5,23 @@ import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.account.Sex
 import com.whyranoid.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SignInViewModel(private val accountRepository: AccountRepository) : ViewModel() {
-    val signInState: MutableStateFlow<SignInState> =
+    private val _signInState: MutableStateFlow<SignInState> =
         MutableStateFlow(SignInState.InitialState)
+    val signInState get() = _signInState.asStateFlow()
+    fun setUserNameState(userNameState: SignInState.UserNameState) {
+        _signInState.value = userNameState
+    }
+
+    fun setInfoState(infoState: SignInState.InfoState) {
+        _signInState.value = infoState
+    }
 
     fun goToAgreeState(authId: String, userName: String, profileUrl: String?) {
-        signInState.value = SignInState.AgreeState(
+        _signInState.value = SignInState.AgreeState(
             authId = authId,
             userName = userName,
             profileUrl = profileUrl,
@@ -21,7 +30,7 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
 
     fun goToUserNameState(agreeGps: Boolean, agreeMarketing: Boolean) {
         (signInState.value as? SignInState.AgreeState)?.let { state ->
-            signInState.value = SignInState.UserNameState(
+            _signInState.value = SignInState.UserNameState(
                 authId = state.authId,
                 name = state.userName,
                 profileUrl = state.profileUrl,
@@ -33,7 +42,7 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
 
     fun goToInfoState() {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            signInState.value = SignInState.InfoState(
+            _signInState.value = SignInState.InfoState(
                 authId = state.authId,
                 name = state.name,
                 profileUrl = state.profileUrl,
@@ -72,14 +81,14 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
     // TODO 중복 확인 로직 추가
     fun checkDupNickName(authId: String, nickName: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            signInState.value = state.copy(isDuplicated = false)
+            _signInState.value = state.copy(isDuplicated = false)
         }
     }
 
     // TODO 인증 확인 로직 추가
     fun checkValidationNumber(authId: String, number: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            signInState.value = state.copy(isValidate = true)
+            _signInState.value = state.copy(isValidate = true)
         }
     }
 }
