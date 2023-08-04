@@ -47,11 +47,11 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                 authId = state.authId,
                 name = state.name,
                 profileUrl = state.profileUrl,
-                nickName = state.nickName,
+                nickName = state.dupResult,
                 year = requireNotNull(state.year),
                 month = requireNotNull(state.month),
                 day = requireNotNull(state.day),
-                phoneNumber = state.phoneNumber,
+                phoneNumber = state.validateResult,
                 agreeGps = state.agreeGps,
                 agreeMarketing = state.agreeMarketing,
             )
@@ -91,14 +91,14 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
     // TODO 중복 확인 로직 추가
     fun checkDupNickName(nickName: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            _signInState.value = state.copy(isDuplicated = false)
+            _signInState.value = state.copy(isDuplicated = false, dupResult = nickName)
         }
     }
 
     // TODO 인증 확인 로직 추가
     fun checkValidationNumber(number: String) {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            _signInState.value = state.copy(isValidate = true)
+            _signInState.value = state.copy(isValidate = true, validateResult = number)
         }
     }
 }
@@ -120,6 +120,7 @@ sealed class SignInState {
         val name: String = "",
         val profileUrl: String? = null,
         val isDuplicated: Boolean? = null,
+        val dupResult: String = "",
         val nickName: String = "",
         val year: Int? = null,
         val month: Int? = null,
@@ -127,6 +128,7 @@ sealed class SignInState {
         val phoneNumber: String = "",
         val checkNumber: String? = null,
         val isValidate: Boolean? = null,
+        val validateResult: String = "",
         val agreeGps: Boolean = false,
         val agreeMarketing: Boolean = false,
     ) : SignInState()
