@@ -17,6 +17,7 @@ class WalkieApplication : Application() {
                     dataSourceModule,
                     useCaseModule,
                     databaseModule,
+                    networkModule,
                 ),
             )
         }
