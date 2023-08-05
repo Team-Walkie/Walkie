@@ -26,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
@@ -90,7 +91,7 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                     Text(
                         text = "중복확인",
                         modifier = Modifier.clickable {
-                            viewModel.setUserNameState(userNameState.copy(isDuplicated = text.length > 3))
+                            viewModel.checkDupNickName()
                         },
                         color = WalkieColor.Primary,
                     )
@@ -116,22 +117,23 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().height(40.dp).clickable(role = Role.Image) {
-                    datePicker(
-                        context,
-                        userNameState.year,
-                        userNameState.month,
-                        userNameState.day,
-                    ) { year, month, day ->
-                        viewModel.setUserNameState(
-                            userNameState.copy(
-                                year = year,
-                                month = month,
-                                day = day,
-                            ),
-                        )
-                    }
-                },
+                modifier = Modifier.fillMaxWidth().height(40.dp).clip(RoundedCornerShape(12.dp))
+                    .clickable(role = Role.Image) {
+                        datePicker(
+                            context,
+                            userNameState.year,
+                            userNameState.month,
+                            userNameState.day,
+                        ) { year, month, day ->
+                            viewModel.setUserNameState(
+                                userNameState.copy(
+                                    year = year,
+                                    month = month,
+                                    day = day,
+                                ),
+                            )
+                        }
+                    },
             ) {
                 Text(
                     text = if (userNameState.year != null) "${userNameState.year}년" else "-",

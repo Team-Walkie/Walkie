@@ -89,10 +89,15 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
         }
     }
 
-    // TODO 중복 확인 로직 추가
-    fun checkDupNickName(nickName: String) {
+    fun checkDupNickName() {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            _signInState.value = state.copy(isDuplicated = false, dupResult = nickName)
+            viewModelScope.launch {
+                accountRepository.checkNickName(state.nickName)
+                    .onSuccess { (isDuplicated, nickName) ->
+                        _signInState.value =
+                            state.copy(isDuplicated = isDuplicated, dupResult = nickName)
+                    }
+            }
         }
     }
 
@@ -110,6 +115,7 @@ sealed class SignInState {
         val userName: String? = null,
         val profileUrl: String? = null,
     ) : SignInState()
+
     data class AgreeState(
         val authId: String,
         val userName: String,
