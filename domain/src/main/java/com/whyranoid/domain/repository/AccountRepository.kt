@@ -24,4 +24,5 @@ interface AccountRepository {
     suspend fun signIn(): Result<Boolean>
 
     suspend fun singOut(): Result<Boolean>
+    suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>>
 }
