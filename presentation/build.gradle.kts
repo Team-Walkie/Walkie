@@ -5,6 +5,7 @@ import java.util.Properties
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties()
@@ -135,4 +136,10 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.1.1")
     implementation("androidx.paging:paging-compose:3.2.0-rc01")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+
+    // FireBase
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
 }
