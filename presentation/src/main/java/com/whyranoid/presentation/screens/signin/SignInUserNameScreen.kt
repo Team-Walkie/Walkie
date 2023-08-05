@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -30,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,6 +75,9 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                 placeholderText = "",
                 checkButton = null,
                 textStyle = WalkieTypography.Body1_ExtraBold,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next,
+                ),
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -97,6 +103,9 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                     )
                 },
                 textStyle = WalkieTypography.Body1_ExtraBold,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                ),
             )
             Box(Modifier.height(20.dp)) {
                 userNameState.isDuplicated?.let { isDuplicated ->
@@ -183,13 +192,16 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                     Text(
                         text = "인증하기",
                         modifier = Modifier.clickable {
-                            // TODO 인증번호 받기 기능 추가
                             viewModel.setUserNameState(userNameState.copy(checkNumber = ""))
                         },
                         color = WalkieColor.Primary,
                     )
                 },
                 textStyle = WalkieTypography.Body1_ExtraBold,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number,
+                ),
             )
             Spacer(modifier = Modifier.height(20.dp))
 
