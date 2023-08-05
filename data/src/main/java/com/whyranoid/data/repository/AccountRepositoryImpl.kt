@@ -27,7 +27,7 @@ class AccountRepositoryImpl(
         weight: Int,
         agreeGps: Boolean,
         agreeSubscription: Boolean,
-    ): Result<Boolean> {
+    ): Result<Long> {
         return kotlin.runCatching {
             accountDataSource.signUp(nickName, profileUrl, authId, agreeGps, agreeSubscription)
                 .onSuccess { uid ->
@@ -36,17 +36,16 @@ class AccountRepositoryImpl(
                     accountDataStore.updateUserName(userName)
                     accountDataStore.updateNickName(nickName)
                     profileUrl?.let { url -> accountDataStore.updateProfileUrl(url) }
-                    return@runCatching true
+                    return@runCatching uid
                 }
-            false
+            return Result.failure(Exception("회원가입 실패"))
         }
     }
 
-    override suspend fun signIn(): Result<Boolean> {
+    override suspend fun signIn(): Result<Long> {
         return kotlin.runCatching {
             // TODO API CALL and update
-            accountDataStore.updateUId(0L)
-            true
+            0L
         }
     }
 

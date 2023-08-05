@@ -19,9 +19,9 @@ interface AccountRepository {
         weight: Int,
         agreeGps: Boolean,
         agreeSubscription: Boolean,
-    ): Result<Boolean>
+    ): Result<Long>
 
-    suspend fun signIn(): Result<Boolean>
+    suspend fun signIn(): Result<Long>
 
     suspend fun singOut(): Result<Boolean>
     suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>>

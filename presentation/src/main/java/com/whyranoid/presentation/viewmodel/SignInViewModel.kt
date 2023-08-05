@@ -80,10 +80,8 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                     agreeGps = state.agreeGps,
                     agreeSubscription = state.agreeMarketing,
                 ).onSuccess {
-                    accountRepository.signIn().onSuccess {
-                        _signInState.value = state.copy(isProgress = false)
-                        _signInState.value = SignInState.Done(state.name)
-                    }
+                    _signInState.value = state.copy(isProgress = false)
+                    _signInState.value = SignInState.Done(state.name)
                 }
             }
         }
