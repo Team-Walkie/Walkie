@@ -11,8 +11,9 @@ import kotlinx.coroutines.launch
 
 class SignInViewModel(private val accountRepository: AccountRepository) : ViewModel() {
     private val _signInState: MutableStateFlow<SignInState> =
-        MutableStateFlow(SignInState.InitialState)
+        MutableStateFlow(SignInState.InitialState())
     val signInState get() = _signInState.asStateFlow()
+
     fun setUserNameState(userNameState: SignInState.UserNameState) {
         _signInState.value = userNameState
     }
@@ -104,7 +105,11 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
 }
 
 sealed class SignInState {
-    object InitialState : SignInState()
+    data class InitialState(
+        val authId: String? = null,
+        val userName: String? = null,
+        val profileUrl: String? = null,
+    ) : SignInState()
     data class AgreeState(
         val authId: String,
         val userName: String,
