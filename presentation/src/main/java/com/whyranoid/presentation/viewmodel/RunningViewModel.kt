@@ -196,7 +196,6 @@ class RunningViewModel(
 
     fun saveHistory(bitmap: Bitmap, finishData: RunningFinishData) {
         intent {
-            if (state.savingState.getDataOrNull() is SavingState.Start) return@intent
             runningHistoryRepository.saveRunningHistory(
                 RunningHistory(
                     0L,
@@ -218,23 +217,19 @@ class RunningViewModel(
                     System.currentTimeMillis(),
                     BitmapConverter.bitmapToString(bitmap),
                 ),
-            )
-            reduce {
-                state.copy(
-                    savingState = UiState.Success(SavingState.Done),
-                )
-            }
-            reduce {
-                state.copy(
-                    savingState = UiState.Idle,
-                    runningFinishState = UiState.Idle,
-                    selectedImage = UiState.Idle,
-                    editState = UiState.Idle,
-                    runningResultInfoState = UiState.Idle,
-                )
+            ).onSuccess {
+                reduce {
+                    state.copy(
+                        savingState = UiState.Idle,
+                        runningFinishState = UiState.Idle,
+                        selectedImage = UiState.Idle,
+                        editState = UiState.Idle,
+                        runningResultInfoState = UiState.Idle,
+                    )
+                }
+                runningRepository.listenLocation()
             }
         }
-        runningRepository.listenLocation()
     }
 
     fun takeSnapShot(runningFinishData: RunningFinishData) {
