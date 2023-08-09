@@ -1,5 +1,6 @@
 package com.whyranoid.data.repository
 
+import android.util.Log
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.model.account.Sex
@@ -60,8 +61,10 @@ class AccountRepositoryImpl(
         return kotlin.runCatching {
             accountDataSource.nickCheck(nickName).onSuccess {
                 return@runCatching it
+            }.onFailure {
+                Log.d("checkNickName", it.message.toString())
             }
-            Pair(false, "Error")
+            return Result.failure(Exception("중복 검사 실패"))
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.account.Sex
@@ -94,6 +95,8 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                     .onSuccess { (isDuplicated, nickName) ->
                         _signInState.value =
                             state.copy(isDuplicated = isDuplicated, dupResult = nickName)
+                    }.onFailure {
+                        Log.d("checkDupNickName", it.message.toString())
                     }
             }
         }
