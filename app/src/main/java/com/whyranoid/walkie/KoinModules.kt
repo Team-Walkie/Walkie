@@ -2,6 +2,7 @@ package com.whyranoid.walkie
 
 import androidx.room.Room
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.whyranoid.data.API
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
@@ -148,7 +149,13 @@ val networkModule = module {
         Retrofit.Builder()
             .baseUrl(API.BASE_URL)
             .client(get())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder()
+                        .setLenient()
+                        .create(),
+                ),
+            )
             .build()
     }
 
