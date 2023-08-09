@@ -235,6 +235,7 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                         )
                     },
                     textStyle = WalkieTypography.Body1_ExtraBold,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 )
             }
             userNameState.isValidate?.let { isValidate ->
