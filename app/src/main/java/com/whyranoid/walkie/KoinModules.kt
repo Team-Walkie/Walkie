@@ -40,6 +40,7 @@ import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
+import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
 import com.whyranoid.presentation.viewmodel.SignInViewModel
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
@@ -55,6 +56,7 @@ val viewModelModule = module {
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
     factory { SignInViewModel(get()) }
+    factory { SelectHistoryViewModel(get()) }
 }
 
 val repositoryModule = module {

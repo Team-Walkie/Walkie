@@ -44,6 +44,10 @@ sealed class Screen(
         R.drawable.ic_mypage_screen_selected,
     )
 
+    object AddPostScreen : Screen(
+        route = "addPostScreen",
+    )
+
     object EditProfileScreen : Screen(
         route = "editProfileScreen",
         arguments = listOf(

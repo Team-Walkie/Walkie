@@ -42,11 +42,9 @@ import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
+import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
-import com.whyranoid.presentation.screens.signin.SignInScreen
-import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
-import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -87,12 +85,13 @@ fun AppScreen(startWorker: () -> Unit) {
     }
 
     val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
-
-    when (splashState.value) {
-        SplashState.InitialState -> SplashScreen()
-        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
-        SplashState.SignedInState -> AppScreenContent(startWorker, navController)
-    }
+    AppScreenContent(startWorker, navController)
+    // TODO Splash 적용
+//    when (splashState.value) {
+//        SplashState.InitialState -> SplashScreen()
+//        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
+//        SplashState.SignedInState -> AppScreenContent(startWorker, navController)
+//    }
 }
 
 @Composable
@@ -162,6 +161,10 @@ fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) 
             // TODO: repo, viewModel로 하여금 uid를 받아오도록 변경 or MyPageScreen 내부적으로 uid 보관하도록 변경
             composable(Screen.MyPage.route) {
                 MyPageScreen(navController, User.DUMMY.uid)
+            }
+
+            composable(Screen.AddPostScreen.route) {
+                AddPostScreen(navController = navController)
             }
 
             composable(Screen.EditProfileScreen.route) {
