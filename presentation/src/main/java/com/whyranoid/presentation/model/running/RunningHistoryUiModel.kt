@@ -1,10 +1,13 @@
 package com.whyranoid.presentation.model.running
 
+import android.content.Context
 import android.graphics.Bitmap
-import com.google.gson.Gson
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.domain.model.running.RunningPosition
-import com.whyranoid.presentation.util.BitmapConverter
 
 data class RunningHistoryUiModel(
     val id: Long,
@@ -18,11 +21,25 @@ data class RunningHistoryUiModel(
     val paths: List<List<RunningPosition>>,
 )
 
-fun RunningHistory.toRunningHistoryUiModel(gson: Gson): RunningHistoryUiModel {
+fun RunningHistory.toRunningHistoryUiModel(context: Context): RunningHistoryUiModel {
     return RunningHistoryUiModel(
         this.id,
         this.finishedAt,
-        BitmapConverter.stringToBitmap(this.bitmap),
+        if (bitmap == null) {
+            null
+        } else if (Build.VERSION.SDK_INT >= 28) {
+            ImageDecoder.decodeBitmap(
+                ImageDecoder.createSource(
+                    context.contentResolver,
+                    Uri.parse(bitmap),
+                ),
+            )
+        } else {
+            MediaStore.Images.Media.getBitmap(
+                context.contentResolver,
+                Uri.parse(bitmap),
+            )
+        },
         this.runningData.distance,
         this.runningData.pace,
         this.runningData.totalRunningTime,
