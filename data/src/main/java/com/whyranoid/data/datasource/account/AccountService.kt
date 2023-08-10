@@ -5,6 +5,7 @@ import com.whyranoid.data.model.account.NickCheckResponse
 import com.whyranoid.data.model.account.SignUpResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface AccountService {
@@ -17,7 +18,7 @@ interface AccountService {
         @Query("agreeSubscription") agreeSubscription: Boolean = false,
     ): Response<NickCheckResponse>
 
-    @GET(API.SIGN_UP)
+    @POST(API.SIGN_UP)
     suspend fun signUp(
         @Query("userName") nickName: String,
         @Query("profileImg") profileUrl: String,
