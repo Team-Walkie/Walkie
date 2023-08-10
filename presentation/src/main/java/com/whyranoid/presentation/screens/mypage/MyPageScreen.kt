@@ -79,11 +79,18 @@ fun MyPageScreen(
 
     val state by viewModel.collectAsState()
 
-    MyPageContent(state, onProfileEditClicked = {
-        navController.navigate(Screen.EditProfileScreen.route)
-    }, onLogoutClicked = {
-        viewModel.signOut()
-    })
+    MyPageContent(
+        state,
+        onPostCreateClicked = {
+            navController.navigate(Screen.AddPostScreen.route)
+        },
+        onProfileEditClicked = {
+            navController.navigate(Screen.EditProfileScreen.route)
+        },
+        onLogoutClicked = {
+            viewModel.signOut()
+        },
+    )
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
