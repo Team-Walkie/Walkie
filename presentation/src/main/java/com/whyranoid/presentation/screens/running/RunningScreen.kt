@@ -319,66 +319,20 @@ fun RunningMapScreen(
 
             state.selectedImage.getDataOrNull()?.let { uri ->
                 cameraPositionState.contentBounds?.let { ll ->
-                    val imageOverlay = OverlayImage.fromBitmap(
-                        if (Build.VERSION.SDK_INT >= 28) {
-                            ImageDecoder.decodeBitmap(
-                                ImageDecoder.createSource(
-                                    LocalContext.current.contentResolver,
-                                    uri,
-                                ),
-                            )
-                        } else {
-                            MediaStore.Images.Media.getBitmap(
+                    val bitmap = if (Build.VERSION.SDK_INT >= 28) {
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
                                 LocalContext.current.contentResolver,
                                 uri,
-                            )
-                        },
-                    )
-                    var bounds = ll
-                    val width = imageOverlay.getIntrinsicWidth(LocalContext.current)
-                    val height = imageOverlay.getIntrinsicHeight(LocalContext.current)
-
-                    if (width != 0 && height != 0) {
-                        // TODO 비율 맞춰서 사진 확장
-                        // TODO 백그라운드
-                        val n = ll.northLatitude
-                        val s = ll.southLatitude
-                        val e = ll.eastLongitude
-                        val w = ll.westLongitude
-                        val imageRatio = height / width.toDouble()
-                        val mapRatio = (n - s) / (e - w)
-                        if (imageRatio > mapRatio) { // 높이가 높은 사진
-                            val h = n - s
-                            val center = (n + s) / 2
-                            val weight = ((h / 2) * (imageRatio / mapRatio))
-                            bounds = LatLngBounds(
-                                LatLng(center - weight, (w + e) / 2 - ((e - w) / 2) * 1.2),
-                                LatLng(center + weight, (w + e) / 2 + ((e - w) / 2) * 1.2),
-                            )
-
-                            Log.d(
-                                "imageRatio",
-                                "$imageRatio ,${
-                                    (
-                                        bounds.northLatitude - bounds.southLatitude
-                                        ) / (bounds.eastLongitude - bounds.westLongitude)
-                                }",
-                            )
-                        } else {
-                            val wi = e - w
-                            val center = (e + w) / 2
-                            val weight = ((wi / 2) * ((mapRatio / imageRatio)))
-                            bounds = LatLngBounds(
-                                LatLng(s, center - weight * 1.2),
-                                LatLng(n, center + weight * 1.2),
-                            )
-                        }
+                            ),
+                        )
+                    } else {
+                        MediaStore.Images.Media.getBitmap(
+                            LocalContext.current.contentResolver,
+                            uri,
+                        )
                     }
-
-                    GroundOverlay(
-                        bounds = bounds,
-                        image = imageOverlay,
-                    )
+                    DrawBitmap(bitmap = bitmap, ll = ll)
                 }
             }
         } // End Of NaverMap
@@ -815,4 +769,54 @@ fun DrawPath(paths: List<List<com.whyranoid.runningdata.model.RunningPosition>>)
             )
         }
     }
+}
+
+@Composable
+fun DrawBitmap(bitmap: Bitmap, ll: LatLngBounds) {
+    val imageOverlay = OverlayImage.fromBitmap(bitmap)
+    var bounds = ll
+    val width = imageOverlay.getIntrinsicWidth(LocalContext.current)
+    val height = imageOverlay.getIntrinsicHeight(LocalContext.current)
+
+    if (width != 0 && height != 0) {
+        // TODO 비율 맞춰서 사진 확장
+        // TODO 백그라운드
+        val n = ll.northLatitude
+        val s = ll.southLatitude
+        val e = ll.eastLongitude
+        val w = ll.westLongitude
+        val imageRatio = height / width.toDouble()
+        val mapRatio = (n - s) / (e - w)
+        if (imageRatio > mapRatio) { // 높이가 높은 사진
+            val h = n - s
+            val center = (n + s) / 2
+            val weight = ((h / 2) * (imageRatio / mapRatio))
+            bounds = LatLngBounds(
+                LatLng(center - weight, (w + e) / 2 - ((e - w) / 2) * 1.2),
+                LatLng(center + weight, (w + e) / 2 + ((e - w) / 2) * 1.2),
+            )
+
+            Log.d(
+                "imageRatio",
+                "$imageRatio ,${
+                    (
+                        bounds.northLatitude - bounds.southLatitude
+                        ) / (bounds.eastLongitude - bounds.westLongitude)
+                }",
+            )
+        } else {
+            val wi = e - w
+            val center = (e + w) / 2
+            val weight = ((wi / 2) * ((mapRatio / imageRatio)))
+            bounds = LatLngBounds(
+                LatLng(s, center - weight * 1.2),
+                LatLng(n, center + weight * 1.2),
+            )
+        }
+    }
+
+    GroundOverlay(
+        bounds = bounds,
+        image = imageOverlay,
+    )
 }
