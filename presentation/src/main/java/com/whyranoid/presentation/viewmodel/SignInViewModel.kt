@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.account.Sex
@@ -11,8 +12,9 @@ import kotlinx.coroutines.launch
 
 class SignInViewModel(private val accountRepository: AccountRepository) : ViewModel() {
     private val _signInState: MutableStateFlow<SignInState> =
-        MutableStateFlow(SignInState.InitialState)
+        MutableStateFlow(SignInState.InitialState())
     val signInState get() = _signInState.asStateFlow()
+
     fun setUserNameState(userNameState: SignInState.UserNameState) {
         _signInState.value = userNameState
     }
@@ -79,19 +81,24 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                     agreeGps = state.agreeGps,
                     agreeSubscription = state.agreeMarketing,
                 ).onSuccess {
-                    accountRepository.signIn().onSuccess {
-                        _signInState.value = state.copy(isProgress = false)
-                        _signInState.value = SignInState.Done(state.name)
-                    }
+                    _signInState.value = state.copy(isProgress = false)
+                    _signInState.value = SignInState.Done(state.name)
                 }
             }
         }
     }
 
-    // TODO 중복 확인 로직 추가
-    fun checkDupNickName(nickName: String) {
+    fun checkDupNickName() {
         (signInState.value as? SignInState.UserNameState)?.let { state ->
-            _signInState.value = state.copy(isDuplicated = false, dupResult = nickName)
+            viewModelScope.launch {
+                accountRepository.checkNickName(state.nickName)
+                    .onSuccess { (isDuplicated, nickName) ->
+                        _signInState.value =
+                            state.copy(isDuplicated = isDuplicated, dupResult = nickName)
+                    }.onFailure {
+                        Log.d("checkDupNickName", it.message.toString())
+                    }
+            }
         }
     }
 
@@ -104,7 +111,12 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
 }
 
 sealed class SignInState {
-    object InitialState : SignInState()
+    data class InitialState(
+        val authId: String? = null,
+        val userName: String? = null,
+        val profileUrl: String? = null,
+    ) : SignInState()
+
     data class AgreeState(
         val authId: String,
         val userName: String,

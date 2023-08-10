@@ -15,9 +15,7 @@ fun SignInScreen(modifier: Modifier = Modifier, finishSignIn: () -> Unit) {
     val signInState = viewModel.signInState.collectAsStateWithLifecycle()
 
     when (signInState.value) {
-        is SignInState.InitialState -> SignInInitialScreen { authId, userName, imageUrl ->
-            viewModel.goToAgreeState(authId, userName, imageUrl)
-        }
+        is SignInState.InitialState -> SignInInitialScreen()
         is SignInState.AgreeState -> SignInAgreeScreen { agreeGps, agreeMarketing ->
             viewModel.goToUserNameState(agreeGps, agreeMarketing)
         }

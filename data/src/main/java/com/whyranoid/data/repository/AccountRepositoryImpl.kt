@@ -1,11 +1,14 @@
 package com.whyranoid.data.repository
 
+import android.util.Log
 import com.whyranoid.data.AccountDataStore
+import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.model.account.Sex
 import com.whyranoid.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
 
 class AccountRepositoryImpl(
+    private val accountDataSource: AccountDataSource,
     private val accountDataStore: AccountDataStore,
 ) : AccountRepository {
 
@@ -25,21 +28,25 @@ class AccountRepositoryImpl(
         weight: Int,
         agreeGps: Boolean,
         agreeSubscription: Boolean,
-    ): Result<Boolean> {
+    ): Result<Long> {
         return kotlin.runCatching {
-            accountDataStore.updateAuthId(authId)
-            accountDataStore.updateUserName(userName)
-            accountDataStore.updateNickName(nickName)
-            profileUrl?.let { url -> accountDataStore.updateProfileUrl(url) }
-            true
+            accountDataSource.signUp(nickName, profileUrl, authId, agreeGps, agreeSubscription)
+                .onSuccess { uid ->
+                    accountDataStore.updateUId(uid)
+                    accountDataStore.updateAuthId(authId)
+                    accountDataStore.updateUserName(userName)
+                    accountDataStore.updateNickName(nickName)
+                    profileUrl?.let { url -> accountDataStore.updateProfileUrl(url) }
+                    return@runCatching uid
+                }
+            return Result.failure(Exception("회원가입 실패"))
         }
     }
 
-    override suspend fun signIn(): Result<Boolean> {
+    override suspend fun signIn(): Result<Long> {
         return kotlin.runCatching {
             // TODO API CALL and update
-            accountDataStore.updateUId(0L)
-            true
+            0L
         }
     }
 
@@ -47,6 +54,17 @@ class AccountRepositoryImpl(
         return kotlin.runCatching {
             accountDataStore.removeAll()
             true
+        }
+    }
+
+    override suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>> {
+        return kotlin.runCatching {
+            accountDataSource.nickCheck(nickName).onSuccess {
+                return@runCatching it
+            }.onFailure {
+                Log.d("checkNickName", it.message.toString())
+            }
+            return Result.failure(Exception("중복 검사 실패"))
         }
     }
 }
