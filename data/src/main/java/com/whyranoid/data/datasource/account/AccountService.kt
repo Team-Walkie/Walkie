@@ -12,10 +12,6 @@ interface AccountService {
     @GET(API.CHECK_NICKNAME)
     suspend fun checkNickName(
         @Query("userName") nickName: String,
-        @Query("profileImg") profileUrl: String = "",
-        @Query("authId") authId: String = "",
-        @Query("agreeGps") agreeGps: Boolean = false,
-        @Query("agreeSubscription") agreeSubscription: Boolean = false,
     ): Response<NickCheckResponse>
 
     @POST(API.SIGN_UP)

@@ -1,6 +1,5 @@
 package com.whyranoid.data.datasource.account
 
-import android.util.Log
 import com.whyranoid.domain.datasource.AccountDataSource
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
@@ -23,12 +22,11 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
 
     override suspend fun nickCheck(nickName: String): Result<Pair<Boolean, String>> {
         return kotlin.runCatching {
-            Log.d("nickCheck", "response.message().toString()") // TODO remove
             val response = accountService.checkNickName(nickName)
             if (response.isSuccessful.not()) {
                 throw Exception(response.errorBody().toString())
             } else if (response.body() == null) throw Exception(response.message())
-            requireNotNull(response.body()).let { Pair(it.isDuplicated, it.nickName) }
+            requireNotNull(response.body()).let { Pair(it.isDuplicated, it.nickName ?: "empty") }
         }
     }
 }
