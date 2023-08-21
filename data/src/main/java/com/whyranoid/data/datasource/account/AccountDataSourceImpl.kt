@@ -1,5 +1,6 @@
 package com.whyranoid.data.datasource.account
 
+import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.domain.datasource.AccountDataSource
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
@@ -11,12 +12,21 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
         agreeMarketing: Boolean,
     ): Result<Long> {
         return kotlin.runCatching {
-            val response =
-                accountService.signUp(nickName, profileUrl ?: "", authId, agreeGps, agreeMarketing)
+
+            val request = SignUpRequest(
+                userName = nickName,
+                profileImg = profileUrl ?: "",
+                authId = authId,
+                agreeGps = agreeGps,
+                agreeSubscription = agreeMarketing,
+            )
+
+            val response = accountService.signUp(request)
+
             if (response.isSuccessful.not()) {
                 throw Exception(response.errorBody().toString())
             } else if (response.body() == null) throw Exception(response.message())
-            requireNotNull(response.body()).uid
+            requireNotNull(response.body()?.walkieId?.toLong() ?: throw Exception("empty response"))
         }
     }
 

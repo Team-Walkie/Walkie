@@ -2,8 +2,10 @@ package com.whyranoid.data.datasource.account
 
 import com.whyranoid.data.API
 import com.whyranoid.data.model.account.NickCheckResponse
+import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.data.model.account.SignUpResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -16,10 +18,6 @@ interface AccountService {
 
     @POST(API.SIGN_UP)
     suspend fun signUp(
-        @Query("userName") nickName: String,
-        @Query("profileImg") profileUrl: String,
-        @Query("authId") authId: String,
-        @Query("agreeGps") agreeGps: Boolean,
-        @Query("agreeSubscription") agreeSubscription: Boolean,
+        @Body signUpRequest: SignUpRequest,
     ): Response<SignUpResponse>
 }
