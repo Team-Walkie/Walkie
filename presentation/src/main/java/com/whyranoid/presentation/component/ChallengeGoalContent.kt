@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
-import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.theme.ChallengeColor.getColor
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -44,14 +45,16 @@ fun ChallengeGoalContent(
     challenge: Challenge
 ) {
 
+    val challengeColor = challenge.challengeType.getColor()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(15.dp))
-            .background(Color(0xFFF7F7F7)),
+            .background(challengeColor.backgroundColor),
     ) {
 
-        val progressBarColor = Color(0xFFFFB763)
+        val progressBarColor = challengeColor.progressBarColor
 
         val progress = requireNotNull(challenge.process) / 100f
 
@@ -85,15 +88,14 @@ fun ChallengeGoalContent(
 
             val isLtr = layoutDirection == LayoutDirection.Ltr
             val barStart = (if (isLtr) 0f else 1f - progress) * width
-            val barEnd = (if (isLtr) progress else 1f - 0f) * width
+            val barEnd = (if (isLtr) progress else 1f) * width
 
             // draw Background
             drawLine(
-                progressBarColor
-                    .copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity),
+                Color.White,
                 Offset(0f, yOffset),
                 Offset(1f * width, yOffset),
-                8.dp.toPx(),
+                4.dp.toPx(),
                 cap = StrokeCap.Round,
             )
 
@@ -102,7 +104,7 @@ fun ChallengeGoalContent(
                 progressBarColor,
                 Offset(barStart, yOffset),
                 Offset(barEnd, yOffset),
-                8.dp.toPx(),
+                4.dp.toPx(),
                 cap = StrokeCap.Round,
             )
 
@@ -113,8 +115,9 @@ fun ChallengeGoalContent(
                 dstSize = bitMapIconSize,
                 dstOffset = IntOffset(
                     (barEnd - bitMapIconSize.width / 2).toInt(),
-                    (yOffset - bitMapIconSize.height / 2).toInt()
-                )
+                    - bitMapIconSize.height / 2,
+                ),
+                colorFilter = ColorFilter.tint(progressBarColor)
             )
 
             val progressText = "${(progress * 100).toInt()}%"
@@ -129,14 +132,12 @@ fun ChallengeGoalContent(
             drawText(
                 textMeasurer = textMeasure, text = progressText,
                 style = TextStyle(
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
+                    color = challengeColor.progressBarColor
                 ),
                 topLeft = Offset(
-                    barEnd
-                            - progressTextMeasured.size.width / 2,
-                    yOffset
-                            - bitMapIconSize.height / 2
-                            - progressTextMeasured.size.height
+                    width - progressTextMeasured.size.width,
+                    yOffset + progressTextMeasured.size.height / 2
 
                 ),
                 softWrap = false,
@@ -158,7 +159,7 @@ fun ChallengeGoalContent(
             )
 
             Divider(
-                color = Color(0xFFBABABA),
+                color = challengeColor.progressBarColor,
                 modifier = Modifier
                     .height(52.dp)
                     .width(1.dp)

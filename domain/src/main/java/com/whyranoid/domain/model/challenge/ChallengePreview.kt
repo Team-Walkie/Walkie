@@ -5,6 +5,7 @@ data class ChallengePreview(
     val title: String,
     val badgeImageUrl: String,
     val progress: Float?,
+    val type: ChallengeType
 ) {
     // TODO: Delete
     companion object {
@@ -41,6 +42,7 @@ data class ChallengePreview(
                 title = DUMMY_NAME_LIST.shuffled().first(),
                 badgeImageUrl = "https://picsum.photos/250/250",
                 progress = DUMMY_PROGRESS_LIST.shuffled().first(),
+                type = ChallengeType.values().toList().shuffled().first(),
             )
     }
 }

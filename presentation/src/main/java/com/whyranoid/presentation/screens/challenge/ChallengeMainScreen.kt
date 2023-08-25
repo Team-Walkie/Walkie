@@ -35,6 +35,7 @@ import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
+import com.whyranoid.presentation.theme.ChallengeColor.getColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.chunkedList
 import com.whyranoid.presentation.viewmodel.ChallengeMainState
@@ -105,6 +106,7 @@ fun ChallengeMainContent(
                             item {
                                 ChallengeItem(
                                     Modifier.fillParentMaxWidth(0.9f),
+                                    it.type.getColor(),
                                     text = it.title
                                 ) {
                                     onChallengeItemClicked(it, false)
@@ -139,7 +141,7 @@ fun ChallengeMainContent(
                             ChallengingItem(
                                 text = it.title,
                                 progress = it.progress!!,
-                                imageUrl = it.badgeImageUrl,
+                                challengeColor = it.type.getColor(),
                             ) {
                                 onChallengeItemClicked(it, true)
                             }
@@ -176,7 +178,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
-                    text = "인기",
+                    text = "인기 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
@@ -197,6 +199,7 @@ fun ChallengeMainContent(
                                     list.forEach {
                                         ChallengeItem(
                                             Modifier.fillParentMaxWidth(0.9f),
+                                            it.type.getColor(),
                                             text = it.title
                                         ) {
                                             onChallengeItemClicked(it, false)
@@ -219,7 +222,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
-                    text = "유형",
+                    text = "유형별 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
@@ -233,7 +236,7 @@ fun ChallengeMainContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = 40.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     ChallengeType.values().forEachIndexed { page, challengeType ->
@@ -265,6 +268,7 @@ fun ChallengeMainContent(
                                 typedChallengePreviewsState[pagerState.currentPage].forEach { challengePreview ->
 
                                     ChallengeItem(
+                                        challengeColor = challengePreview.type.getColor(),
                                         text = challengePreview.title
                                     ) {
                                         onChallengeItemClicked(challengePreview, false)
