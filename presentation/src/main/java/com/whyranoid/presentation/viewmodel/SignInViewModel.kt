@@ -49,11 +49,11 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                 authId = state.authId,
                 name = state.name,
                 profileUrl = state.profileUrl,
-                nickName = state.dupResult,
+                nickName = state.nickName,
                 year = requireNotNull(state.year),
                 month = requireNotNull(state.month),
                 day = requireNotNull(state.day),
-                phoneNumber = state.validateResult,
+                phoneNumber = state.phoneNumber,
                 agreeGps = state.agreeGps,
                 agreeMarketing = state.agreeMarketing,
             )
@@ -64,10 +64,9 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
     fun goToDoneState() {
         (signInState.value as? SignInState.InfoState)?.let { state ->
             viewModelScope.launch {
-                // TODO WITH API CALL
+
                 _signInState.value = state.copy(isProgress = true)
 
-                delay(1000)
                 accountRepository.signUp(
                     authId = state.authId,
                     userName = state.name,
@@ -83,6 +82,10 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                 ).onSuccess {
                     _signInState.value = state.copy(isProgress = false)
                     _signInState.value = SignInState.Done(state.name)
+                }.onFailure {
+                    // TODO: 실패 시
+                    delay(1000)
+                    _signInState.value = state.copy(isProgress = false)
                 }
             }
         }

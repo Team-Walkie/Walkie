@@ -1,6 +1,6 @@
 package com.whyranoid.data.datasource.account
 
-import android.util.Log
+import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.domain.datasource.AccountDataSource
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
@@ -12,23 +12,31 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
         agreeMarketing: Boolean,
     ): Result<Long> {
         return kotlin.runCatching {
-            val response =
-                accountService.signUp(nickName, profileUrl ?: "", authId, agreeGps, agreeMarketing)
+
+            val request = SignUpRequest(
+                userName = nickName,
+                profileImg = profileUrl ?: "",
+                authId = authId,
+                agreeGps = agreeGps,
+                agreeSubscription = agreeMarketing,
+            )
+
+            val response = accountService.signUp(request)
+
             if (response.isSuccessful.not()) {
                 throw Exception(response.errorBody().toString())
             } else if (response.body() == null) throw Exception(response.message())
-            requireNotNull(response.body()).uid
+            requireNotNull(response.body()?.walkieId?.toLong() ?: throw Exception("empty response"))
         }
     }
 
     override suspend fun nickCheck(nickName: String): Result<Pair<Boolean, String>> {
         return kotlin.runCatching {
-            Log.d("nickCheck", "response.message().toString()") // TODO remove
             val response = accountService.checkNickName(nickName)
             if (response.isSuccessful.not()) {
                 throw Exception(response.errorBody().toString())
             } else if (response.body() == null) throw Exception(response.message())
-            requireNotNull(response.body()).let { Pair(it.isDuplicated, it.nickName) }
+            requireNotNull(response.body()).let { Pair(it.isDuplicated, it.nickName ?: "empty") }
         }
     }
 }
