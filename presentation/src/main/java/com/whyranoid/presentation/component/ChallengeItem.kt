@@ -13,16 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.whyranoid.presentation.theme.ChallengeColor
 import com.whyranoid.presentation.util.bouncingClickable
 
-// Todo: set Color System
 @Composable
 fun ChallengeItem(
     modifier: Modifier = Modifier,
+    challengeColor: ChallengeColor.ChallengeColorInterface,
     text: String,
     onClicked: () -> Unit = {}
 ) {
@@ -34,7 +34,7 @@ fun ChallengeItem(
             .fillMaxWidth()
             .height(90.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .background(color = Color(0xFFECECEC)),
+            .background(color = challengeColor.backgroundColor),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -49,7 +49,8 @@ fun ChallengeItem(
                 textAlign = TextAlign.Start,
                 text = text,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2)
+                maxLines = 2
+            )
         }
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.whyranoid.presentation.reusable.TextWithImageSpaceBetween
+import com.whyranoid.presentation.theme.ChallengeColor
 import com.whyranoid.presentation.util.bouncingClickable
 import com.whyranoid.presentation.util.conditional
 
@@ -27,6 +28,7 @@ fun ChallengingItem(
     text: String,
     progress: Float,
     imageUrl: String,
+    challengeColor: ChallengeColor.ChallengeColorInterface,
     onClicked: () -> Unit = {}
 ) {
     Column(
@@ -37,7 +39,7 @@ fun ChallengingItem(
             .fillMaxWidth()
             .height(105.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .background(color = Color(0xFFECECEC))
+            .background(color = challengeColor.backgroundColor)
             .conditional(progress == 1f) {
                 border(
                     3.dp,
@@ -66,7 +68,8 @@ fun ChallengingItem(
                 .padding(horizontal = 26.dp)
                 .clip(RoundedCornerShape(15.dp)),
             progress = progress,
-            color = Color(0xFFFFB763),
+            color = challengeColor.progressBarColor,
+            backgroundColor = challengeColor.progressBackgroundColor,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
