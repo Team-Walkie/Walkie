@@ -25,7 +25,6 @@ fun RisingImage(
     modifier: Modifier = Modifier,
     painter: Painter,
 ) {
-
     // TODO: CompositionLocal
     val configuration = LocalConfiguration.current
 
@@ -40,36 +39,38 @@ fun RisingImage(
     var initOffSetY = 0f
     val offsetX = remember { Animatable((0f..screenWidth).random()) }
     val offsetY = remember {
-        Animatable((0f..screenHeight).random()
-            .apply { initOffSetY = this }
+        Animatable(
+            (0f..screenHeight).random()
+                .apply { initOffSetY = this },
         )
     }
     val opacity = remember { Animatable(1f) }
 
     Image(
         painter = painter,
-        contentDescription = "risingAnimationImage", contentScale = ContentScale.Crop,
+        contentDescription = "risingAnimationImage",
+        contentScale = ContentScale.Crop,
         modifier = modifier
             .offset {
                 IntOffset(
                     offsetX.value.toInt(),
-                    offsetY.value.toInt()
+                    offsetY.value.toInt(),
                 )
             },
-        alpha = opacity.value
+        alpha = opacity.value,
     )
 
     LaunchedEffect(true) {
         launch {
             offsetY.animateTo(
                 targetValue = initOffSetY - ANIMATION_MOVE_RANGE.random(),
-                animationSpec = tween(RISING_ANIMATION_TIME_RANGE.random())
+                animationSpec = tween(RISING_ANIMATION_TIME_RANGE.random()),
             )
         }
         launch {
             opacity.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(RISING_ANIMATION_TIME_RANGE.random())
+                animationSpec = tween(RISING_ANIMATION_TIME_RANGE.random()),
             )
         }
     }

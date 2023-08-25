@@ -19,7 +19,6 @@ import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
-import com.whyranoid.presentation.util.BitmapConverter
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
@@ -208,14 +207,14 @@ class RunningViewModel(
                         finishData.runningPositionList.map { list ->
                             list.map { runningPosition ->
                                 RunningPosition(
-                                    runningPosition.longitude,
                                     runningPosition.latitude,
+                                    runningPosition.longitude,
                                 )
                             }
                         },
                     ),
                     System.currentTimeMillis(),
-                    BitmapConverter.bitmapToString(bitmap),
+                    state.selectedImage.getDataOrNull()?.let { it.toString() },
                 ),
             ).onSuccess {
                 reduce {

@@ -1,7 +1,5 @@
 package com.whyranoid.presentation.screens.signin
 
-import android.app.DatePickerDialog
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.whyranoid.presentation.reusable.CheckableCustomTextField
+import com.whyranoid.presentation.reusable.datePicker
 import com.whyranoid.presentation.theme.SystemColor
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -263,24 +262,6 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
             }
         }
     }
-}
-
-fun datePicker(
-    context: Context,
-    year: Int?,
-    month: Int?,
-    day: Int?,
-    onDateSelected: (Int, Int, Int) -> Unit,
-) {
-    DatePickerDialog(
-        context,
-        { _, year, month, day ->
-            onDateSelected(year, month, day)
-        },
-        year ?: Calendar.getInstance().get(Calendar.YEAR),
-        month ?: Calendar.getInstance().get(Calendar.MONTH),
-        day ?: Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-    ).show()
 }
 
 @Composable
