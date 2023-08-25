@@ -232,12 +232,13 @@ fun SelectHistoryScreen(
         }
     }
 
-    selectedState.value?.let { runningHistory ->
+    selectedState.value.let { runningHistory ->
         Box(modifier = Modifier.fillMaxSize().padding(20.dp)) {
             Button(
+                enabled = runningHistory != null,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth().height(48.dp).align(Alignment.BottomCenter),
-                onClick = { onHistorySelected(runningHistory) },
+                onClick = { onHistorySelected(requireNotNull(runningHistory)) },
                 colors = buttonColors(containerColor = WalkieColor.Primary),
             ) {
                 Text(text = "선택", color = Color.White)
