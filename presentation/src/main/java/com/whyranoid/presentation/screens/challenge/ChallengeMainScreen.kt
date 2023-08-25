@@ -178,7 +178,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
-                    text = "인기",
+                    text = "인기 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
@@ -222,7 +222,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
-                    text = "유형",
+                    text = "유형별 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
@@ -236,7 +236,7 @@ fun ChallengeMainContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = 40.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     ChallengeType.values().forEachIndexed { page, challengeType ->
