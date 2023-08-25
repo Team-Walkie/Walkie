@@ -141,7 +141,6 @@ fun ChallengeMainContent(
                             ChallengingItem(
                                 text = it.title,
                                 progress = it.progress!!,
-                                imageUrl = it.badgeImageUrl,
                                 challengeColor = it.type.getColor(),
                             ) {
                                 onChallengeItemClicked(it, true)
