@@ -476,11 +476,19 @@ fun RunningInfoScreen(
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     if (state.editState.getDataOrNull() == true) {
-        GalleryGrid(
-            column = 3,
-            modifier = modifier
-                .background(Color.White),
-        ) { uri -> onSelectImage(uri) }
+        Column {
+            Box(
+                modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(text = "앨범", style = WalkieTypography.SubTitle)
+            }
+            GalleryGrid(
+                column = 3,
+                modifier = modifier
+                    .background(Color.White),
+            ) { uri -> onSelectImage(uri) }
+        }
         return
     }
     Column(
