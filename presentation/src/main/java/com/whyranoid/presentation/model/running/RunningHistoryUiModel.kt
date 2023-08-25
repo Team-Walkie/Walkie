@@ -27,18 +27,23 @@ fun RunningHistory.toRunningHistoryUiModel(context: Context): RunningHistoryUiMo
         this.finishedAt,
         if (bitmap == null) {
             null
-        } else if (Build.VERSION.SDK_INT >= 28) {
-            ImageDecoder.decodeBitmap(
-                ImageDecoder.createSource(
-                    context.contentResolver,
-                    Uri.parse(bitmap),
-                ),
-            )
         } else {
-            MediaStore.Images.Media.getBitmap(
-                context.contentResolver,
-                Uri.parse(bitmap),
-            )
+            val result = kotlin.runCatching {
+                if (Build.VERSION.SDK_INT >= 28) {
+                    ImageDecoder.decodeBitmap(
+                        ImageDecoder.createSource(
+                            context.contentResolver,
+                            Uri.parse(bitmap),
+                        ),
+                    )
+                } else {
+                    MediaStore.Images.Media.getBitmap(
+                        context.contentResolver,
+                        Uri.parse(bitmap),
+                    )
+                }
+            }
+            result.getOrNull()
         },
         this.runningData.distance,
         this.runningData.pace,
