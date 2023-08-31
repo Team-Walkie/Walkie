@@ -139,7 +139,7 @@ class RunningWorker(
         const val WORKER_NAME = "RunningWorker"
         const val NOTIFICATION_ID = 2000
         const val CHANNEL_ID = "Walkie Channel"
-        const val UPDATE_INTERVAL_MS = 2000L
+        const val UPDATE_INTERVAL_MS = 1000L
     }
 }
 
