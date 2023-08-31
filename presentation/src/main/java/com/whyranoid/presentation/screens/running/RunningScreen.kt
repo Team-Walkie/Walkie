@@ -295,6 +295,8 @@ fun RunningMapScreen(
                     LocationOverlay(
                         position = LatLng(location),
                         icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
+                        circleOutlineWidth = 2.dp,
+                        circleOutlineColor = Color.White,
                     )
                 }
             }
@@ -305,6 +307,8 @@ fun RunningMapScreen(
                     LocationOverlay(
                         position = LatLng(location),
                         icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
+                        circleOutlineWidth = 2.dp,
+                        circleOutlineColor = Color.White,
                     )
                 }
 
