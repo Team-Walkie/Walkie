@@ -19,10 +19,12 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val locationRequest =
         LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L).build()
-    private lateinit var locationCallback: LocationCallback
+    private var locationCallback: LocationCallback? = null
 
     override val userLocationState: MutableStateFlow<UserLocation> =
         MutableStateFlow(UserLocation.NotTracking)
+
+    private var isTrackingUserLocation = true
 
     override suspend fun startRunning() {
     }
@@ -40,13 +42,16 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
     }
 
     override fun listenLocation() {
+        isTrackingUserLocation = true
         if (userLocationState.value is UserLocation.Tracking) return
         if ((runningDataManager.runningState.value is RunningState.NotRunning).not()) return
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { location ->
-                    userLocationState.value =
-                        UserLocation.Tracking(location.latitude, location.longitude)
+                    if (isTrackingUserLocation) {
+                        userLocationState.value =
+                            UserLocation.Tracking(location.latitude, location.longitude)
+                    }
                 } ?: run {
                     removeListener()
                 }
@@ -55,7 +60,7 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
         try {
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
-                locationCallback,
+                requireNotNull(locationCallback),
                 Looper.getMainLooper(),
             )
         } catch (e: SecurityException) {
@@ -66,7 +71,10 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
     }
 
     override fun removeListener() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        isTrackingUserLocation = false
+        userLocationState.value = UserLocation.NotTracking
+        fusedLocationClient.removeLocationUpdates(requireNotNull(locationCallback))
+        locationCallback = null
     }
 
     override fun removeUserLocation() {

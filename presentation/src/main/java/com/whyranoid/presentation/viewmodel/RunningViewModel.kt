@@ -75,9 +75,6 @@ class RunningViewModel(
         }
         viewModelScope.launch {
             runningDataManager.runningState.collect { runningState ->
-                if (runningState.runningData.lastLocation != null) {
-                    runningRepository.removeUserLocation()
-                }
                 intent {
                     reduce {
                         val runningInfo =
