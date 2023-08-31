@@ -40,6 +40,7 @@ import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
+import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
@@ -70,6 +71,7 @@ val viewModelModule = module {
     factory { SplashViewModel(get()) }
     factory { SignInViewModel(get()) }
     factory { SelectHistoryViewModel(get()) }
+    factory { EditProfileViewModel(get()) }
 }
 
 val repositoryModule = module {

@@ -14,6 +14,8 @@ class AccountRepositoryImpl(
 
     override val authId: Flow<String?> = accountDataStore.authId
     override val uId: Flow<Long?> = accountDataStore.uId
+    override val userName: Flow<String?> = accountDataStore.userName
+    override val nickName: Flow<String?> = accountDataStore.nickName
 
     // TODO API Call
     override suspend fun signUp(
