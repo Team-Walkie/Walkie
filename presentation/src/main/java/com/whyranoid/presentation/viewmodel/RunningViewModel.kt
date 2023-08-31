@@ -53,6 +53,8 @@ class RunningViewModel(
     private val runningHistoryRepository: RunningHistoryRepository,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
 
+    private var savedHistory: List<List<com.whyranoid.runningdata.model.RunningPosition>>? = null
+
     private val runningDataManager = RunningDataManager.getInstance()
     var startWorker: (() -> Unit)? = null
 
@@ -194,6 +196,8 @@ class RunningViewModel(
     }
 
     fun saveHistory(bitmap: Bitmap, finishData: RunningFinishData) {
+        if (savedHistory == finishData.runningPositionList) return
+        savedHistory = finishData.runningPositionList
         intent {
             runningHistoryRepository.saveRunningHistory(
                 RunningHistory(
