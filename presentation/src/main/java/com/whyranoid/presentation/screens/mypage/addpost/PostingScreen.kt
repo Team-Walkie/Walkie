@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -70,27 +71,20 @@ import java.util.*
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun PostingScreen(runningHistory: RunningHistory) {
-    var textVisibleState by remember { mutableStateOf(true) }
+    var textVisibleState by remember { mutableStateOf(TEXTVISIBLESTATE.WHITE) }
     var photoEditState by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         verticalArrangement = Arrangement.Top,
     ) {
         Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 20.dp),
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 20.dp),
         ) {
             Text(
                 style = WalkieTypography.Title,
                 text = "새 게시물",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(bottom = 24.dp),
+                modifier = Modifier.align(Alignment.Center).padding(bottom = 24.dp),
             )
         }
 
@@ -103,12 +97,8 @@ fun PostingScreen(runningHistory: RunningHistory) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
-                            .weight(1f)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(WalkieColor.GrayDefault),
+                        modifier = Modifier.padding(bottom = 12.dp).weight(1f).height(40.dp)
+                            .clip(RoundedCornerShape(12.dp)).background(WalkieColor.GrayDefault),
                     ) {
                         Text(text = it, style = WalkieTypography.SubTitle)
                     }
@@ -122,33 +112,28 @@ fun PostingScreen(runningHistory: RunningHistory) {
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .align(Alignment.End)
-                .wrapContentSize(),
+            modifier = Modifier.padding(horizontal = 20.dp).align(Alignment.End).wrapContentSize(),
         ) {
             if (photoEditState) {
                 Text("앨범", style = WalkieTypography.SubTitle)
                 Spacer(Modifier.weight(1f))
             }
             Icon(
-                modifier = Modifier
-                    .clickable {
-                        textVisibleState = textVisibleState.not()
+                modifier = Modifier.clickable {
+                    textVisibleState = when (textVisibleState) {
+                        TEXTVISIBLESTATE.WHITE -> TEXTVISIBLESTATE.BLACK
+                        TEXTVISIBLESTATE.BLACK -> TEXTVISIBLESTATE.HIDE
+                        TEXTVISIBLESTATE.HIDE -> TEXTVISIBLESTATE.WHITE
                     }
-                    .size(48.dp)
-                    .padding(12.dp),
+                }.size(48.dp).clip(CircleShape).padding(12.dp),
                 painter = painterResource(id = R.drawable.ic_timer),
                 contentDescription = "textVisible",
                 tint = WalkieColor.GrayDefault,
             )
             Icon(
-                modifier = Modifier
-                    .clickable {
-                        photoEditState = photoEditState.not()
-                    }
-                    .size(48.dp)
-                    .padding(12.dp),
+                modifier = Modifier.clickable {
+                    photoEditState = photoEditState.not()
+                }.size(48.dp).clip(CircleShape).padding(12.dp),
                 painter = painterResource(id = R.drawable.ic_gallery),
                 contentDescription = "gallery",
                 tint = WalkieColor.GrayDefault,
@@ -166,13 +151,9 @@ fun PostingScreen(runningHistory: RunningHistory) {
             BasicTextField(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-                    .height(92.dp)
+                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth().height(92.dp)
                     .background(Color.White)
-                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp))
-                    .padding(8.dp),
+                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)).padding(8.dp),
                 value = text,
                 onValueChange = {
                     text = it
@@ -184,16 +165,12 @@ fun PostingScreen(runningHistory: RunningHistory) {
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
+        modifier = Modifier.fillMaxSize().padding(20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Button(
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
+            modifier = Modifier.fillMaxWidth().height(48.dp),
             onClick = {
                 if (photoEditState) {
                     photoEditState = false
@@ -213,7 +190,7 @@ fun PostingScreen(runningHistory: RunningHistory) {
 @Composable
 fun Map(
     runningHistory: RunningHistory,
-    textVisibleState: Boolean,
+    textVisibleState: TEXTVISIBLESTATE,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
@@ -261,9 +238,7 @@ fun Map(
 
     Box {
         NaverMap(
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .aspectRatio(1f),
+            modifier = Modifier.padding(horizontal = 20.dp).aspectRatio(1f),
             cameraPositionState = cameraPositionState,
             uiSettings = mapUiSettings,
             properties = mapProperties,
@@ -289,20 +264,19 @@ fun Map(
             }
         }
 
-        Text(
-            text = SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt)),
-            modifier = Modifier.padding(top = 12.dp).align(Alignment.TopCenter),
-            style = WalkieTypography.Body2,
-        )
-
         // 지도 하단 정보
-        if (textVisibleState) {
+        if (textVisibleState != TEXTVISIBLESTATE.HIDE) {
+            val textColor = if (textVisibleState == TEXTVISIBLESTATE.WHITE) Color.White else Color.Black
+
+            Text(
+                text = SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt)),
+                modifier = Modifier.padding(top = 12.dp).align(Alignment.TopCenter),
+                style = WalkieTypography.Body2.copy(color = textColor),
+            )
+
             Row(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 12.dp)
+                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()
+                    .align(Alignment.BottomCenter).padding(bottom = 12.dp)
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -313,10 +287,14 @@ fun Map(
                 ).forEach {
                     Text(
                         it,
-                        style = WalkieTypography.Title,
+                        style = WalkieTypography.Title.copy(color = textColor),
                     )
                 }
             }
         }
     }
+}
+
+enum class TEXTVISIBLESTATE {
+    WHITE, BLACK, HIDE
 }
