@@ -50,7 +50,7 @@ fun EditProfileScreen(navController: NavController) {
     val name = viewModel.name.collectAsStateWithLifecycle(initialValue = "")
     val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = "")
 
-    EditProfileContent(name = name.value ?: "null", nick = nick.value ?: "null") {
+    EditProfileContent(name = name.value.orEmpty(), nick = nick.value.orEmpty()) {
         navController.popBackStack()
     }
 }
