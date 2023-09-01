@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.reusable.CheckableCustomTextField
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -47,8 +48,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val viewModel = koinViewModel<EditProfileViewModel>()
-    val name = viewModel.name.collectAsStateWithLifecycle(initialValue = "")
-    val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = "")
+    val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
+    val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
 
     EditProfileContent(name = name.value.orEmpty(), nick = nick.value.orEmpty()) {
         navController.popBackStack()
