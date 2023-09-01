@@ -136,7 +136,7 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                             viewModel.setUserNameState(
                                 userNameState.copy(
                                     year = year,
-                                    month = month,
+                                    month = month + 1,
                                     day = day,
                                 ),
                             )

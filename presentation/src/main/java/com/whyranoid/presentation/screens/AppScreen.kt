@@ -40,11 +40,14 @@ import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
-import com.whyranoid.presentation.screens.mypage.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
+import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
+import com.whyranoid.presentation.screens.signin.SignInScreen
+import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -87,11 +90,11 @@ fun AppScreen(startWorker: () -> Unit) {
     val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
     AppScreenContent(startWorker, navController)
     // TODO Splash 적용
-//    when (splashState.value) {
-//        SplashState.InitialState -> SplashScreen()
-//        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
-//        SplashState.SignedInState -> AppScreenContent(startWorker, navController)
-//    }
+    when (splashState.value) {
+        SplashState.InitialState -> SplashScreen()
+        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
+        SplashState.SignedInState -> AppScreenContent(startWorker, navController)
+    }
 }
 
 @Composable

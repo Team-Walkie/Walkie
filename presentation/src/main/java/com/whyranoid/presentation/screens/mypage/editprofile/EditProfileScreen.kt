@@ -1,4 +1,4 @@
-package com.whyranoid.presentation.screens.mypage
+package com.whyranoid.presentation.screens.mypage.editprofile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +22,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,19 +34,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.reusable.CheckableCustomTextField
+import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun EditProfileScreen(name: String = "", nick: String = "", navController: NavController) {
-    EditProfileContent(name = name, nick = nick) {
+fun EditProfileScreen(navController: NavController) {
+    val viewModel = koinViewModel<EditProfileViewModel>()
+    val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
+    val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
+
+    EditProfileContent(name = name.value.orEmpty(), nick = nick.value.orEmpty()) {
         navController.popBackStack()
     }
 }
 
+// TODO API 연결
 @Composable
 fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
     Column(
@@ -118,17 +130,14 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
 
         Text(
             modifier = Modifier.align(Alignment.Start),
-            text = "이름 변경",
+            text = "이름",
             fontWeight = WalkieTypography.Title.fontWeight,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        var nameText by rememberSaveable { mutableStateOf(name) }
-
-        CheckableCustomTextField(
-            text = nameText,
-            onTextChanged = { text -> nameText = text },
+        Box(
+            contentAlignment = Alignment.CenterStart,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(34.dp)
@@ -136,15 +145,13 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
                     Color(0xFFEEEEEE),
                     RoundedCornerShape(10.dp),
                 ),
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit Icon",
-                    tint = Color(0xFF989898),
-                )
-            },
-            placeholderText = "이름",
-        )
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = name,
+                style = TextStyle.Default.copy(color = WalkieColor.GrayDefault),
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -156,9 +163,12 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TODO 임시로 만든 변수, viewModel, uiState로 관리하도록 변경 필요(139, 171 line)
         var nickCheckState: Boolean? by rememberSaveable { mutableStateOf(null) }
-        var nickName by rememberSaveable { mutableStateOf(nick) }
+        var nickName by remember { mutableStateOf(nick) }
+
+        LaunchedEffect(key1 = nick) {
+            nickName = nick
+        }
 
         CheckableCustomTextField(
             text = nickName,
@@ -177,7 +187,6 @@ fun EditProfileContent(name: String, nick: String, onCloseClicked: () -> Unit) {
                     tint = Color(0xFF989898),
                 )
             },
-            placeholderText = "닉네임",
             checkButton = { text ->
                 Text(
                     text = "확인",
