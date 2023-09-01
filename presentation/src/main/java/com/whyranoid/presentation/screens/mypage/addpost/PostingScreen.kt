@@ -71,7 +71,7 @@ import java.util.*
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun PostingScreen(runningHistory: RunningHistory) {
-    var textVisibleState by remember { mutableStateOf(TEXTVISIBLESTATE.WHITE) }
+    var textVisibleState by remember { mutableStateOf(TextVisibleState.WHITE) }
     var photoEditState by remember { mutableStateOf(false) }
 
     Column(
@@ -121,9 +121,9 @@ fun PostingScreen(runningHistory: RunningHistory) {
             Icon(
                 modifier = Modifier.clickable {
                     textVisibleState = when (textVisibleState) {
-                        TEXTVISIBLESTATE.WHITE -> TEXTVISIBLESTATE.BLACK
-                        TEXTVISIBLESTATE.BLACK -> TEXTVISIBLESTATE.HIDE
-                        TEXTVISIBLESTATE.HIDE -> TEXTVISIBLESTATE.WHITE
+                        TextVisibleState.WHITE -> TextVisibleState.BLACK
+                        TextVisibleState.BLACK -> TextVisibleState.HIDE
+                        TextVisibleState.HIDE -> TextVisibleState.WHITE
                     }
                 }.size(48.dp).clip(CircleShape).padding(12.dp),
                 painter = painterResource(id = R.drawable.ic_timer),
@@ -190,7 +190,7 @@ fun PostingScreen(runningHistory: RunningHistory) {
 @Composable
 fun Map(
     runningHistory: RunningHistory,
-    textVisibleState: TEXTVISIBLESTATE,
+    textVisibleState: TextVisibleState,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
@@ -265,8 +265,8 @@ fun Map(
         }
 
         // 지도 하단 정보
-        if (textVisibleState != TEXTVISIBLESTATE.HIDE) {
-            val textColor = if (textVisibleState == TEXTVISIBLESTATE.WHITE) Color.White else Color.Black
+        if (textVisibleState != TextVisibleState.HIDE) {
+            val textColor = if (textVisibleState == TextVisibleState.WHITE) Color.White else Color.Black
 
             Text(
                 text = SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt)),
@@ -295,6 +295,6 @@ fun Map(
     }
 }
 
-enum class TEXTVISIBLESTATE {
+enum class TextVisibleState {
     WHITE, BLACK, HIDE
 }
