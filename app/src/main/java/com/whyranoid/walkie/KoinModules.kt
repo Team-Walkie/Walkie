@@ -38,7 +38,6 @@ import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
-import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
 import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
@@ -58,7 +57,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 val viewModelModule = module {
@@ -66,7 +64,7 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get(), get()) }
-    factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { RunningViewModel(get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
     factory { SignInViewModel(get()) }
@@ -101,7 +99,6 @@ val useCaseModule = module {
     single { GetUserDetailUseCase(get()) }
     single { GetRunningFollowerUseCase() }
     single { RunningFinishUseCase() }
-    single { RunningPauseOrResumeUseCase() }
     single { RunningStartUseCase() }
     single { SignOutUseCase(get()) }
 }
