@@ -1,4 +1,4 @@
-package com.whyranoid.presentation.viewmodel
+package com.whyranoid.presentation.viewmodel.challenge
 
 import androidx.lifecycle.ViewModel
 import com.whyranoid.domain.model.challenge.Challenge
