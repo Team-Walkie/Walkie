@@ -76,6 +76,13 @@ sealed class Screen(
         ),
     )
 
+    object ChallengeCompleteScreen : Screen(
+        route = "challengeComplete/{challengeId}",
+        arguments = listOf(
+            navArgument("challengeId") { type = NavType.LongType },
+        ),
+    )
+
     companion object {
         val bottomNavigationItems = listOf(Running, Community, ChallengeMainScreen, MyPage)
     }
