@@ -16,32 +16,32 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
     override suspend fun unfollow(followerId: Long, followedId: Long): Result<Long> {
         return kotlin.runCatching {
             val request = FollowRequest(followerId, followedId, true)
-            val response = followService.follow(request)
+            val response = followService.unfollow(request)
             requireNotNull(response.body()).followedId
         }
     }
 
-    override suspend fun getWalkingFollowings(uid: Long): Result<List<User>> {
+    override suspend fun getWalkingFollowingList(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getWalkingFollowings(uid).body()).list
+            val list = requireNotNull(followService.getWalkingFollowingList(uid).body()).list
             list.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }
         }
     }
 
-    override suspend fun getFollowings(uid: Long): Result<List<User>> {
+    override suspend fun getFollowingList(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getFollowings(uid).body()).list
+            val list = requireNotNull(followService.getFollowingList(uid).body()).list
             list.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }
         }
     }
 
-    override suspend fun getFollowers(uid: Long): Result<List<User>> {
+    override suspend fun getFollowerList(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getFollowers(uid).body()).list
+            val list = requireNotNull(followService.getFollowerList(uid).body()).list
             list.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }

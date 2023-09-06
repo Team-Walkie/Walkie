@@ -19,17 +19,17 @@ interface FollowService {
     ): Response<FollowResponse>
 
     @GET(API.WALKING_FOLLOWING)
-    suspend fun getWalkingFollowings(
+    suspend fun getWalkingFollowingList(
         @Path("uid") uid: Long,
     ): Response<FollowersResponse>
 
     @GET(API.FOLLOWINGS)
-    suspend fun getFollowings(
+    suspend fun getFollowingList(
         @Path("uid") uid: Long,
     ): Response<FollowersResponse>
 
     @GET(API.FOLLOWERS)
-    suspend fun getFollowers(
+    suspend fun getFollowerList(
         @Path("uid") uid: Long,
     ): Response<FollowersResponse>
 

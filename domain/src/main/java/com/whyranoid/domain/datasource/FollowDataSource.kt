@@ -7,9 +7,9 @@ interface FollowDataSource {
 
     suspend fun unfollow(followerId: Long, followedId: Long): Result<Long>
 
-    suspend fun getWalkingFollowings(uid: Long): Result<List<User>>
+    suspend fun getWalkingFollowingList(uid: Long): Result<List<User>>
 
-    suspend fun getFollowings(uid: Long): Result<List<User>>
+    suspend fun getFollowingList(uid: Long): Result<List<User>>
 
-    suspend fun getFollowers(uid: Long): Result<List<User>>
+    suspend fun getFollowerList(uid: Long): Result<List<User>>
 }
