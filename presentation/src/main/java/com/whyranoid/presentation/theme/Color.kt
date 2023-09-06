@@ -10,6 +10,7 @@ object WalkieColor {
     val Tertiary = Color(0xFFFAC03A)
     val GrayDisable = Color(0xFFECECEC)
     val GrayDefault = Color(0xFFD9D9D9)
+    val GrayBorder = Color(0xFFB9BBB8)
 }
 
 object SystemColor {

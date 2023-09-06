@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.component.community
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -23,14 +24,22 @@ fun RunningFollowerItem() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        AsyncImage(
-            model = "https://picsum.photos/250/250 ", contentDescription = "달리고 있는 친구의 프로필 이미지",
+        Box(
             modifier = Modifier
-                .size(65.dp)
-                .border(1.dp, WalkieColor.Primary, CircleShape)
+                .size(76.dp)
+                .border(2.dp, WalkieColor.Primary, CircleShape)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = "https://picsum.photos/250/250 ", contentDescription = "달리고 있는 친구의 프로필 이미지",
+                modifier = Modifier
+                    .size(65.dp)
+                    .border(0.5.dp, WalkieColor.GrayBorder, CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Spacer(modifier = Modifier.size(2.dp))
 
