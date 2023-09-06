@@ -23,8 +23,9 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
 
     override suspend fun getWalkingFollowings(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getWalkingFollowings(uid).body()).list
-            list.map {
+            val response = followService.getWalkingFollowings(uid)
+            val followingList = requireNotNull(response.body()).list
+            followingList.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }
         }
@@ -32,8 +33,9 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
 
     override suspend fun getFollowings(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getFollowings(uid).body()).list
-            list.map {
+            val response = followService.getFollowings(uid)
+            val followingList = requireNotNull(response.body()).list
+            followingList.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }
         }
@@ -41,8 +43,9 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
 
     override suspend fun getFollowers(uid: Long): Result<List<User>> {
         return kotlin.runCatching {
-            val list = requireNotNull(followService.getFollowers(uid).body()).list
-            list.map {
+            val response = followService.getFollowers(uid)
+            val followerList = requireNotNull(response.body()).list
+            followerList.map {
                 User(it.walkieId, "name", it.nickname, it.profileImg)
             }
         }
