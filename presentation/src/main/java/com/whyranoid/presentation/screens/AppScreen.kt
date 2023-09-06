@@ -37,6 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
+import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
@@ -190,6 +191,15 @@ fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) 
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
                 ChallengeExitScreen(navController, challengeId)
+            }
+
+            composable(
+                Screen.ChallengeCompleteScreen.route,
+                Screen.ChallengeCompleteScreen.arguments,
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val challengeId = arguments.getLong("challengeId")
+                ChallengeCompleteScreen(navController, challengeId)
             }
         }
     }

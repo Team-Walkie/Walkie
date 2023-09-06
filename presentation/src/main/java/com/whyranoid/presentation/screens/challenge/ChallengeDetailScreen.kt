@@ -46,8 +46,8 @@ import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.SystemColor
 import com.whyranoid.presentation.theme.WalkieTypography
-import com.whyranoid.presentation.viewmodel.ChallengeDetailState
-import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailState
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState

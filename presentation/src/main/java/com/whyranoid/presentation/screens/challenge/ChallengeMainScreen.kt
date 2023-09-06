@@ -38,8 +38,8 @@ import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.ChallengeColor.getColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.chunkedList
-import com.whyranoid.presentation.viewmodel.ChallengeMainState
-import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainState
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState

@@ -29,8 +29,8 @@ import com.whyranoid.presentation.component.button.WalkieNegativeButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.WalkieTypography
-import com.whyranoid.presentation.viewmodel.ChallengeExitState
-import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitState
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
