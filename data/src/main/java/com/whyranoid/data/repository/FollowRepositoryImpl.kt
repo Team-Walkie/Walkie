@@ -14,14 +14,14 @@ class FollowRepositoryImpl(private val followDataSource: FollowDataSource) : Fol
     }
 
     override suspend fun getWalkingFollowings(uid: Long): Result<List<User>> {
-        return followDataSource.getWalkingFollowingList(uid)
+        return followDataSource.getWalkingFollowings(uid)
     }
 
     override suspend fun getFollowings(uid: Long): Result<List<User>> {
-        return followDataSource.getFollowingList(uid)
+        return followDataSource.getFollowings(uid)
     }
 
     override suspend fun getFollowers(uid: Long): Result<List<User>> {
-        return followDataSource.getFollowerList(uid)
+        return followDataSource.getFollowers(uid)
     }
 }
