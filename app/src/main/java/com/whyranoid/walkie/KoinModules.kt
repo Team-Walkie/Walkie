@@ -44,10 +44,10 @@ import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
-import com.whyranoid.presentation.viewmodel.ChallengeDetailViewModel
-import com.whyranoid.presentation.viewmodel.ChallengeExitViewModel
-import com.whyranoid.presentation.viewmodel.ChallengeMainViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
