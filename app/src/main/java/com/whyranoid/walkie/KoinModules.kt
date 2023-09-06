@@ -11,18 +11,23 @@ import com.whyranoid.data.datasource.PostDataSourceImpl
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
+import com.whyranoid.data.datasource.follow.FollowDataSourceImpl
+import com.whyranoid.data.datasource.follow.FollowService
 import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
+import com.whyranoid.data.repository.FollowRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
 import com.whyranoid.data.repository.RunningHistoryRepositoryImpl
 import com.whyranoid.data.repository.RunningRepositoryImpl
 import com.whyranoid.data.repository.UserRepositoryImpl
 import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.datasource.ChallengeDataSource
+import com.whyranoid.domain.datasource.FollowDataSource
 import com.whyranoid.domain.datasource.PostDataSource
 import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
+import com.whyranoid.domain.repository.FollowRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
@@ -38,7 +43,6 @@ import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
-import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
@@ -65,7 +69,7 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get(), get()) }
-    factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { RunningViewModel(get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
     factory { SignInViewModel(get()) }
@@ -80,6 +84,7 @@ val repositoryModule = module {
     single<RunningRepository> { RunningRepositoryImpl(get()) }
     single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
     single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
+    single<FollowRepository> { FollowRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {
@@ -87,6 +92,7 @@ val dataSourceModule = module {
     single<PostDataSource> { PostDataSourceImpl() }
     single<UserDataSource> { UserDataSourceImpl(get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
+    single<FollowDataSource> { FollowDataSourceImpl(get()) }
 }
 
 val useCaseModule = module {
@@ -100,7 +106,6 @@ val useCaseModule = module {
     single { GetUserDetailUseCase(get()) }
     single { GetRunningFollowerUseCase() }
     single { RunningFinishUseCase() }
-    single { RunningPauseOrResumeUseCase() }
     single { RunningStartUseCase() }
     single { SignOutUseCase(get()) }
 }
@@ -164,4 +169,6 @@ val networkModule = module {
     single {
         get<Retrofit>().create(AccountService::class.java)
     }
+
+    single { get<Retrofit>().create(FollowService::class.java) }
 }

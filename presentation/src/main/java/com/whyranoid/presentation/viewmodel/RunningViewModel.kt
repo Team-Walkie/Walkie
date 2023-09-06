@@ -12,7 +12,6 @@ import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
-import com.whyranoid.domain.usecase.running.RunningPauseOrResumeUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.presentation.model.UiState
 import com.whyranoid.presentation.model.running.RunningFollower
@@ -46,7 +45,6 @@ data class RunningScreenState(
 
 class RunningViewModel(
     val runningStartUseCase: RunningStartUseCase,
-    val runningPauseOrResumeUseCase: RunningPauseOrResumeUseCase,
     val runningFinishUseCase: RunningFinishUseCase,
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
     private val runningRepository: RunningRepository,
