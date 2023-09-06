@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.component.community
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,14 +29,22 @@ fun PostProfileItem() {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        AsyncImage(
-            model = "https://picsum.photos/250/250 ", contentDescription = "내 프로필 이미지",
+        Box(
             modifier = Modifier
-                .size(24.dp)
+                .size(27.dp)
                 .border(1.dp, WalkieColor.Primary, CircleShape)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = "https://picsum.photos/250/250 ", contentDescription = "내 프로필 이미지",
+                modifier = Modifier
+                    .size(24.dp)
+                    .border(0.5.dp, WalkieColor.GrayBorder, CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
         Spacer(modifier = Modifier.size(11.dp))
         Column {
             Text(
