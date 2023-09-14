@@ -26,9 +26,8 @@ import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
 fun CommunityScreen(
-    navController: NavController
+    navController: NavController,
 ) {
-
     Scaffold(
         topBar = {
             WalkieTopBar(
@@ -44,9 +43,9 @@ fun CommunityScreen(
                         Icon(
                             modifier = Modifier
                                 .clickable {
-
                                 },
-                            imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "Down Arrow"
+                            imageVector = Icons.Filled.KeyboardArrowDown,
+                            contentDescription = "Down Arrow",
                         )
                     }
                 },
@@ -55,9 +54,9 @@ fun CommunityScreen(
                         Icon(
                             modifier = Modifier
                                 .clickable {
-
                                 },
-                            imageVector = Icons.Filled.Add, contentDescription = "추가 버튼"
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "추가 버튼",
                         )
 
                         Spacer(modifier = Modifier.width(16.dp))
@@ -65,21 +64,18 @@ fun CommunityScreen(
                         Icon(
                             modifier = Modifier
                                 .clickable {
-
                                 },
-                            imageVector = Icons.Filled.Search, contentDescription = "검색 버튼"
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "검색 버튼",
                         )
                     }
-
                 },
             )
         },
     ) {
-
         LazyColumn(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
         ) {
-
             item {
                 LazyRow {
                     repeat(10) {
@@ -95,7 +91,4 @@ fun CommunityScreen(
             }
         }
     }
-
 }
-
-
