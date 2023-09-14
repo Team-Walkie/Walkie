@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -74,7 +73,6 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
-import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.presentation.reusable.CircleProgressWithText
@@ -294,7 +292,7 @@ fun RunningMapScreen(
                     }
                     LocationOverlay(
                         position = LatLng(location),
-                        icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
+                        // icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
                         circleOutlineWidth = 2.dp,
                         circleOutlineColor = Color.White,
                     )
@@ -306,7 +304,7 @@ fun RunningMapScreen(
                 it.runningData.lastLocation?.let { location ->
                     LocationOverlay(
                         position = LatLng(location),
-                        icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
+                        // icon = OverlayImage.fromResource(R.drawable.ic_running_screen_selected),
                         circleOutlineWidth = 2.dp,
                         circleOutlineColor = Color.White,
                     )
@@ -451,13 +449,20 @@ fun RunningMapScreen(
                                         CameraUpdate.scrollTo(LatLng(location)),
                                     )
                                 }
-                            } ?: state.userLocationState.getDataOrNull()?.let { location ->
-                                if (location is UserLocation.Tracking) {
-                                    cameraPositionState.move(
-                                        CameraUpdate.scrollTo(LatLng(location.lat, location.lng)),
-                                    )
+                            } ?: state.userLocationState
+                                .getDataOrNull()
+                                ?.let { location ->
+                                    if (location is UserLocation.Tracking) {
+                                        cameraPositionState.move(
+                                            CameraUpdate.scrollTo(
+                                                LatLng(
+                                                    location.lat,
+                                                    location.lng,
+                                                ),
+                                            ),
+                                        )
+                                    }
                                 }
-                            }
                             onClickTrackingModeButton()
                         }
                         .background(Color.White)
@@ -482,7 +487,9 @@ fun RunningInfoScreen(
     if (state.editState.getDataOrNull() == true) {
         Column {
             Box(
-                modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 4.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 4.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "앨범", style = WalkieTypography.SubTitle)
@@ -506,11 +513,12 @@ fun RunningInfoScreen(
                 .fillMaxWidth()
                 .height(120.dp)
                 .padding(top = 20.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Column(
                 Modifier
                     .wrapContentHeight()
-                    .weight(0.4f),
+                    .weight(0.5f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -530,7 +538,7 @@ fun RunningInfoScreen(
                         fontSize = 20.sp,
                     )
                     Text(
-                        modifier = Modifier.padding(bottom = 4.dp),
+                        modifier = Modifier.padding(bottom = 2.dp),
                         text = "km",
                         style = WalkieTypography.Body2.copy(fontSize = 16.sp),
                     )
@@ -540,7 +548,7 @@ fun RunningInfoScreen(
             Column(
                 Modifier
                     .wrapContentHeight()
-                    .weight(0.6f),
+                    .weight(0.5f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -650,7 +658,7 @@ fun RunningBottomButton(
         if (state.editState.getDataOrNull() == true) {
             Button(
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(44.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 onClick = { onEditClose() },
@@ -667,7 +675,7 @@ fun RunningBottomButton(
                     Text(modifier = Modifier.padding(bottom = 8.dp), text = "런닝을 종료했습니다.")
                     Button(
                         modifier = Modifier
-                            .height(50.dp)
+                            .height(44.dp)
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp),
                         onClick = { onTakeSnapShot(finState) },
@@ -694,7 +702,8 @@ fun RunningBottomButton(
                     is RunningState.Paused -> {
                         Row(
                             Modifier
-                                .wrapContentSize()
+                                .height(44.dp)
+                                .wrapContentWidth()
                                 .border(
                                     width = 1.dp,
                                     color = WalkieColor.GrayDefault,
@@ -704,13 +713,18 @@ fun RunningBottomButton(
                                 .background(Color.White),
                         ) {
                             IconButton(modifier = modifier, onClick = { onResumeRunning() }) {
-                                Icon(Icons.Default.PlayArrow, contentDescription = "")
+                                Icon(
+                                    Icons.Default.PlayArrow,
+                                    contentDescription = "",
+                                    modifier = Modifier.size(20.dp),
+                                )
                             }
                             IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
                                 Icon(
                                     Icons.Default.Stop,
                                     contentDescription = "",
                                     tint = WalkieColor.Primary,
+                                    modifier = Modifier.size(20.dp),
                                 )
                             }
                         }
@@ -718,7 +732,8 @@ fun RunningBottomButton(
                     is RunningState.Running -> {
                         Row(
                             Modifier
-                                .wrapContentSize()
+                                .height(44.dp)
+                                .wrapContentWidth()
                                 .border(
                                     width = 1.dp,
                                     color = WalkieColor.GrayDefault,
@@ -728,13 +743,18 @@ fun RunningBottomButton(
                                 .background(Color.White),
                         ) {
                             IconButton(modifier = modifier, onClick = { onPauseRunning() }) {
-                                Icon(Icons.Default.Pause, contentDescription = "")
+                                Icon(
+                                    Icons.Default.Pause,
+                                    contentDescription = "",
+                                    modifier = Modifier.size(20.dp),
+                                )
                             }
                             IconButton(modifier = modifier, onClick = { onFinishRunning() }) {
                                 Icon(
                                     Icons.Default.Stop,
                                     contentDescription = "",
                                     tint = WalkieColor.Primary,
+                                    modifier = Modifier.size(20.dp),
                                 )
                             }
                         }
