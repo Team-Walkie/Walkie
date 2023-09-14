@@ -19,6 +19,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +36,7 @@ import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
+import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.ChallengeColor.getColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -75,12 +78,46 @@ fun ChallengeMainContent(
 ) {
 
     Scaffold(
-        Modifier.padding(horizontal = 20.dp)
-    ) { paddingValues ->
+        topBar = {
+            WalkieTopBar(
+                leftContent = {
+                    Text(
+                        text = "챌린지",
+                        style = WalkieTypography.Title.copy(fontWeight = FontWeight(600)),
+                    )
+                },
+                rightContent = {
+                    Row {
+                        Icon(
+                            modifier = Modifier
+                                .clickable {
 
+                                },
+                            imageVector = Icons.Filled.Search, contentDescription = "검색 버튼"
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Icon(
+                            modifier = Modifier
+                                .clickable {
+
+                                },
+                            imageVector = Icons.Filled.Menu, contentDescription = "메뉴 버튼"
+                        )
+                    }
+
+                },
+            )
+        },
+    ) { paddingValues ->
         val pagerState = rememberPagerState()
 
-        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp)
+        ) {
 
             item {
                 Spacer(modifier = Modifier.height(10.dp))
