@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -73,6 +74,7 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.presentation.component.running.RunningFollowerItemWithLikable
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.presentation.reusable.CircleProgressWithText
@@ -472,6 +474,12 @@ fun RunningMapScreen(
                     contentDescription = "",
                     tint = WalkieColor.Primary,
                 )
+            }
+
+            LazyRow {
+                repeat(10) {
+                    item { RunningFollowerItemWithLikable(onClick = { Result.success(Unit) }) }
+                }
             }
         }
     }
