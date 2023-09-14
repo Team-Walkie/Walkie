@@ -517,7 +517,7 @@ fun RunningInfoScreen(
                 Text(
                     modifier = Modifier.padding(bottom = 4.dp),
                     text = "거리",
-                    style = WalkieTypography.Caption,
+                    style = WalkieTypography.Body2,
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
@@ -527,12 +527,12 @@ fun RunningInfoScreen(
                                 ?: 0.00,
                         ),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 32.sp,
+                        fontSize = 20.sp,
                     )
                     Text(
                         modifier = Modifier.padding(bottom = 4.dp),
                         text = "km",
-                        style = WalkieTypography.Body2,
+                        style = WalkieTypography.Body2.copy(fontSize = 16.sp),
                     )
                 }
             }
@@ -547,14 +547,14 @@ fun RunningInfoScreen(
                 Text(
                     modifier = Modifier.padding(bottom = 4.dp),
                     text = "런닝시간",
-                    style = WalkieTypography.Caption,
+                    style = WalkieTypography.Body2,
                 )
                 Text(
                     text = state.runningResultInfoState.getDataOrNull()?.runningTime?.toRunningTime()
                         ?: state.runningInfoState.getDataOrNull()?.runningTime?.toRunningTime()
                         ?: "00:00:00",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 32.sp,
+                    fontSize = 20.sp,
                 )
             }
         }
@@ -574,12 +574,12 @@ fun RunningInfoScreen(
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp),
                     text = "페이스",
-                    style = WalkieTypography.Caption,
+                    style = WalkieTypography.Body2,
                 )
                 Text(
                     text = state.runningResultInfoState.getDataOrNull()?.pace?.toPace()
                         ?: state.runningInfoState.getDataOrNull()?.pace?.toPace() ?: "0`00``",
-                    style = WalkieTypography.SubTitle,
+                    style = WalkieTypography.Title,
                 )
             }
 
@@ -592,12 +592,12 @@ fun RunningInfoScreen(
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp),
                     text = "칼로리",
-                    style = WalkieTypography.Caption,
+                    style = WalkieTypography.Body2,
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = "${state.runningResultInfoState.getDataOrNull()?.calories?.toInt() ?: state.runningInfoState.getDataOrNull()?.calories?.toInt() ?: 0}",
-                        style = WalkieTypography.SubTitle,
+                        style = WalkieTypography.Title,
                     )
                     Text(
                         text = "kcal",
@@ -616,13 +616,13 @@ fun RunningInfoScreen(
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp),
                     text = "걸음수",
-                    style = WalkieTypography.Caption,
+                    style = WalkieTypography.Body2,
                 )
                 Text(
                     text = state.runningResultInfoState.getDataOrNull()?.steps?.let { it.toString() }
                         ?: state.runningInfoState.getDataOrNull()?.steps?.let { it.toString() }
                         ?: "0",
-                    style = WalkieTypography.SubTitle,
+                    style = WalkieTypography.Title,
                 )
             }
         }
@@ -684,7 +684,7 @@ fun RunningBottomButton(
                     is RunningState.NotRunning -> {
                         Button(
                             modifier = Modifier
-                                .height(50.dp)
+                                .height(44.dp)
                                 .width(160.dp),
                             onClick = onStartRunning,
                         ) {
