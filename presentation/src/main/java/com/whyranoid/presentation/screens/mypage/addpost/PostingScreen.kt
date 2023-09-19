@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.screens.mypage.addpost
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,11 +47,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapEffect
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
@@ -65,6 +70,14 @@ import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.dpToPx
 import com.whyranoid.presentation.util.toPace
 import com.whyranoid.presentation.util.toRunningTime
+import com.whyranoid.presentation.viewmodel.AddPostViewModel
+import com.whyranoid.presentation.viewmodel.TextVisibleState
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,18 +86,27 @@ import java.util.*
 fun PostingScreen(runningHistory: RunningHistory) {
     var textVisibleState by remember { mutableStateOf(TextVisibleState.WHITE) }
     var photoEditState by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+    var isUploading by rememberSaveable { mutableStateOf(IsUploading.Init) }
 
     Column(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.Top,
     ) {
         Box(
-            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 20.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(top = 20.dp),
         ) {
             Text(
                 style = WalkieTypography.Title,
                 text = "새 게시물",
-                modifier = Modifier.align(Alignment.Center).padding(bottom = 24.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(bottom = 24.dp),
             )
         }
 
@@ -97,8 +119,12 @@ fun PostingScreen(runningHistory: RunningHistory) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 12.dp).weight(1f).height(40.dp)
-                            .clip(RoundedCornerShape(12.dp)).background(WalkieColor.GrayDefault),
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .weight(1f)
+                            .height(40.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(WalkieColor.GrayDefault),
                     ) {
                         Text(text = it, style = WalkieTypography.SubTitle)
                     }
@@ -107,33 +133,44 @@ fun PostingScreen(runningHistory: RunningHistory) {
 
         var runningHistoryState by remember { mutableStateOf(runningHistory) }
 
-        Map(runningHistoryState, textVisibleState)
+        Map(runningHistoryState, textVisibleState, isUploading)
 
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 20.dp).align(Alignment.End).wrapContentSize(),
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .align(Alignment.End)
+                .wrapContentSize(),
         ) {
             if (photoEditState) {
                 Text("앨범", style = WalkieTypography.SubTitle)
                 Spacer(Modifier.weight(1f))
             }
             Icon(
-                modifier = Modifier.clickable {
-                    textVisibleState = when (textVisibleState) {
-                        TextVisibleState.WHITE -> TextVisibleState.BLACK
-                        TextVisibleState.BLACK -> TextVisibleState.HIDE
-                        TextVisibleState.HIDE -> TextVisibleState.WHITE
+                modifier = Modifier
+                    .clickable {
+                        textVisibleState = when (textVisibleState) {
+                            TextVisibleState.WHITE -> TextVisibleState.BLACK
+                            TextVisibleState.BLACK -> TextVisibleState.HIDE
+                            TextVisibleState.HIDE -> TextVisibleState.WHITE
+                        }
                     }
-                }.size(48.dp).clip(CircleShape).padding(12.dp),
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .padding(12.dp),
                 painter = painterResource(id = R.drawable.ic_timer),
                 contentDescription = "textVisible",
                 tint = WalkieColor.GrayDefault,
             )
             Icon(
-                modifier = Modifier.clickable {
-                    photoEditState = photoEditState.not()
-                }.size(48.dp).clip(CircleShape).padding(12.dp),
+                modifier = Modifier
+                    .clickable {
+                        photoEditState = photoEditState.not()
+                    }
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .padding(12.dp),
                 painter = painterResource(id = R.drawable.ic_gallery),
                 contentDescription = "gallery",
                 tint = WalkieColor.GrayDefault,
@@ -141,7 +178,6 @@ fun PostingScreen(runningHistory: RunningHistory) {
         }
 
         val focusManager = LocalFocusManager.current
-        var text by remember { mutableStateOf("") }
 
         if (photoEditState) {
             GalleryGrid(column = 3) { uri ->
@@ -151,9 +187,13 @@ fun PostingScreen(runningHistory: RunningHistory) {
             BasicTextField(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth().height(92.dp)
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth()
+                    .height(92.dp)
                     .background(Color.White)
-                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)).padding(8.dp),
+                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp))
+                    .padding(8.dp),
                 value = text,
                 onValueChange = {
                     text = it
@@ -165,17 +205,22 @@ fun PostingScreen(runningHistory: RunningHistory) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Button(
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             onClick = {
                 if (photoEditState) {
                     photoEditState = false
                 } else {
-                    // TODO 게시글 올리기
+                    // TODO
+                    isUploading = IsUploading.Uploading
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = WalkieColor.Primary),
@@ -191,10 +236,13 @@ fun PostingScreen(runningHistory: RunningHistory) {
 fun Map(
     runningHistory: RunningHistory,
     textVisibleState: TextVisibleState,
+    isUploading: IsUploading,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
     val cameraPositionState = rememberCameraPositionState()
+
+    val viewModel = koinViewModel<AddPostViewModel>()
 
     var maxLat = Double.MIN_VALUE
     var minLat = Double.MAX_VALUE
@@ -238,12 +286,49 @@ fun Map(
 
     Box {
         NaverMap(
-            modifier = Modifier.padding(horizontal = 20.dp).aspectRatio(1f),
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .aspectRatio(1f),
             cameraPositionState = cameraPositionState,
             uiSettings = mapUiSettings,
             properties = mapProperties,
             locationSource = null,
         ) {
+            val context = LocalContext.current
+            val scope = rememberCoroutineScope()
+            MapEffect(isUploading) { naverMap ->
+                if (isUploading == IsUploading.Uploading) {
+                    naverMap.takeSnapshot { bitmap ->
+                        scope.launch {
+                            val storage: File = context.cacheDir
+                            val fileName = "${System.currentTimeMillis()}.jpg"
+                            val tempFile = File(storage, fileName)
+                            try {
+                                // 자동으로 빈 파일을 생성합니다.
+                                tempFile.createNewFile()
+
+                                // 파일을 쓸 수 있는 스트림을 준비합니다.
+                                val out = FileOutputStream(tempFile)
+
+                                // compress 함수를 사용해 스트림에 비트맵을 저장합니다.
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                                viewModel.uploadPost(
+                                    "test",
+                                    textVisibleState,
+                                    "test",
+                                    tempFile.absolutePath.toUri().toString(),
+                                )
+                                out.close()
+                            } catch (e: FileNotFoundException) {
+                                Log.e("MyTag", "FileNotFoundException : " + e.message)
+                            } catch (e: IOException) {
+                                Log.e("MyTag", "IOException : " + e.message)
+                            }
+                        }
+                    }
+                }
+            }
+
             // 경로
             DrawPath(
                 runningHistoryUiModel.paths.map { list ->
@@ -256,7 +341,7 @@ fun Map(
                 },
             )
 
-            // 배경이 있는 경우
+            // 배경이 있는 경우 TODO 배경이 없는 경우
             runningHistoryUiModel.bitmap?.let { bitmap ->
                 cameraPositionState.contentBounds?.let { ll ->
                     DrawBitmap(bitmap = bitmap, ll = ll)
@@ -266,17 +351,23 @@ fun Map(
 
         // 지도 하단 정보
         if (textVisibleState != TextVisibleState.HIDE) {
-            val textColor = if (textVisibleState == TextVisibleState.WHITE) Color.White else Color.Black
+            val textColor =
+                if (textVisibleState == TextVisibleState.WHITE) Color.White else Color.Black
 
             Text(
                 text = SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt)),
-                modifier = Modifier.padding(top = 12.dp).align(Alignment.TopCenter),
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .align(Alignment.TopCenter),
                 style = WalkieTypography.Body2.copy(color = textColor),
             )
 
             Row(
-                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()
-                    .align(Alignment.BottomCenter).padding(bottom = 12.dp)
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 12.dp)
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -295,6 +386,6 @@ fun Map(
     }
 }
 
-enum class TextVisibleState {
-    WHITE, BLACK, HIDE
+enum class IsUploading {
+    Init, Uploading, Done
 }
