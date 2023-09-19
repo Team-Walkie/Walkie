@@ -14,4 +14,12 @@ interface PostRepository {
     ): Result<List<PostPreview>>
 
     suspend fun getPost(postId: Long): Result<Post>
+
+    suspend fun uploadPost(
+        uid: Long,
+        content: String,
+        colorMode: Int,
+        history: String,
+        imagePath: String,
+    ): Result<String>
 }

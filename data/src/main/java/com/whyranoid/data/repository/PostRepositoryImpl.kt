@@ -24,4 +24,14 @@ class PostRepositoryImpl(
     override suspend fun getPost(postId: Long): Result<Post> {
         return postDataSource.getPost(postId)
     }
+
+    override suspend fun uploadPost(
+        uid: Long,
+        content: String,
+        colorMode: Int,
+        history: String,
+        imagePath: String,
+    ): Result<String> {
+        return postDataSource.uploadPost(uid, content, colorMode, history, imagePath)
+    }
 }
