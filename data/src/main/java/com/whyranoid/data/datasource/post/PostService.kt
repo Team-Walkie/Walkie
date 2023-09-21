@@ -5,14 +5,12 @@ import com.whyranoid.data.model.post.UploadPostResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface PostService {
     @Multipart
-    @Headers("Content-Type: multipart/form-data")
     @POST(API.UPLOAD_POST)
     suspend fun uploadPost(
         @Part("walkieId") walkieId: RequestBody,

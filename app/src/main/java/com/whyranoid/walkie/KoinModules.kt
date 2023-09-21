@@ -136,9 +136,7 @@ val databaseModule = module {
 val networkModule = module {
     class WalkieInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val newRequest =
-                chain.request().newBuilder().header("Content-Type", "application/json")
-                    .build()
+            val newRequest = chain.request()
             return chain.proceed(newRequest)
         }
     }
