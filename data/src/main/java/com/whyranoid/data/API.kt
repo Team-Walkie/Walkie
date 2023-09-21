@@ -16,4 +16,6 @@ object API {
     const val FOLLOWERS = "api/follow/{uid}/follower"
 
     const val UNFOLLOW = "api/follow/unfollow"
+
+    const val UPLOAD_POST = "api/community/upload-post"
 }

@@ -7,12 +7,13 @@ import com.whyranoid.data.API
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
 import com.whyranoid.data.datasource.ChallengeDataSourceImpl
-import com.whyranoid.data.datasource.PostDataSourceImpl
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
 import com.whyranoid.data.datasource.follow.FollowDataSourceImpl
 import com.whyranoid.data.datasource.follow.FollowService
+import com.whyranoid.data.datasource.post.PostDataSourceImpl
+import com.whyranoid.data.datasource.post.PostService
 import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.FollowRepositoryImpl
@@ -41,19 +42,21 @@ import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
-import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
-import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
-import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
+import com.whyranoid.presentation.viewmodel.AddPostViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
 import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
 import com.whyranoid.presentation.viewmodel.SignInViewModel
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -75,6 +78,7 @@ val viewModelModule = module {
     factory { SignInViewModel(get()) }
     factory { SelectHistoryViewModel(get()) }
     factory { EditProfileViewModel(get()) }
+    factory { AddPostViewModel(get()) }
 }
 
 val repositoryModule = module {
@@ -89,7 +93,7 @@ val repositoryModule = module {
 
 val dataSourceModule = module {
     single<ChallengeDataSource> { ChallengeDataSourceImpl() }
-    single<PostDataSource> { PostDataSourceImpl() }
+    single<PostDataSource> { PostDataSourceImpl(get()) }
     single<UserDataSource> { UserDataSourceImpl(get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
     single<FollowDataSource> { FollowDataSourceImpl(get()) }
@@ -108,6 +112,7 @@ val useCaseModule = module {
     single { RunningFinishUseCase() }
     single { RunningStartUseCase() }
     single { SignOutUseCase(get()) }
+    single { UploadPostUseCase(get(), get()) }
 }
 
 val databaseModule = module {
@@ -131,9 +136,7 @@ val databaseModule = module {
 val networkModule = module {
     class WalkieInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val newRequest =
-                chain.request().newBuilder().header("Content-Type", "application/json")
-                    .build()
+            val newRequest = chain.request()
             return chain.proceed(newRequest)
         }
     }
@@ -171,4 +174,6 @@ val networkModule = module {
     }
 
     single { get<Retrofit>().create(FollowService::class.java) }
+
+    single { get<Retrofit>().create(PostService::class.java) }
 }
