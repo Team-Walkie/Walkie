@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -16,12 +17,14 @@ private val DarkColorScheme = darkColorScheme(
     primary = WalkieColor.Primary,
     secondary = WalkieColor.Secondary,
     tertiary = WalkieColor.Tertiary,
+    surface = Color.Black,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = WalkieColor.Primary,
     secondary = WalkieColor.Secondary,
     tertiary = WalkieColor.Tertiary,
+    surface = Color.White,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -50,8 +53,8 @@ fun WalkieTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = WalkieColor.GrayStatusBar.toArgb()
-            window.navigationBarColor = WalkieColor.GrayStatusBar.toArgb()
+            window.statusBarColor = colorScheme.surface.toArgb()
+            window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

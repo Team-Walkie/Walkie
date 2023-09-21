@@ -537,13 +537,14 @@ fun RunningInfoScreen(
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
+                        modifier = Modifier.padding(start = 4.dp),
                         text = "%.2f".format(
                             state.runningResultInfoState.getDataOrNull()?.distance?.div(1000.toDouble())
                                 ?: state.runningInfoState.getDataOrNull()?.distance?.div(1000.toDouble())
                                 ?: 0.00,
                         ),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
+                        fontSize = 32.sp,
                     )
                     Text(
                         modifier = Modifier.padding(bottom = 2.dp),
@@ -570,7 +571,7 @@ fun RunningInfoScreen(
                         ?: state.runningInfoState.getDataOrNull()?.runningTime?.toRunningTime()
                         ?: "00:00:00",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 32.sp,
                 )
             }
         }

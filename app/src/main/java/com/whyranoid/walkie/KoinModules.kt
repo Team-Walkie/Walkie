@@ -17,6 +17,8 @@ import com.whyranoid.data.datasource.post.PostService
 import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.FollowRepositoryImpl
+import com.whyranoid.data.repository.GpsRepositoryImpl
+import com.whyranoid.data.repository.NetworkRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
 import com.whyranoid.data.repository.RunningHistoryRepositoryImpl
 import com.whyranoid.data.repository.RunningRepositoryImpl
@@ -29,6 +31,8 @@ import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.FollowRepository
+import com.whyranoid.domain.repository.GpsRepository
+import com.whyranoid.domain.repository.NetworkRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
@@ -89,6 +93,8 @@ val repositoryModule = module {
     single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
     single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
     single<FollowRepository> { FollowRepositoryImpl(get()) }
+    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
+    single<GpsRepository> { GpsRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {
