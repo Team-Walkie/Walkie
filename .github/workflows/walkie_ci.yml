@@ -53,5 +53,5 @@ jobs:
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          groups: haha
+          groups: walkieDeveloper
           file: app/build/outputs/bundle/release/app-release.aab
