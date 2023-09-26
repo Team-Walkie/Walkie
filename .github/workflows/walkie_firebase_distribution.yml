@@ -1,10 +1,12 @@
-name: Walkie Android CI
+name: Walkie Firebase Distribution
 on:
   pull_request:
     branches: [ "main", "develop", "compose/develop" ]
+    types: [ labeled ]
 
 jobs:
   build:
+    if: ${{ github.event.label.name == 'Distribution' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,20 +32,10 @@ jobs:
       - name: Build Debug APK
         run: bash ./gradlew assembleDebug --stacktrace
 
-      - name: Assemble release build
-        run: ./gradlew bundleRelease
-
-      - name: Signing App Bundle
-        uses: r0adkll/sign-android-release@v1
+      - name: Upload artifact to firebase app distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-            releaseDirectory: app/build/outputs/bundle/release
-            signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
-            alias: ${{ secrets.KEY_ALIAS }}
-            keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-            keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - name: 테스트용 AAB artifact 업로드
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release.aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: walkieDeveloper
+          file: app/build/outputs/apk/debug/app-debug.apk
