@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.label.name == "Distribution" }}
+    if: ${{ github.event.label.name == 'Distribution' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
