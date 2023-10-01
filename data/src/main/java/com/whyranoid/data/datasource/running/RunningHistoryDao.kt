@@ -1,4 +1,4 @@
-package com.whyranoid.data.datasource.runninghistory
+package com.whyranoid.data.datasource.running
 
 import androidx.room.Dao
 import androidx.room.Insert

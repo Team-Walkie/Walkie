@@ -2,7 +2,7 @@ package com.whyranoid.data.repository
 
 import android.annotation.SuppressLint
 import com.google.gson.Gson
-import com.whyranoid.data.datasource.runninghistory.RunningHistoryDao
+import com.whyranoid.data.datasource.running.RunningHistoryDao
 import com.whyranoid.data.model.RunningHistoryEntity
 import com.whyranoid.data.model.toRunningHistory
 import com.whyranoid.domain.model.running.RunningHistory
