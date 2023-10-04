@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -137,7 +138,7 @@ fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
 
         var runningHistoryState by remember { mutableStateOf(runningHistory) }
 
-        Map(runningHistoryState, textVisibleState, isUploading.value)
+        Map(runningHistoryState, textVisibleState, isUploading.value, text)
 
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -252,12 +253,20 @@ fun Map(
     runningHistory: RunningHistory,
     textVisibleState: TextVisibleState,
     isUploading: PostUploadingState,
+    content: String,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
     val cameraPositionState = rememberCameraPositionState()
 
     val viewModel = koinViewModel<AddPostViewModel>()
+
+    val updatedContent by rememberUpdatedState(content)
+    val contentHistory = listOf(
+        "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
+        runningHistoryUiModel.totalRunningTime.toRunningTime(),
+        runningHistoryUiModel.pace.toPace(),
+    )
 
     var maxLat = Double.MIN_VALUE
     var minLat = Double.MAX_VALUE
@@ -328,9 +337,11 @@ fun Map(
                                 // compress 함수를 사용해 스트림에 비트맵을 저장합니다.
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
                                 viewModel.uploadPost(
-                                    "test",
+                                    updatedContent,
                                     textVisibleState,
-                                    "test",
+                                    "${
+                                        SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt))
+                                    }-${contentHistory.joinToString("-")}",
                                     tempFile.absolutePath.toUri().toString(),
                                 )
                                 out.close()
@@ -386,11 +397,7 @@ fun Map(
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                listOf(
-                    "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
-                    runningHistoryUiModel.totalRunningTime.toRunningTime(),
-                    runningHistoryUiModel.pace.toPace(),
-                ).forEach {
+                contentHistory.forEach {
                     Text(
                         it,
                         style = WalkieTypography.Title.copy(color = textColor),
