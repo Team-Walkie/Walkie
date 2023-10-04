@@ -36,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
@@ -64,6 +64,7 @@ import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.toRunningHistoryUiModel
+import com.whyranoid.presentation.reusable.CircleProgressWithText
 import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.screens.running.DrawBitmap
 import com.whyranoid.presentation.screens.running.DrawPath
@@ -73,6 +74,7 @@ import com.whyranoid.presentation.util.dpToPx
 import com.whyranoid.presentation.util.toPace
 import com.whyranoid.presentation.util.toRunningTime
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
+import com.whyranoid.presentation.viewmodel.PostUploadingState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
@@ -84,11 +86,12 @@ import java.util.*
 
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun PostingScreen(runningHistory: RunningHistory) {
+fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
     var textVisibleState by remember { mutableStateOf(TextVisibleState.WHITE) }
     var photoEditState by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
-    var isUploading by rememberSaveable { mutableStateOf(IsUploading.Init) }
+    val viewModel = koinViewModel<AddPostViewModel>()
+    val isUploading = viewModel.uploadingState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -134,7 +137,7 @@ fun PostingScreen(runningHistory: RunningHistory) {
 
         var runningHistoryState by remember { mutableStateOf(runningHistory) }
 
-        Map(runningHistoryState, textVisibleState, isUploading)
+        Map(runningHistoryState, textVisibleState, isUploading.value)
 
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -219,15 +222,26 @@ fun PostingScreen(runningHistory: RunningHistory) {
             onClick = {
                 if (photoEditState) {
                     photoEditState = false
-                } else {
-                    // TODO
-                    isUploading = IsUploading.Uploading
+                } else if (isUploading.value == PostUploadingState.Init) {
+                    viewModel.startUploading()
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = WalkieColor.Primary),
         ) {
             Text(text = if (photoEditState) "확인" else "올리기", color = Color.White)
         }
+    }
+
+    when (isUploading.value) {
+        PostUploadingState.Uploading -> CircleProgressWithText(text = "업로드 중")
+        PostUploadingState.Done -> {
+            // TODO
+            finish()
+        }
+        PostUploadingState.Error -> {
+            // TODO
+        }
+        else -> Unit
     }
 }
 
@@ -237,7 +251,7 @@ fun PostingScreen(runningHistory: RunningHistory) {
 fun Map(
     runningHistory: RunningHistory,
     textVisibleState: TextVisibleState,
-    isUploading: IsUploading,
+    isUploading: PostUploadingState,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
@@ -298,7 +312,7 @@ fun Map(
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
             MapEffect(isUploading) { naverMap ->
-                if (isUploading == IsUploading.Uploading) {
+                if (isUploading == PostUploadingState.Uploading) {
                     naverMap.takeSnapshot { bitmap ->
                         scope.launch {
                             val storage: File = context.cacheDir
@@ -385,8 +399,4 @@ fun Map(
             }
         }
     }
-}
-
-enum class IsUploading {
-    Init, Uploading, Done
 }

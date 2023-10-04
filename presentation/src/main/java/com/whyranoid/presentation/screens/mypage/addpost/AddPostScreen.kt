@@ -13,7 +13,7 @@ fun AddPostScreen(navController: NavHostController) {
     var selectedHistory by remember { mutableStateOf<RunningHistory?>(null) }
 
     selectedHistory?.let { runningHistory ->
-        PostingScreen(runningHistory)
+        PostingScreen(runningHistory) { navController.navigateUp() }
     } ?: run {
         SelectHistoryScreen { runningHistory ->
             selectedHistory = runningHistory
