@@ -31,6 +31,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -249,7 +250,6 @@ fun Map(
     var maxLng = Double.MIN_VALUE
     var minLng = Double.MAX_VALUE
     runningHistoryUiModel.paths.flatten().forEach { position ->
-        Log.d("cameraUpdate1", position.toString())
         maxLat = maxOf(maxLat, position.latitude)
         minLat = minOf(minLat, position.latitude)
         maxLng = maxOf(maxLng, position.longitude)
@@ -262,8 +262,9 @@ fun Map(
         ),
         100.dpToPx(LocalContext.current),
     )
-    Log.d("cameraUpdate", cameraUpdate.toString())
-    cameraPositionState.move(cameraUpdate)
+    LaunchedEffect(Unit) {
+        cameraPositionState.move(cameraUpdate)
+    }
 
     val mapUiSettings by remember {
         mutableStateOf(
