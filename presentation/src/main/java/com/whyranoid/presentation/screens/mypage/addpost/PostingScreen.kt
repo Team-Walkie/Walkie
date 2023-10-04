@@ -59,6 +59,7 @@ import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.toRunningHistoryUiModel
@@ -71,7 +72,6 @@ import com.whyranoid.presentation.util.dpToPx
 import com.whyranoid.presentation.util.toPace
 import com.whyranoid.presentation.util.toRunningTime
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
-import com.whyranoid.presentation.viewmodel.TextVisibleState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.io.File

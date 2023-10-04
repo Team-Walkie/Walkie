@@ -2,6 +2,7 @@ package com.whyranoid.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.usecase.UploadPostUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -24,8 +25,4 @@ class AddPostViewModel(private val uploadPostUseCase: UploadPostUseCase) : ViewM
             }
         }
     }
-}
-
-enum class TextVisibleState {
-    WHITE, BLACK, HIDE
 }

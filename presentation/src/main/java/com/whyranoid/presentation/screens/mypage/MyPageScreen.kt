@@ -106,6 +106,7 @@ fun MyPageContent(
 ) {
     Scaffold(
         topBar = {
+            // TODO change to WalkieTopBar()
             MyPageTopAppBar(
                 onProfileEditClicked,
                 onSettingsClicked,
