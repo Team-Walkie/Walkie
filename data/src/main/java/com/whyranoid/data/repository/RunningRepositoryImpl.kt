@@ -31,7 +31,8 @@ class RunningRepositoryImpl(
     private var isTrackingUserLocation = true
 
     // TODO API 연결 및 성공 후 WorkerStart, DataStore 를 통해 중간 실패 여부 저장
-    override suspend fun startRunning() {
+    override suspend fun startRunning(uid: Long): Result<Long> {
+        return runningControlDataSource.runningStart(uid)
     }
 
     override suspend fun pauseRunning() {
@@ -43,8 +44,8 @@ class RunningRepositoryImpl(
     }
 
     // TODO API 연결 및 성공 후 저장
-    override suspend fun finishRunning() {
-        TODO("Not yet implemented")
+    override suspend fun finishRunning(uid: Long): Result<Unit> {
+        return runningControlDataSource.runningFinish(uid)
     }
 
     override fun listenLocation() {

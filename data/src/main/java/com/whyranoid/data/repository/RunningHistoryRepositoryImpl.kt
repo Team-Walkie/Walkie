@@ -3,8 +3,8 @@ package com.whyranoid.data.repository
 import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.whyranoid.data.datasource.running.RunningHistoryDao
-import com.whyranoid.data.model.RunningHistoryEntity
-import com.whyranoid.data.model.toRunningHistory
+import com.whyranoid.data.model.running.RunningHistoryEntity
+import com.whyranoid.data.model.running.toRunningHistory
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import kotlinx.coroutines.Dispatchers

@@ -2,6 +2,7 @@ package com.whyranoid.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.running.RunningData
@@ -91,11 +92,17 @@ class RunningViewModel(
     }
 
     fun startRunning() {
-        startWorker?.invoke()
-        runningRepository.removeListener()
-        intent {
-            reduce {
-                state.copy(trackingModeState = UiState.Success(TrackingMode.FOLLOW))
+        viewModelScope.launch {
+            runningStartUseCase().onSuccess {
+                startWorker?.invoke()
+                runningRepository.removeListener()
+                intent {
+                    reduce {
+                        state.copy(trackingModeState = UiState.Success(TrackingMode.FOLLOW))
+                    }
+                }
+            }.onFailure {
+                Log.d("startRunning Failure", it.message.toString())
             }
         }
     }
@@ -115,18 +122,24 @@ class RunningViewModel(
     }
 
     fun finishRunning() {
-        intent {
-            state.runningInfoState.getDataOrNull()?.let {
-                reduce {
-                    state.copy(runningResultInfoState = UiState.Success(it))
+        viewModelScope.launch {
+            runningFinishUseCase().onSuccess {
+                intent {
+                    state.runningInfoState.getDataOrNull()?.let {
+                        reduce {
+                            state.copy(runningResultInfoState = UiState.Success(it))
+                        }
+                    }
                 }
-            }
-        }
-        runningDataManager.finishRunning().onSuccess { runningFinishData ->
-            intent {
-                reduce {
-                    state.copy(runningFinishState = UiState.Success(runningFinishData))
+                runningDataManager.finishRunning().onSuccess { runningFinishData ->
+                    intent {
+                        reduce {
+                            state.copy(runningFinishState = UiState.Success(runningFinishData))
+                        }
+                    }
                 }
+            }.onFailure {
+                Log.d("finishRunning Failure", it.message.toString())
             }
         }
     }

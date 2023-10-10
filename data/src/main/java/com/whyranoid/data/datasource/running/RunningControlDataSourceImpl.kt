@@ -1,5 +1,6 @@
 package com.whyranoid.data.datasource.running
 
+import com.whyranoid.data.model.running.RunningFinishRequest
 import com.whyranoid.data.model.running.RunningStartRequest
 import com.whyranoid.data.model.running.SendLikeRequest
 import com.whyranoid.domain.datasource.RunningControlDataSource
@@ -17,6 +18,14 @@ class RunningControlDataSourceImpl(private val runningService: RunningService) :
                         startTime = LocalDateTime.now().toString(),
                     ),
                 ).body(),
+            )
+        }
+    }
+
+    override suspend fun runningFinish(id: Long): Result<Unit> {
+        return kotlin.runCatching {
+            runningService.runningFinish(
+                RunningFinishRequest(id),
             )
         }
     }

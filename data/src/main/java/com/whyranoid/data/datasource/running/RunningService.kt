@@ -2,6 +2,7 @@ package com.whyranoid.data.datasource.running
 
 import com.whyranoid.data.API
 import com.whyranoid.data.model.running.LikeTotalResponse
+import com.whyranoid.data.model.running.RunningFinishRequest
 import com.whyranoid.data.model.running.RunningStartRequest
 import com.whyranoid.data.model.running.SendLikeRequest
 import retrofit2.Response
@@ -13,6 +14,9 @@ import retrofit2.http.Query
 interface RunningService {
     @POST(API.WalkingControl.RUNNING_START)
     suspend fun runningStart(@Body runningStartRequest: RunningStartRequest): Response<Long>
+
+    @POST(API.WalkingControl.RUNNING_FINISH)
+    suspend fun runningFinish(@Body runningFinishRequest: RunningFinishRequest): Response<Unit>
 
     @POST(API.WalkingControl.SEND_LIKE)
     suspend fun sendLike(@Body sendLikeRequest: SendLikeRequest): Response<LikeTotalResponse>

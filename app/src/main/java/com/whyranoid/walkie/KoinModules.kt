@@ -14,6 +14,8 @@ import com.whyranoid.data.datasource.follow.FollowDataSourceImpl
 import com.whyranoid.data.datasource.follow.FollowService
 import com.whyranoid.data.datasource.post.PostDataSourceImpl
 import com.whyranoid.data.datasource.post.PostService
+import com.whyranoid.data.datasource.running.RunningControlDataSourceImpl
+import com.whyranoid.data.datasource.running.RunningService
 import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.FollowRepositoryImpl
@@ -27,6 +29,7 @@ import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.datasource.FollowDataSource
 import com.whyranoid.domain.datasource.PostDataSource
+import com.whyranoid.domain.datasource.RunningControlDataSource
 import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
@@ -89,7 +92,7 @@ val repositoryModule = module {
     single<ChallengeRepository> { ChallengeRepositoryImpl(get()) }
     single<PostRepository> { PostRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
-    single<RunningRepository> { RunningRepositoryImpl(get()) }
+    single<RunningRepository> { RunningRepositoryImpl(get(), get()) }
     single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
     single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
     single<FollowRepository> { FollowRepositoryImpl(get()) }
@@ -103,6 +106,7 @@ val dataSourceModule = module {
     single<UserDataSource> { UserDataSourceImpl(get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
     single<FollowDataSource> { FollowDataSourceImpl(get()) }
+    single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
 }
 
 val useCaseModule = module {
@@ -115,8 +119,8 @@ val useCaseModule = module {
     single { GetUserBadgesUseCase(get()) }
     single { GetUserDetailUseCase(get()) }
     single { GetRunningFollowerUseCase() }
-    single { RunningFinishUseCase() }
-    single { RunningStartUseCase() }
+    single { RunningFinishUseCase(get(), get()) }
+    single { RunningStartUseCase(get(), get()) }
     single { SignOutUseCase(get()) }
     single { UploadPostUseCase(get(), get()) }
 }
@@ -182,4 +186,6 @@ val networkModule = module {
     single { get<Retrofit>().create(FollowService::class.java) }
 
     single { get<Retrofit>().create(PostService::class.java) }
+
+    single { get<Retrofit>().create(RunningService::class.java) }
 }
