@@ -87,4 +87,8 @@ class RunningRepositoryImpl(
     override fun removeUserLocation() {
         userLocationState.value = UserLocation.NotTracking
     }
+
+    override suspend fun sendLike(uid: Long, receiverId: Long): Result<Long> {
+        return runningControlDataSource.sendLike(uid, receiverId)
+    }
 }
