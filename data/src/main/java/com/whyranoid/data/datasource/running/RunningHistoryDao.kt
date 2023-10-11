@@ -1,10 +1,10 @@
-package com.whyranoid.data.datasource.runninghistory
+package com.whyranoid.data.datasource.running
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.whyranoid.data.model.RunningHistoryEntity
+import com.whyranoid.data.model.running.RunningHistoryEntity
 
 @Dao
 interface RunningHistoryDao {

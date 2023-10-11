@@ -18,4 +18,16 @@ object API {
     const val UNFOLLOW = "api/follow/unfollow"
 
     const val UPLOAD_POST = "api/community/upload-post"
+
+    object WalkingControl {
+        const val RUNNING_START = "api/walk/start"
+
+        const val RUNNING_FINISH = "api/walk/save"
+
+        const val SEND_LIKE = "api/walk/send-like"
+
+        const val LIKE_TOTAL = "api/walk/count-total"
+
+        const val LIKE_COUNT = "api/walk/count-like"
+    }
 }

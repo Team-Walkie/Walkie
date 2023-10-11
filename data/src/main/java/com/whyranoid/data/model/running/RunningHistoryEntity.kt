@@ -1,4 +1,4 @@
-package com.whyranoid.data.model
+package com.whyranoid.data.model.running
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

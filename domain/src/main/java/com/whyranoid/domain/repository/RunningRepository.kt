@@ -7,10 +7,10 @@ interface RunningRepository {
 
     val userLocationState: StateFlow<UserLocation>
 
-    suspend fun startRunning()
+    suspend fun startRunning(uid: Long): Result<Long>
     suspend fun pauseRunning()
     suspend fun resumeRunning()
-    suspend fun finishRunning()
+    suspend fun finishRunning(uid: Long): Result<Unit>
     fun listenLocation()
 
     fun removeListener()

@@ -7,13 +7,17 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.whyranoid.domain.datasource.RunningControlDataSource
 import com.whyranoid.domain.model.running.UserLocation
 import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningState
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class RunningRepositoryImpl(context: Context) : RunningRepository {
+class RunningRepositoryImpl(
+    context: Context,
+    private val runningControlDataSource: RunningControlDataSource,
+) : RunningRepository {
 
     private val runningDataManager = RunningDataManager.getInstance()
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -26,7 +30,9 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
 
     private var isTrackingUserLocation = true
 
-    override suspend fun startRunning() {
+    // TODO API 연결 및 성공 후 WorkerStart, DataStore 를 통해 중간 실패 여부 저장
+    override suspend fun startRunning(uid: Long): Result<Long> {
+        return runningControlDataSource.runningStart(uid)
     }
 
     override suspend fun pauseRunning() {
@@ -37,8 +43,9 @@ class RunningRepositoryImpl(context: Context) : RunningRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun finishRunning() {
-        TODO("Not yet implemented")
+    // TODO API 연결 및 성공 후 저장
+    override suspend fun finishRunning(uid: Long): Result<Unit> {
+        return runningControlDataSource.runningFinish(uid)
     }
 
     override fun listenLocation() {
