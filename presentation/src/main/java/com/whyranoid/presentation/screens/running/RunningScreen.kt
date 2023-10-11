@@ -104,6 +104,7 @@ fun RunningScreen(
     LaunchedEffect(LocalLifecycleOwner.current) {
         viewModel.startWorker = startWorker
         viewModel.getRunningState()
+        viewModel.getRunningFollowingsState()
         viewModel.onTrackingButtonClicked()
     }
 
@@ -122,6 +123,7 @@ fun RunningScreen(
         viewModel::selectImage,
         viewModel::saveHistory,
         viewModel::takeSnapShot,
+        viewModel::sendLike,
     )
 }
 
@@ -139,6 +141,7 @@ fun RunningContent(
     selectImage: (Uri) -> Unit,
     saveHistory: (Bitmap, RunningFinishData) -> Unit,
     onTakeSnapShot: (RunningFinishData) -> Unit,
+    onSendLike: (uid: Long) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxHeight(),
@@ -151,6 +154,7 @@ fun RunningContent(
             onEditOpen,
             onEditClose,
             saveHistory,
+            onSendLike,
         )
         RunningInfoScreen(
             modifier = Modifier.height(280.dp),
@@ -186,6 +190,7 @@ fun RunningMapScreen(
     onEditOpen: () -> Unit,
     onEditClose: () -> Unit,
     onSaveHistory: (Bitmap, RunningFinishData) -> Unit,
+    onSendLike: (uid: Long) -> Unit,
 ) {
     var mapProperties by remember {
         mutableStateOf(
@@ -477,8 +482,21 @@ fun RunningMapScreen(
             }
 
             LazyRow {
-                repeat(10) {
-                    item { RunningFollowerItemWithLikable(onClick = { Result.success(Unit) }) }
+                state.runningFollowerState.getDataOrNull()?.let { (running, notRunning) ->
+                    items(running.size) {
+                        RunningFollowerItemWithLikable(
+                            user = running[it].user,
+                            onClick = onSendLike,
+                            circleBorderColor = WalkieColor.Primary,
+                            isLiked = running[it].isLiked,
+                        )
+                    }
+                    items(notRunning.size) {
+                        RunningFollowerItemWithLikable(
+                            user = running[it].user,
+                            circleBorderColor = WalkieColor.GrayBorder,
+                        )
+                    }
                 }
             }
         }
