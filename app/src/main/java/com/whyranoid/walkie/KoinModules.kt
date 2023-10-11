@@ -53,6 +53,7 @@ import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
+import com.whyranoid.domain.usecase.running.SendLikeUseCase
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
@@ -79,7 +80,7 @@ val viewModelModule = module {
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     single { UserPageViewModel(get(), get(), get(), get(), get()) }
-    factory { RunningViewModel(get(), get(), get(), get(), get()) }
+    factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
     factory { SignInViewModel(get()) }
@@ -118,11 +119,12 @@ val useCaseModule = module {
     single { GetUserPostPreviewsUseCase(get()) }
     single { GetUserBadgesUseCase(get()) }
     single { GetUserDetailUseCase(get()) }
-    single { GetRunningFollowerUseCase() }
+    single { GetRunningFollowerUseCase(get(), get()) }
     single { RunningFinishUseCase(get(), get()) }
     single { RunningStartUseCase(get(), get()) }
     single { SignOutUseCase(get()) }
     single { UploadPostUseCase(get(), get()) }
+    single { SendLikeUseCase(get(), get()) }
 }
 
 val databaseModule = module {
