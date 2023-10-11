@@ -9,11 +9,13 @@ import com.whyranoid.domain.model.running.RunningData
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.domain.model.running.RunningPosition
 import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
+import com.whyranoid.domain.usecase.running.SendLikeUseCase
 import com.whyranoid.presentation.model.UiState
 import com.whyranoid.presentation.model.running.RunningFollower
 import com.whyranoid.presentation.model.running.RunningInfo
@@ -22,6 +24,7 @@ import com.whyranoid.presentation.model.running.TrackingMode
 import com.whyranoid.runningdata.RunningDataManager
 import com.whyranoid.runningdata.model.RunningFinishData
 import com.whyranoid.runningdata.model.RunningState
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -32,7 +35,7 @@ sealed class RunningScreenSideEffect
 
 data class RunningScreenState(
     val runningState: UiState<RunningState> = UiState.Idle,
-    val runningFollowerState: UiState<List<RunningFollower>> = UiState.Idle,
+    val runningFollowerState: UiState<Pair<List<RunningFollower>, List<User>>> = UiState.Idle,
     val likedCountState: UiState<Int> = UiState.Idle,
     val runningInfoState: UiState<RunningInfo> = UiState.Idle,
     val runningResultInfoState: UiState<RunningInfo> = UiState.Idle,
@@ -48,6 +51,7 @@ class RunningViewModel(
     val runningStartUseCase: RunningStartUseCase,
     val runningFinishUseCase: RunningFinishUseCase,
     val getRunningFollowerUseCase: GetRunningFollowerUseCase,
+    val sendLikeUseCase: SendLikeUseCase,
     private val runningRepository: RunningRepository,
     private val runningHistoryRepository: RunningHistoryRepository,
 ) : ViewModel(), ContainerHost<RunningScreenState, RunningScreenSideEffect> {
@@ -60,6 +64,56 @@ class RunningViewModel(
     override val container = container<RunningScreenState, RunningScreenSideEffect>(
         RunningScreenState(),
     )
+
+    fun sendLike(receiverId: Long) {
+        viewModelScope.launch {
+            sendLikeUseCase(receiverId).onSuccess {
+                intent {
+                    val lists =
+                        state.runningFollowerState.getDataOrNull() ?: Pair(listOf(), listOf())
+                    reduce {
+                        state.copy(
+                            runningFollowerState = UiState.Success(
+                                Pair(
+                                    lists.first.map { it.copy(isLiked = it.user.uid == receiverId) },
+                                    lists.second,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getRunningFollowingsState() {
+        viewModelScope.launch {
+            getRunningFollowerUseCase().distinctUntilChanged().collect {
+                intent {
+                    val likedFollowings =
+                        state.runningFollowerState.getDataOrNull()?.first?.associateBy(
+                            { it.user.uid },
+                            { it.isLiked },
+                        )
+                    reduce {
+                        state.copy(
+                            runningFollowerState = UiState.Success(
+                                Pair(
+                                    it.first.map { u ->
+                                        RunningFollower(
+                                            u,
+                                            likedFollowings?.get(u.uid) ?: false,
+                                        )
+                                    },
+                                    it.second,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun getRunningState() {
         runningRepository.listenLocation()
