@@ -41,6 +41,7 @@ import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
+import com.whyranoid.presentation.screens.community.SearchFriendScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
@@ -157,6 +158,9 @@ fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) 
             }
             composable(Screen.Community.route) {
                 CommunityScreen(navController)
+            }
+            composable(Screen.SearchFriendScreen.route) {
+                SearchFriendScreen(navController)
             }
             composable(Screen.ChallengeMainScreen.route) {
                 ChallengeMainScreen(navController)

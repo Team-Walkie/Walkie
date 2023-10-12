@@ -7,6 +7,7 @@ import com.whyranoid.data.API
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
 import com.whyranoid.data.datasource.ChallengeDataSourceImpl
+import com.whyranoid.data.datasource.OtherUserPagingSource
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
@@ -21,6 +22,7 @@ import com.whyranoid.data.repository.ChallengeRepositoryImpl
 import com.whyranoid.data.repository.FollowRepositoryImpl
 import com.whyranoid.data.repository.GpsRepositoryImpl
 import com.whyranoid.data.repository.NetworkRepositoryImpl
+import com.whyranoid.data.repository.OtherUserRepositoryImpl
 import com.whyranoid.data.repository.PostRepositoryImpl
 import com.whyranoid.data.repository.RunningHistoryRepositoryImpl
 import com.whyranoid.data.repository.RunningRepositoryImpl
@@ -36,6 +38,7 @@ import com.whyranoid.domain.repository.ChallengeRepository
 import com.whyranoid.domain.repository.FollowRepository
 import com.whyranoid.domain.repository.GpsRepository
 import com.whyranoid.domain.repository.NetworkRepository
+import com.whyranoid.domain.repository.OtherUserRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
@@ -45,6 +48,7 @@ import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
+import com.whyranoid.domain.usecase.GetSearchedUserUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
@@ -58,6 +62,7 @@ import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewMode
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
+import com.whyranoid.presentation.viewmodel.SearchFriendViewModel
 import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
 import com.whyranoid.presentation.viewmodel.SignInViewModel
 import com.whyranoid.presentation.viewmodel.SplashViewModel
@@ -87,6 +92,7 @@ val viewModelModule = module {
     factory { SelectHistoryViewModel(get()) }
     factory { EditProfileViewModel(get()) }
     factory { AddPostViewModel(get()) }
+    factory { SearchFriendViewModel(get()) }
 }
 
 val repositoryModule = module {
@@ -99,6 +105,7 @@ val repositoryModule = module {
     single<FollowRepository> { FollowRepositoryImpl(get()) }
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<GpsRepository> { GpsRepositoryImpl(get()) }
+    single<OtherUserRepository> { OtherUserRepositoryImpl(OtherUserPagingSource()) }
 }
 
 val dataSourceModule = module {
@@ -125,6 +132,7 @@ val useCaseModule = module {
     single { SignOutUseCase(get()) }
     single { UploadPostUseCase(get(), get()) }
     single { SendLikeUseCase(get(), get()) }
+    single { GetSearchedUserUseCase(get()) }
 }
 
 val databaseModule = module {
