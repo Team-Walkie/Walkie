@@ -142,4 +142,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
+
+    // paging
+    val pagingVersion = "3.2.1"
+    val pagingForComposeVersion = "1.0.0-alpha18"
+    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    implementation("androidx.paging:paging-compose:$pagingForComposeVersion")
 }

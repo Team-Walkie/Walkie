@@ -13,4 +13,8 @@ dependencies {
 
     // Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
+    val pagingVersion = "3.2.1"
+    implementation("androidx.paging:paging-common:$pagingVersion")
+
 }
