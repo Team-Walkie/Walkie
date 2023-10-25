@@ -20,7 +20,6 @@ class AddPostViewModel(private val uploadPostUseCase: UploadPostUseCase) : ViewM
         history: String,
         imagePath: String,
     ) {
-        println("AddPostViewModel") // TODO REMOVE
         viewModelScope.launch {
             uploadPostUseCase(content, textVisibleState.ordinal, history, imagePath).onFailure {
                 uploadingState.value = PostUploadingState.Error
