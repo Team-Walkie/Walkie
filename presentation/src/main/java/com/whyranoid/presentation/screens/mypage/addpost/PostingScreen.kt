@@ -1,7 +1,10 @@
 package com.whyranoid.presentation.screens.mypage.addpost
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
+import android.location.Address
+import android.location.Geocoder
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -261,6 +264,7 @@ fun Map(
 
     val viewModel = koinViewModel<AddPostViewModel>()
 
+    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     val contentHistory = listOf(
         "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
@@ -340,8 +344,18 @@ fun Map(
                                     updatedContent,
                                     textVisibleState,
                                     "${
-                                        SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(runningHistory.finishedAt))
-                                    }-${contentHistory.joinToString("-")}",
+                                        SimpleDateFormat("yyyy.MM.dd HH:mm").format(
+                                            Date(
+                                                runningHistory.finishedAt,
+                                            ),
+                                        )
+                                    }_${
+                                        getAddress(
+                                            context,
+                                            runningHistoryUiModel.paths.last().last().latitude,
+                                            runningHistoryUiModel.paths.last().last().longitude,
+                                        )
+                                    }_${contentHistory.joinToString("_")}",
                                     tempFile.absolutePath.toUri().toString(),
                                 )
                                 out.close()
@@ -406,4 +420,21 @@ fun Map(
             }
         }
     }
+}
+
+fun getAddress(mContext: Context?, lat: Double, lng: Double): String {
+    var nowAddr = "위치를 확인 할 수 없습니다."
+    val geocoder = mContext?.let { Geocoder(it, Locale.KOREA) }
+    val address: List<Address>?
+    try {
+        if (geocoder != null) {
+            address = geocoder.getFromLocation(lat, lng, 1)
+            if (address != null && address.isNotEmpty()) {
+                nowAddr = address[0].getAddressLine(0).toString()
+            }
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return nowAddr
 }
