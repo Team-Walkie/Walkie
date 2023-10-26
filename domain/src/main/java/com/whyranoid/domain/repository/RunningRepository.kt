@@ -15,4 +15,6 @@ interface RunningRepository {
 
     fun removeListener()
     fun removeUserLocation()
+
+    suspend fun sendLike(uid: Long, receiverId: Long): Result<Long>
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -22,6 +23,7 @@ import com.whyranoid.presentation.theme.WalkieColor
 fun RunningFollowerItem(
     user: User = User.DUMMY,
     isDisplayName: Boolean = true,
+    circularBorderColor: Color = WalkieColor.Primary,
 ) {
     Column(
         modifier = Modifier.padding(10.dp),
@@ -30,7 +32,7 @@ fun RunningFollowerItem(
         Box(
             modifier = Modifier
                 .size(76.dp)
-                .border(2.dp, WalkieColor.Primary, CircleShape)
+                .border(2.dp, circularBorderColor, CircleShape)
                 .clip(CircleShape),
             contentAlignment = Alignment.Center,
         ) {

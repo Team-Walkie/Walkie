@@ -9,12 +9,11 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whyranoid.domain.model.user.User
@@ -25,18 +24,21 @@ import com.whyranoid.presentation.theme.WalkieTheme
 @Composable
 fun RunningFollowerItemWithLikable(
     user: User = User.DUMMY,
-    onClick: (uid: Long) -> Result<Unit>,
+    onClick: ((uid: Long) -> Unit)? = null,
+    circleBorderColor: Color = WalkieColor.Primary,
+    isLiked: Boolean = false,
 ) {
-    var isLiked by rememberSaveable { mutableStateOf(false) }
+    // var isLiked by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.clip(CircleShape).clickable {
-            onClick(user.uid).onSuccess {
-                isLiked = true
-            }
+            onClick?.invoke(user.uid)
+//                .onSuccess {
+//                isLiked = true
+//            }
         },
     ) {
-        RunningFollowerItem(user = user, isDisplayName = false)
+        RunningFollowerItem(user = user, isDisplayName = false, circleBorderColor)
         if (isLiked) {
             Icon(
                 Icons.Default.Favorite,
