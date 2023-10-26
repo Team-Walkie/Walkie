@@ -1,7 +1,10 @@
 package com.whyranoid.presentation.screens.mypage.addpost
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
+import android.location.Address
+import android.location.Geocoder
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,11 +34,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
@@ -59,9 +64,11 @@ import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.model.running.RunningHistory
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.toRunningHistoryUiModel
+import com.whyranoid.presentation.reusable.CircleProgressWithText
 import com.whyranoid.presentation.reusable.GalleryGrid
 import com.whyranoid.presentation.screens.running.DrawBitmap
 import com.whyranoid.presentation.screens.running.DrawPath
@@ -71,7 +78,7 @@ import com.whyranoid.presentation.util.dpToPx
 import com.whyranoid.presentation.util.toPace
 import com.whyranoid.presentation.util.toRunningTime
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
-import com.whyranoid.presentation.viewmodel.TextVisibleState
+import com.whyranoid.presentation.viewmodel.PostUploadingState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
@@ -83,11 +90,12 @@ import java.util.*
 
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun PostingScreen(runningHistory: RunningHistory) {
+fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
     var textVisibleState by remember { mutableStateOf(TextVisibleState.WHITE) }
     var photoEditState by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
-    var isUploading by rememberSaveable { mutableStateOf(IsUploading.Init) }
+    val viewModel = koinViewModel<AddPostViewModel>()
+    val isUploading = viewModel.uploadingState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -133,7 +141,7 @@ fun PostingScreen(runningHistory: RunningHistory) {
 
         var runningHistoryState by remember { mutableStateOf(runningHistory) }
 
-        Map(runningHistoryState, textVisibleState, isUploading)
+        Map(runningHistoryState, textVisibleState, isUploading.value, text)
 
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -218,15 +226,26 @@ fun PostingScreen(runningHistory: RunningHistory) {
             onClick = {
                 if (photoEditState) {
                     photoEditState = false
-                } else {
-                    // TODO
-                    isUploading = IsUploading.Uploading
+                } else if (isUploading.value == PostUploadingState.Init) {
+                    viewModel.startUploading()
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = WalkieColor.Primary),
         ) {
             Text(text = if (photoEditState) "확인" else "올리기", color = Color.White)
         }
+    }
+
+    when (isUploading.value) {
+        PostUploadingState.Uploading -> CircleProgressWithText(text = "업로드 중")
+        PostUploadingState.Done -> {
+            // TODO
+            finish()
+        }
+        PostUploadingState.Error -> {
+            // TODO
+        }
+        else -> Unit
     }
 }
 
@@ -236,7 +255,8 @@ fun PostingScreen(runningHistory: RunningHistory) {
 fun Map(
     runningHistory: RunningHistory,
     textVisibleState: TextVisibleState,
-    isUploading: IsUploading,
+    isUploading: PostUploadingState,
+    content: String,
 ) {
     val runningHistoryUiModel = runningHistory.toRunningHistoryUiModel(LocalContext.current)
 
@@ -244,12 +264,19 @@ fun Map(
 
     val viewModel = koinViewModel<AddPostViewModel>()
 
+    val context = LocalContext.current
+    val updatedContent by rememberUpdatedState(content)
+    val contentHistory = listOf(
+        "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
+        runningHistoryUiModel.totalRunningTime.toRunningTime(),
+        runningHistoryUiModel.pace.toPace(),
+    )
+
     var maxLat = Double.MIN_VALUE
     var minLat = Double.MAX_VALUE
     var maxLng = Double.MIN_VALUE
     var minLng = Double.MAX_VALUE
     runningHistoryUiModel.paths.flatten().forEach { position ->
-        Log.d("cameraUpdate1", position.toString())
         maxLat = maxOf(maxLat, position.latitude)
         minLat = minOf(minLat, position.latitude)
         maxLng = maxOf(maxLng, position.longitude)
@@ -262,8 +289,9 @@ fun Map(
         ),
         100.dpToPx(LocalContext.current),
     )
-    Log.d("cameraUpdate", cameraUpdate.toString())
-    cameraPositionState.move(cameraUpdate)
+    LaunchedEffect(Unit) {
+        cameraPositionState.move(cameraUpdate)
+    }
 
     val mapUiSettings by remember {
         mutableStateOf(
@@ -297,7 +325,7 @@ fun Map(
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
             MapEffect(isUploading) { naverMap ->
-                if (isUploading == IsUploading.Uploading) {
+                if (isUploading == PostUploadingState.Uploading) {
                     naverMap.takeSnapshot { bitmap ->
                         scope.launch {
                             val storage: File = context.cacheDir
@@ -313,9 +341,21 @@ fun Map(
                                 // compress 함수를 사용해 스트림에 비트맵을 저장합니다.
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
                                 viewModel.uploadPost(
-                                    "test",
+                                    updatedContent,
                                     textVisibleState,
-                                    "test",
+                                    "${
+                                        SimpleDateFormat("yyyy.MM.dd HH:mm").format(
+                                            Date(
+                                                runningHistory.finishedAt,
+                                            ),
+                                        )
+                                    }_${
+                                        getAddress(
+                                            context,
+                                            runningHistoryUiModel.paths.last().last().latitude,
+                                            runningHistoryUiModel.paths.last().last().longitude,
+                                        )
+                                    }_${contentHistory.joinToString("_")}",
                                     tempFile.absolutePath.toUri().toString(),
                                 )
                                 out.close()
@@ -371,11 +411,7 @@ fun Map(
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                listOf(
-                    "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
-                    runningHistoryUiModel.totalRunningTime.toRunningTime(),
-                    runningHistoryUiModel.pace.toPace(),
-                ).forEach {
+                contentHistory.forEach {
                     Text(
                         it,
                         style = WalkieTypography.Title.copy(color = textColor),
@@ -386,6 +422,19 @@ fun Map(
     }
 }
 
-enum class IsUploading {
-    Init, Uploading, Done
+fun getAddress(mContext: Context?, lat: Double, lng: Double): String {
+    var nowAddr = "위치를 확인 할 수 없습니다."
+    val geocoder = mContext?.let { Geocoder(it, Locale.KOREA) }
+    val address: List<Address>?
+    try {
+        if (geocoder != null) {
+            address = geocoder.getFromLocation(lat, lng, 1)
+            if (address != null && address.isNotEmpty()) {
+                nowAddr = address[0].getAddressLine(0).toString()
+            }
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return nowAddr
 }

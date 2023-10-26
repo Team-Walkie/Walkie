@@ -4,6 +4,10 @@ data class PostPreview(
     val id: Long,
     val imageUrl: String,
     val date: Long = 0L,
+    val textVisibleState: TextVisibleState = TextVisibleState.HIDE,
+    val distanceText: String = "",
+    val timeText: String = "",
+    val paceText: String = "",
 ) {
     companion object {
         val DUMMY_LIST = listOf(
@@ -29,4 +33,8 @@ data class PostPreview(
             ),
         )
     }
+}
+
+enum class TextVisibleState {
+    WHITE, BLACK, HIDE
 }
