@@ -1,12 +1,5 @@
 package com.whyranoid.presentation.screens
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,16 +10,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -57,37 +47,6 @@ fun AppScreen(startWorker: () -> Unit) {
     val navController = rememberNavController()
     val splashViewModel = koinViewModel<SplashViewModel>()
 
-    // TODO 권한 요청 위치 Splash 화면 이동
-    val context = LocalContext.current
-    val launcherMultiplePermissions = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions(),
-    ) { permissionsMap ->
-        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
-        if (areGranted) {
-            Log.d("test5", "권한이 동의되었습니다.")
-        }
-        /** 권한 요청시 거부 했을 경우 **/
-        else {
-            Log.d("test5", "권한이 거부되었습니다~~.")
-            // TODO SHOW DIALOG
-        }
-    }
-
-    SideEffect {
-        checkAndRequestPermissions(
-            context,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            ),
-            launcherMultiplePermissions,
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        splashViewModel.splashStart()
-    }
-
     val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
     AppScreenContent(startWorker, navController)
     // TODO Splash 적용
@@ -95,6 +54,10 @@ fun AppScreen(startWorker: () -> Unit) {
         SplashState.InitialState -> SplashScreen()
         SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
         SplashState.SignedInState -> AppScreenContent(startWorker, navController)
+    }
+
+    LaunchedEffect(Unit) {
+        splashViewModel.splashStart()
     }
 }
 
@@ -202,27 +165,5 @@ fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) 
                 ChallengeCompleteScreen(navController, challengeId)
             }
         }
-    }
-}
-
-fun checkAndRequestPermissions(
-    context: Context,
-    permissions: Array<String>,
-    launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
-) {
-    if (permissions.all {
-            ContextCompat.checkSelfPermission(
-                context,
-                it,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    ) {
-        Log.d("test5", "권한이 이미 존재합니다.")
-    }
-
-    /** 권한이 없는 경우 **/
-    else {
-        launcher.launch(permissions)
-        Log.d("test5", "권한을 요청하였습니다.")
     }
 }
