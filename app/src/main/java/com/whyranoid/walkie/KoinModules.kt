@@ -50,6 +50,12 @@ import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
+import com.whyranoid.domain.usecase.broadcast.AddGpsListener
+import com.whyranoid.domain.usecase.broadcast.AddNetworkListener
+import com.whyranoid.domain.usecase.broadcast.GetGpsState
+import com.whyranoid.domain.usecase.broadcast.GetNetworkState
+import com.whyranoid.domain.usecase.broadcast.RemoveGpsListener
+import com.whyranoid.domain.usecase.broadcast.RemoveNetworkListener
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
@@ -65,6 +71,7 @@ import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
+import com.whyranoid.walkie.wlakiedialog.DialogViewModel
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -87,6 +94,7 @@ val viewModelModule = module {
     factory { SelectHistoryViewModel(get()) }
     factory { EditProfileViewModel(get()) }
     factory { AddPostViewModel(get()) }
+    factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val repositoryModule = module {
@@ -125,6 +133,13 @@ val useCaseModule = module {
     single { SignOutUseCase(get()) }
     single { UploadPostUseCase(get(), get()) }
     single { SendLikeUseCase(get(), get()) }
+
+    single { AddGpsListener(get()) }
+    single { AddNetworkListener(get()) }
+    single { RemoveGpsListener(get()) }
+    single { RemoveNetworkListener(get()) }
+    single { GetGpsState(get()) }
+    single { GetNetworkState(get()) }
 }
 
 val databaseModule = module {
