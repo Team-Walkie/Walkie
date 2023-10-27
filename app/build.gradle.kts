@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.whyranoid.walkie"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.whyranoid.walkie"
@@ -116,7 +116,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     // rememberPermissionState
-    implementation("com.google.accompanist:accompanist-permissions:v0.32.2-alpha")
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
 
     // collectAsStateWithLifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
