@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import com.whyranoid.presentation.screens.AppScreen
 import com.whyranoid.presentation.theme.WalkieTheme
-import com.whyranoid.walkie.wlakiedialog.AppManageDialog
+import com.whyranoid.walkie.walkiedialog.AppManageDialog
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

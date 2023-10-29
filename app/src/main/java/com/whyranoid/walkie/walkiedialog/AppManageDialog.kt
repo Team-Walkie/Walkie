@@ -1,4 +1,4 @@
-package com.whyranoid.walkie.wlakiedialog
+package com.whyranoid.walkie.walkiedialog
 
 import android.Manifest
 import android.app.Activity
@@ -82,19 +82,19 @@ fun AppManageDialog() {
 
     if (locationPermissionState.status.isGranted.not() && locationPermissionState.status.shouldShowRationale) {
         PermissionDialog(
-            dialog = DialogProvider.LocationPermission,
+            dialog = DialogContentProvider.LocationPermission,
             onAction = { activity.openSettings() },
             modifier = Modifier.clip(RoundedCornerShape(20.dp)),
         )
     } else if (storagePermissionState.status.isGranted.not() && storagePermissionState.status.shouldShowRationale) {
         PermissionDialog(
-            dialog = DialogProvider.StoragePermission,
+            dialog = DialogContentProvider.StoragePermission,
             onAction = { activity.openSettings() },
             modifier = Modifier.clip(RoundedCornerShape(20.dp)),
         )
     } else if (gpsDialogState.value is DialogState.InValid) {
         PermissionDialog(
-            dialog = DialogProvider.GPS,
+            dialog = DialogContentProvider.GPS,
             onAction = {
                 activity.openStatusBar()
             },
@@ -102,7 +102,7 @@ fun AppManageDialog() {
         )
     } else if (networkDialogState.value is DialogState.InValid) {
         PermissionDialog(
-            dialog = DialogProvider.Network,
+            dialog = DialogContentProvider.Network,
             onAction = {
                 activity.openStatusBar()
             },
@@ -113,7 +113,7 @@ fun AppManageDialog() {
 
 @Composable
 fun PermissionDialog(
-    dialog: DialogProvider,
+    dialog: DialogContentProvider,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

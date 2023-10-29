@@ -71,7 +71,7 @@ import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
-import com.whyranoid.walkie.wlakiedialog.DialogViewModel
+import com.whyranoid.walkie.walkiedialog.DialogViewModel
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response

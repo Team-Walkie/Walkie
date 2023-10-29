@@ -1,4 +1,4 @@
-package com.whyranoid.walkie.wlakiedialog
+package com.whyranoid.walkie.walkiedialog
 
 import androidx.lifecycle.ViewModel
 import com.whyranoid.domain.usecase.broadcast.AddGpsListener
@@ -32,19 +32,19 @@ class DialogViewModel(
     val storagePermissionDialogState get() = _storagePermissionDialogState.asStateFlow()
 
     val gpsDialogState = getGpsState().map {
-        if (it) DialogState.Valid else DialogState.InValid(DialogProvider.GPS)
+        if (it) DialogState.Valid else DialogState.InValid(DialogContentProvider.GPS)
     }
     val networkDialogState = getNetworkState().map {
-        if (it) DialogState.Valid else DialogState.InValid(DialogProvider.Network)
+        if (it) DialogState.Valid else DialogState.InValid(DialogContentProvider.Network)
     }
 
     fun setPermission(permission: String, showDialog: Boolean) {
-        if (permission == DialogProvider.LocationPermission.PERMISSION) {
+        if (permission == DialogContentProvider.LocationPermission.PERMISSION) {
             _locationPermissionDialogState.value =
-                if (showDialog) DialogState.Valid else DialogState.InValid(DialogProvider.LocationPermission)
-        } else if (permission == DialogProvider.StoragePermission.PERMISSION) {
+                if (showDialog) DialogState.Valid else DialogState.InValid(DialogContentProvider.LocationPermission)
+        } else if (permission == DialogContentProvider.StoragePermission.PERMISSION) {
             _storagePermissionDialogState.value =
-                if (showDialog) DialogState.Valid else DialogState.InValid(DialogProvider.StoragePermission)
+                if (showDialog) DialogState.Valid else DialogState.InValid(DialogContentProvider.StoragePermission)
         }
     }
 
