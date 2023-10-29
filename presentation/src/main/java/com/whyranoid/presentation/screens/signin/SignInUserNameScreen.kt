@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import com.whyranoid.presentation.reusable.CheckableCustomTextField
 import com.whyranoid.presentation.reusable.datePicker
 import com.whyranoid.presentation.theme.SystemColor
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.SignInState
 import com.whyranoid.presentation.viewmodel.SignInViewModel
@@ -106,7 +106,7 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                     imeAction = ImeAction.Done,
                 ),
             )
-            Box(Modifier.height(20.dp)) {
+            Box(Modifier.height(32.dp)) {
                 userNameState.isDuplicated?.let { isDuplicated ->
                     Text(
                         text = if (isDuplicated) "중복된 닉네임입니다." else "사용가능한 닉네임입니다.",
@@ -175,78 +175,79 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
                 )
             }
 
-            Text(
-                "전화번호",
-                style = WalkieTypography.Body1_Normal,
-                modifier = Modifier.padding(bottom = 10.dp).padding(top = 20.dp),
-            )
-            CheckableCustomTextField(
-                text = userNameState.phoneNumber,
-                onTextChanged = { text -> viewModel.setUserNameState(userNameState.copy(phoneNumber = text)) },
-                modifier = Modifier.fillMaxWidth().height(40.dp).background(Color.White)
-                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)),
-                trailingIcon = null,
-                placeholderText = "",
-                checkButton = { text ->
-                    Text(
-                        text = "인증하기",
-                        modifier = Modifier.clickable {
-                            viewModel.setUserNameState(userNameState.copy(checkNumber = ""))
-                        },
-                        color = WalkieColor.Primary,
-                    )
-                },
-                textStyle = WalkieTypography.Body1_ExtraBold,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number,
-                ),
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-
-            if (userNameState.checkNumber != null) {
-                Text(
-                    "인증번호 입력",
-                    style = WalkieTypography.Body1_Normal,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                )
-                CheckableCustomTextField(
-                    text = userNameState.checkNumber,
-                    onTextChanged = { text ->
-                        viewModel.setUserNameState(
-                            userNameState.copy(
-                                checkNumber = text,
-                            ),
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth().height(40.dp).background(Color.White)
-                        .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)),
-                    trailingIcon = null,
-                    placeholderText = "",
-                    checkButton = { text ->
-                        Text(
-                            text = "확인",
-                            modifier = Modifier.clickable {
-                                // TODO 인증번호 확인 기능
-                                viewModel.setUserNameState(userNameState.copy(isValidate = text.length > 3))
-                            },
-                            color = WalkieColor.Primary,
-                        )
-                    },
-                    textStyle = WalkieTypography.Body1_ExtraBold,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                )
-            }
-            userNameState.isValidate?.let { isValidate ->
-                Text(
-                    text = if (isValidate) "인증 성공" else "인증 번호가 다릅니다.",
-                    style = WalkieTypography.Caption.copy(color = if (isValidate) SystemColor.Positive else SystemColor.Error),
-                )
-            }
+            // 전화 번호 관련 화면
+//            Text(
+//                "전화번호",
+//                style = WalkieTypography.Body1_Normal,
+//                modifier = Modifier.padding(bottom = 10.dp).padding(top = 20.dp),
+//            )
+//            CheckableCustomTextField(
+//                text = userNameState.phoneNumber,
+//                onTextChanged = { text -> viewModel.setUserNameState(userNameState.copy(phoneNumber = text)) },
+//                modifier = Modifier.fillMaxWidth().height(40.dp).background(Color.White)
+//                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)),
+//                trailingIcon = null,
+//                placeholderText = "",
+//                checkButton = { text ->
+//                    Text(
+//                        text = "인증하기",
+//                        modifier = Modifier.clickable {
+//                            viewModel.setUserNameState(userNameState.copy(checkNumber = ""))
+//                        },
+//                        color = WalkieColor.Primary,
+//                    )
+//                },
+//                textStyle = WalkieTypography.Body1_ExtraBold,
+//                keyboardOptions = KeyboardOptions.Default.copy(
+//                    imeAction = ImeAction.Done,
+//                    keyboardType = KeyboardType.Number,
+//                ),
+//            )
+//            Spacer(modifier = Modifier.height(20.dp))
+//
+//            if (userNameState.checkNumber != null) {
+//                Text(
+//                    "인증번호 입력",
+//                    style = WalkieTypography.Body1_Normal,
+//                    modifier = Modifier.padding(bottom = 10.dp),
+//                )
+//                CheckableCustomTextField(
+//                    text = userNameState.checkNumber,
+//                    onTextChanged = { text ->
+//                        viewModel.setUserNameState(
+//                            userNameState.copy(
+//                                checkNumber = text,
+//                            ),
+//                        )
+//                    },
+//                    modifier = Modifier.fillMaxWidth().height(40.dp).background(Color.White)
+//                        .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp)),
+//                    trailingIcon = null,
+//                    placeholderText = "",
+//                    checkButton = { text ->
+//                        Text(
+//                            text = "확인",
+//                            modifier = Modifier.clickable {
+//                                // TODO 인증번호 확인 기능
+//                                viewModel.setUserNameState(userNameState.copy(isValidate = text.length > 3))
+//                            },
+//                            color = WalkieColor.Primary,
+//                        )
+//                    },
+//                    textStyle = WalkieTypography.Body1_ExtraBold,
+//                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+//                )
+//            }
+//            userNameState.isValidate?.let { isValidate ->
+//                Text(
+//                    text = if (isValidate) "인증 성공" else "인증 번호가 다릅니다.",
+//                    style = WalkieTypography.Caption.copy(color = if (isValidate) SystemColor.Positive else SystemColor.Error),
+//                )
+//            }
 
             Spacer(modifier = Modifier.weight(1f))
             val enable =
-                userNameState.name.isNotBlank() && userNameState.isDuplicated == false && userNameState.year != null && userNameState.month != null && userNameState.day != null && userNameState.isValidate == true
+                userNameState.name.isNotBlank() && userNameState.isDuplicated == false && userNameState.year != null && userNameState.month != null && userNameState.day != null // && userNameState.isValidate == true
             Button(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 onClick = {
@@ -264,11 +265,11 @@ fun SignInUserNameScreen(onSuccess: () -> Unit) {
     }
 }
 
-@Composable
-fun DatePickerText() {
-}
-
 @Preview
 @Composable
 fun PreviewDatePickerSeparate() {
+    WalkieTheme {
+        SignInUserNameScreen {
+        }
+    }
 }

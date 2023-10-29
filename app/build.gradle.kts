@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace = "com.whyranoid.walkie"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.whyranoid.walkie"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0.3"
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -114,4 +114,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // rememberPermissionState
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+
+    // collectAsStateWithLifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 }
