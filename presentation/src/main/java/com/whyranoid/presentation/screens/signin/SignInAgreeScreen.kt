@@ -57,7 +57,7 @@ fun SignInAgreeScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         val textColor =
-            if (isAllChecked) WalkieColor.Primary else WalkieColor.GrayDefault
+            if (isAllChecked) WalkieColor.Primary else Color.Black
 
         Box(
             modifier = Modifier

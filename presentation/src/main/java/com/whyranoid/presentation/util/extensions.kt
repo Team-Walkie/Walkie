@@ -1,6 +1,13 @@
 package com.whyranoid.presentation.util
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -45,4 +52,24 @@ fun Int.pxToDp(context: Context): Int {
         else -> 1.0f
     }
     return (this / (scale * mul)).toInt()
+}
+
+fun Activity.openSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null),
+    ).also(::startActivity)
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@SuppressLint("WrongConstant")
+fun Activity.openStatusBar() {
+    try {
+        val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
+        val statusBarManager = Class.forName("android.app.StatusBarManager")
+        val expandStatusBar = statusBarManager.getMethod("expandNotificationsPanel")
+        expandStatusBar.invoke(statusBarService)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }

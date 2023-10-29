@@ -46,10 +46,54 @@ fun SplashScreen(modifier: Modifier = Modifier) {
 
         Text(
             "스플래시 화면입니다~~",
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 120.dp),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 120.dp),
         )
     }
 }
+
+// @Composable
+// fun PermissionDialog(
+//    permission: DialogProvider,
+//    isPermanentlyDeclined: Boolean,
+//    onDismiss: () -> Unit,
+//    onOkClick: () -> Unit,
+//    onSettingClick: () -> Unit,
+//    modifier: Modifier = Modifier,
+// ) {
+//    AlertDialog(
+//        onDismissRequest = onDismiss,
+//        buttons = {
+//            Column(modifier = Modifier.fillMaxWidth()) {
+//                Text(
+//                    text = if (isPermanentlyDeclined) "설정" else "동의",
+//                    style = WalkieTypography.SubTitle.copy(color = WalkieColor.Primary),
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier.align(Alignment.End).clickable(
+//                        indication = null,
+//                        interactionSource = remember { MutableInteractionSource() },
+//                    ) {
+//                        if (isPermanentlyDeclined) {
+//                            onSettingClick()
+//                        } else {
+//                            onOkClick()
+//                        }
+//                    }.padding(bottom = 20.dp).padding(horizontal = 20.dp)
+//                        .clip(RoundedCornerShape(12.dp)),
+//                )
+//            }
+//        },
+//        title = { Text(permission.title, style = WalkieTypography.SubTitle) },
+//        text = {
+//            Text(
+//                text = permission.description,
+//                style = WalkieTypography.Body1_Normal,
+//            )
+//        },
+//        modifier = modifier,
+//    )
+// }
 
 @Preview(showBackground = true)
 @Composable
