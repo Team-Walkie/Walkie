@@ -64,6 +64,7 @@ fun CommunityScreen(
                         Icon(
                             modifier = Modifier
                                 .clickable {
+                                    navController.navigate(Screen.SearchFriendScreen.route)
                                 },
                             imageVector = Icons.Filled.Search,
                             contentDescription = "검색 버튼",

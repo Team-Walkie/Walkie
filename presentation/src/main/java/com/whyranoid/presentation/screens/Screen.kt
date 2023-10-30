@@ -29,6 +29,10 @@ sealed class Screen(
         R.drawable.ic_community_screen_selected,
     )
 
+    object SearchFriendScreen : Screen(
+        "searchFriendScreen",
+    )
+
     object ChallengeMainScreen :
         Screen(
             "challengeMain",
