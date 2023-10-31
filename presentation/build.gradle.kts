@@ -91,6 +91,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.1")
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
     val navVersion = "2.5.3"
     implementation("androidx.navigation:navigation-compose:$navVersion")
@@ -133,9 +134,13 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:$googleLocationVersion")
 
     // Paging
-    implementation("androidx.paging:paging-runtime:3.1.1")
-    implementation("androidx.paging:paging-compose:3.2.0-rc01")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+//    implementation("androidx.paging:paging-runtime:3.1.1")
+//    implementation("androidx.paging:paging-compose:3.2.0-rc01")
+    val pagingVersion = "3.2.1"
+    val pagingForComposeVersion = "1.0.0-alpha18"
+    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    implementation("androidx.paging:paging-compose:$pagingForComposeVersion")
+    implementation("com.google.accompanist:accompanist-pager:0.33.2-alpha")
 
     // FireBase
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
@@ -143,9 +148,4 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
 
-    // paging
-    val pagingVersion = "3.2.1"
-    val pagingForComposeVersion = "1.0.0-alpha18"
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation("androidx.paging:paging-compose:$pagingForComposeVersion")
 }

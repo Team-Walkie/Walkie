@@ -111,7 +111,10 @@ fun ChallengeMainContent(
             )
         },
     ) { paddingValues ->
-        val pagerState = rememberPagerState()
+        val pagerState = rememberPagerState() {
+            ChallengeType.values().size
+        }
+
 
         LazyColumn(
             modifier = Modifier
@@ -295,7 +298,6 @@ fun ChallengeMainContent(
                 Spacer(modifier = Modifier.height(15.dp))
 
                 HorizontalPager(
-                    pageCount = ChallengeType.values().size,
                     state = pagerState,
                 ) {
 

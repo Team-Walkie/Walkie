@@ -190,9 +190,14 @@ fun MyPageContent(
 
             Spacer(Modifier.height(12.dp))
 
-            val pagerState = rememberPagerState()
-            val coroutineScope = rememberCoroutineScope()
             val pagerList = listOf("게시물", "내기록", "챌린지")
+
+            val pagerState = rememberPagerState {
+                pagerList.size
+            }
+
+            val coroutineScope = rememberCoroutineScope()
+
 
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
@@ -224,7 +229,6 @@ fun MyPageContent(
             }
 
             HorizontalPager(
-                pageCount = pagerList.size,
                 state = pagerState,
                 contentPadding = PaddingValues(top = 4.dp),
                 verticalAlignment = Alignment.Top,
