@@ -1,16 +1,13 @@
 package com.whyranoid.presentation.theme
 
-import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 // TODO: Dark Theme
 private val DarkColorScheme = darkColorScheme(
@@ -44,19 +41,31 @@ fun WalkieTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
+
     // TODO : Dynamic Color
     val colorScheme = when {
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.surface.toArgb()
-            window.navigationBarColor = colorScheme.surface.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+
+    // Remember a SystemUiController
+    val systemUiController = rememberSystemUiController()
+
+    DisposableEffect(systemUiController, darkTheme) {
+
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = darkTheme.not()
+        )
+
+        systemUiController.setStatusBarColor(
+            color = colorScheme.surface,
+            darkIcons = darkTheme.not()
+        ) { requestedColor ->
+            requestedColor
         }
+
+        onDispose {}
     }
 
     MaterialTheme(
