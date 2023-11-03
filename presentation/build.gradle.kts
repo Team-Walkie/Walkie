@@ -148,4 +148,6 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
 
+    // System UI Controller
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.33.2-alpha")
 }
