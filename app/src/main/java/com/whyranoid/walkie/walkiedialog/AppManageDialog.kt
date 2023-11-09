@@ -15,7 +15,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -126,7 +125,7 @@ fun PermissionDialog(
                     style = WalkieTypography.SubTitle.copy(color = WalkieColor.Primary),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .align(Alignment.End)
+                        .fillMaxWidth()
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() },
@@ -134,16 +133,22 @@ fun PermissionDialog(
                             onAction()
                         }
                         .padding(bottom = 20.dp)
-                        .padding(horizontal = 20.dp)
-                        .clip(RoundedCornerShape(12.dp)),
+                        .padding(horizontal = 20.dp),
                 )
             }
         },
-        title = { Text(dialog.title, style = WalkieTypography.SubTitle) },
+        title = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = dialog.title, style = WalkieTypography.SubTitle,
+                textAlign = TextAlign.Center,
+            ) },
         text = {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = dialog.description,
                 style = WalkieTypography.Body1_Normal,
+                textAlign = TextAlign.Center,
             )
         },
         modifier = modifier,
