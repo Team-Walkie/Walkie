@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.post.TextVisibleState
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.reusable.NonLazyGrid
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -44,7 +45,10 @@ fun PostPage(
         contentPadding = 4,
     ) { index ->
         if (index < postPreviews.size) {
-            PostImagePreview(postPreviews[index], onPostPreviewClicked)
+            PostImagePreview(
+                postPreview = postPreviews[index],
+                onPostPreviewClicked = onPostPreviewClicked,
+            )
         } else {
             Box(
                 modifier = Modifier
@@ -74,10 +78,15 @@ fun PostPage(
 }
 
 @Composable
-fun PostImagePreview(postPreview: PostPreview, onPostPreviewClicked: (id: Long) -> Unit = {}) {
-    Box {
+fun PostImagePreview(
+    modifier: Modifier = Modifier,
+    postPreview: PostPreview,
+    onPostPreviewClicked: (id: Long) -> Unit = {},
+) {
+    // TODO modifier 크기 맞춰서 글자 크기 수정
+    Box(modifier = modifier) {
         AsyncImage(
-            model = postPreview.imageUrl,
+            model = User.DUMMY.imageUrl, // TODO REMOVE postPreview.imageUrl,
             contentDescription = "postPreview Image",
             modifier = Modifier
                 .fillMaxWidth()

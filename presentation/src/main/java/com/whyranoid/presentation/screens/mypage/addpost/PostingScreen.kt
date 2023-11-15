@@ -66,6 +66,7 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.model.running.RunningHistory
+import com.whyranoid.domain.util.DATE_FORMAT
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.model.running.toRunningHistoryUiModel
 import com.whyranoid.presentation.reusable.CircleProgressWithText
@@ -264,7 +265,6 @@ fun Map(
 
     val viewModel = koinViewModel<AddPostViewModel>()
 
-    val context = LocalContext.current
     val updatedContent by rememberUpdatedState(content)
     val contentHistory = listOf(
         "%.2f".format(runningHistoryUiModel.distance.div(1000.toDouble())),
@@ -344,7 +344,7 @@ fun Map(
                                     updatedContent,
                                     textVisibleState,
                                     "${
-                                        SimpleDateFormat("yyyy.MM.dd HH:mm").format(
+                                        SimpleDateFormat(String.DATE_FORMAT).format(
                                             Date(
                                                 runningHistory.finishedAt,
                                             ),

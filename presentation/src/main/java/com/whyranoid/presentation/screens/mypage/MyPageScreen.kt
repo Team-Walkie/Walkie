@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,27 +55,37 @@ import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
 import com.whyranoid.presentation.screens.mypage.tabs.ChallengePage
 import com.whyranoid.presentation.screens.mypage.tabs.HistoryPage
+import com.whyranoid.presentation.screens.mypage.tabs.PostImagePreview
 import com.whyranoid.presentation.screens.mypage.tabs.PostPage
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.UserPageState
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import java.time.LocalDate
 import java.util.*
 
 @Composable
 fun MyPageScreen(
     navController: NavController,
-    uid: Long,
+    uid: Long? = null,
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
 
     LaunchedEffect(true) {
-        viewModel.getUserDetail(uid)
-        viewModel.getUserBadges(uid)
-        viewModel.getUserPostPreviews(uid)
+        uid?.let {
+            viewModel.getUserDetail(uid)
+            viewModel.getUserBadges(uid)
+            viewModel.getUserPostPreviews(uid)
+        } ?: run {
+            val myUid = requireNotNull(viewModel.accountRepository.uId.first())
+            viewModel.getUserDetail(myUid)
+            viewModel.getUserBadges(myUid)
+            viewModel.getUserPostPreviews(myUid)
+        }
     }
 
     val state by viewModel.collectAsState()
@@ -90,6 +101,7 @@ fun MyPageScreen(
         onLogoutClicked = {
             viewModel.signOut()
         },
+        onDateClicked = viewModel::selectDate,
     )
 }
 
@@ -103,6 +115,7 @@ fun MyPageContent(
     onProfileEditClicked: () -> Unit = {}, // TODO
     onSettingsClicked: () -> Unit = {}, // TODO
     onLogoutClicked: () -> Unit = {}, // TODO
+    onDateClicked: (LocalDate) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -198,7 +211,6 @@ fun MyPageContent(
 
             val coroutineScope = rememberCoroutineScope()
 
-
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier.height(40.dp),
@@ -241,7 +253,21 @@ fun MyPageContent(
                             onPostCreateClicked,
                         )
                     }
-                    1 -> HistoryPage(onDayClicked = {}) // TODO: 해당 날짜 데이터 로드
+
+                    1 -> {
+                        Column {
+                            HistoryPage(onDayClicked = onDateClicked)
+                            state.calendarPreviewsState.getDataOrNull()?.let { postPreviews ->
+                                postPreviews.forEach { postPreview ->
+                                    PostImagePreview(
+                                        Modifier.fillMaxSize().padding(40.dp),
+                                        postPreview,
+                                        onPostPreviewClicked,
+                                    )
+                                }
+                            }
+                        }
+                    }
                     2 -> ChallengePage()
                 }
             }
