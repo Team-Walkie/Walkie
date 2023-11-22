@@ -130,25 +130,19 @@ fun MyPageContent(
 
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(top = 28.dp)
+            modifier = Modifier.padding(paddingValues).padding(top = 28.dp)
                 .verticalScroll(scrollState),
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AsyncImage(
                         model = userDetail.user.imageUrl,
                         contentDescription = "유저 프로필 이미지",
-                        modifier = Modifier
-                            .clip(shape = CircleShape)
-                            .size(70.dp),
+                        modifier = Modifier.clip(shape = CircleShape).size(70.dp),
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
@@ -183,18 +177,14 @@ fun MyPageContent(
 
             state.userBadgesState.getDataOrNull()?.let { userBadges ->
                 LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
                 ) {
                     items(userBadges.size) { index ->
                         AsyncImage(
                             model = userBadges[index].imageUrl,
                             contentDescription = "badge image",
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .size(56.dp),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                                .clip(RoundedCornerShape(8.dp)).size(56.dp),
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                     }
@@ -268,6 +258,7 @@ fun MyPageContent(
                             }
                         }
                     }
+
                     2 -> ChallengePage()
                 }
             }

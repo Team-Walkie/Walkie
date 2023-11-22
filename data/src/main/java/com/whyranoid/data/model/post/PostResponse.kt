@@ -22,9 +22,9 @@ data class PostResponse(
         val destructedHistoryContent = historyContent.split('_')
         println(destructedHistoryContent)
         return PostPreview(
-            poster = poster.toUser(),
+            author = poster.toUser(),
             id = this.poster.uid,
-            liked = this.liked,
+            isLiked = this.liked,
             likers = this.likers.map { it.toUser() },
             imageUrl = this.photo,
             date = dateFormatter.parse(this.date.replace("T", " ")).time,

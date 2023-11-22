@@ -15,21 +15,27 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.reusable.NonLazyGrid
 import com.whyranoid.presentation.theme.WalkieColor
-import com.whyranoid.presentation.theme.WalkieTypography
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -83,8 +89,17 @@ fun PostImagePreview(
     postPreview: PostPreview,
     onPostPreviewClicked: (id: Long) -> Unit = {},
 ) {
-    // TODO modifier 크기 맞춰서 글자 크기 수정
-    Box(modifier = modifier) {
+    var dynamicFontSize by remember { mutableStateOf(0.sp) }
+    var dynamicPaddingSize by remember { mutableStateOf(0.dp) }
+
+    Box(
+        modifier = modifier.onGloballyPositioned {
+            val parentSize = it.size
+            dynamicFontSize = (parentSize.width / 60f).sp
+            dynamicPaddingSize = (parentSize.width / 50f).dp
+            it.providedAlignmentLines
+        },
+    ) {
         AsyncImage(
             model = User.DUMMY.imageUrl, // TODO REMOVE postPreview.imageUrl,
             contentDescription = "postPreview Image",
@@ -99,35 +114,37 @@ fun PostImagePreview(
         )
 
         if (postPreview.textVisibleState != TextVisibleState.HIDE) {
-            val textColor =
+            val selectedTextColor =
                 if (postPreview.textVisibleState == TextVisibleState.WHITE) Color.White else Color.Black
 
             Text(
                 text = SimpleDateFormat("yyyy.MM.dd HH:mm").format(Date(postPreview.date)),
                 modifier = Modifier
-                    .padding(top = 12.dp)
+                    .padding(top = dynamicPaddingSize)
                     .align(Alignment.TopCenter),
-                style = WalkieTypography.Body2.copy(color = textColor),
+                color = selectedTextColor,
+                fontSize = dynamicFontSize,
             )
 
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp)
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 12.dp)
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(bottom = dynamicPaddingSize),
+                horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 listOf(
                     "DISTANCE\n${postPreview.distanceText}",
                     "TIME\n${postPreview.timeText}",
-                    "PACE\n${postPreview.paceText}",
+                    "PACE\n  ${postPreview.paceText}",
                 ).forEach {
                     Text(
-                        it,
-                        style = WalkieTypography.Title.copy(color = textColor),
+                        text = it,
+                        color = selectedTextColor,
+                        fontSize = dynamicFontSize,
+                        lineHeight = dynamicFontSize,
                         textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
