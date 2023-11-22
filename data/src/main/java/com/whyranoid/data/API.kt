@@ -19,6 +19,10 @@ object API {
 
     const val UPLOAD_POST = "api/community/upload-post"
 
+    const val LIST_UP_MY_POST = "api/walkies/listup-my-post"
+
+    const val LIST_UP_POST = "api/community/listup-post"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 

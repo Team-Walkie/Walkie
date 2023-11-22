@@ -1,9 +1,9 @@
 package com.whyranoid.data.datasource.follow
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.account.UserResponse
 import com.whyranoid.data.model.follow.FollowRequest
 import com.whyranoid.data.model.follow.FollowResponse
-import com.whyranoid.data.model.follow.FollowersResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -21,17 +21,17 @@ interface FollowService {
     @GET(API.WALKING_FOLLOWING)
     suspend fun getWalkingFollowings(
         @Path("uid") uid: Long,
-    ): Response<FollowersResponse>
+    ): Response<List<UserResponse>>
 
     @GET(API.FOLLOWINGS)
     suspend fun getFollowings(
         @Path("uid") uid: Long,
-    ): Response<FollowersResponse>
+    ): Response<List<UserResponse>>
 
     @GET(API.FOLLOWERS)
     suspend fun getFollowers(
         @Path("uid") uid: Long,
-    ): Response<FollowersResponse>
+    ): Response<List<UserResponse>>
 
     @DELETE(API.UNFOLLOW)
     suspend fun unfollow(

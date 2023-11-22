@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,6 +45,7 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
         initialSelection = listOf(LocalDate.now()),
         initialSelectionMode = SelectionMode.Single,
     )
+    onDayClicked(calendarState.selectionState.selection[0])
 
     Column(
         modifier = modifier
@@ -165,7 +165,5 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
                 }
             },
         )
-
-        Spacer(modifier = Modifier.height(100.dp))
     }
 }

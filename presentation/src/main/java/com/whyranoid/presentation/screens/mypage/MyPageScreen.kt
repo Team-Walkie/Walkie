@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,27 +55,37 @@ import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
 import com.whyranoid.presentation.screens.mypage.tabs.ChallengePage
 import com.whyranoid.presentation.screens.mypage.tabs.HistoryPage
+import com.whyranoid.presentation.screens.mypage.tabs.PostImagePreview
 import com.whyranoid.presentation.screens.mypage.tabs.PostPage
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.UserPageState
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import java.time.LocalDate
 import java.util.*
 
 @Composable
 fun MyPageScreen(
     navController: NavController,
-    uid: Long,
+    uid: Long? = null,
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
 
     LaunchedEffect(true) {
-        viewModel.getUserDetail(uid)
-        viewModel.getUserBadges(uid)
-        viewModel.getUserPostPreviews(uid)
+        uid?.let {
+            viewModel.getUserDetail(uid)
+            viewModel.getUserBadges(uid)
+            viewModel.getUserPostPreviews(uid)
+        } ?: run {
+            val myUid = requireNotNull(viewModel.accountRepository.uId.first())
+            viewModel.getUserDetail(myUid)
+            viewModel.getUserBadges(myUid)
+            viewModel.getUserPostPreviews(myUid)
+        }
     }
 
     val state by viewModel.collectAsState()
@@ -90,6 +101,7 @@ fun MyPageScreen(
         onLogoutClicked = {
             viewModel.signOut()
         },
+        onDateClicked = viewModel::selectDate,
     )
 }
 
@@ -103,6 +115,7 @@ fun MyPageContent(
     onProfileEditClicked: () -> Unit = {}, // TODO
     onSettingsClicked: () -> Unit = {}, // TODO
     onLogoutClicked: () -> Unit = {}, // TODO
+    onDateClicked: (LocalDate) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -117,25 +130,19 @@ fun MyPageContent(
 
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(top = 28.dp)
+            modifier = Modifier.padding(paddingValues).padding(top = 28.dp)
                 .verticalScroll(scrollState),
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AsyncImage(
                         model = userDetail.user.imageUrl,
                         contentDescription = "유저 프로필 이미지",
-                        modifier = Modifier
-                            .clip(shape = CircleShape)
-                            .size(70.dp),
+                        modifier = Modifier.clip(shape = CircleShape).size(70.dp),
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
@@ -170,18 +177,14 @@ fun MyPageContent(
 
             state.userBadgesState.getDataOrNull()?.let { userBadges ->
                 LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
                 ) {
                     items(userBadges.size) { index ->
                         AsyncImage(
                             model = userBadges[index].imageUrl,
                             contentDescription = "badge image",
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .size(56.dp),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                                .clip(RoundedCornerShape(8.dp)).size(56.dp),
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                     }
@@ -197,7 +200,6 @@ fun MyPageContent(
             }
 
             val coroutineScope = rememberCoroutineScope()
-
 
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
@@ -241,7 +243,22 @@ fun MyPageContent(
                             onPostCreateClicked,
                         )
                     }
-                    1 -> HistoryPage(onDayClicked = {}) // TODO: 해당 날짜 데이터 로드
+
+                    1 -> {
+                        Column {
+                            HistoryPage(onDayClicked = onDateClicked)
+                            state.calendarPreviewsState.getDataOrNull()?.let { postPreviews ->
+                                postPreviews.forEach { postPreview ->
+                                    PostImagePreview(
+                                        Modifier.fillMaxSize().padding(40.dp),
+                                        postPreview,
+                                        onPostPreviewClicked,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     2 -> ChallengePage()
                 }
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.user.UserDetail
+import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
@@ -16,6 +17,8 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
+import java.util.Date
 
 sealed class UserPageSideEffect
 
@@ -23,9 +26,11 @@ data class UserPageState(
     val userDetailState: UiState<UserDetail> = UiState.Idle,
     val userBadgesState: UiState<List<Badge>> = UiState.Idle,
     val userPostPreviewsState: UiState<List<PostPreview>> = UiState.Idle,
+    val calendarPreviewsState: UiState<List<PostPreview>> = UiState.Idle,
 )
 
 class UserPageViewModel(
+    val accountRepository: AccountRepository,
     private val getUserDetailUseCase: GetUserDetailUseCase,
     private val getUserBadgesUseCase: GetUserBadgesUseCase,
     private val getUserPostPreviewsUseCase: GetUserPostPreviewsUseCase,
@@ -33,8 +38,7 @@ class UserPageViewModel(
     private val signOutUseCase: SignOutUseCase,
 ) : ViewModel(), ContainerHost<UserPageState, UserPageSideEffect> {
 
-    override val container =
-        container<UserPageState, UserPageSideEffect>(UserPageState())
+    override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
 
     fun getUserDetail(uid: Long) = intent {
         reduce {
@@ -84,6 +88,20 @@ class UserPageViewModel(
             reduce {
                 state.copy(userPostPreviewsState = UiState.Error(it.message.toString()))
             }
+        }
+    }
+
+    fun selectDate(localDate: LocalDate) = intent {
+        reduce {
+            state.copy(calendarPreviewsState = UiState.Loading)
+        }
+        reduce {
+            val posts = state.userPostPreviewsState.getDataOrNull() ?: emptyList()
+            val filtered = posts.filter {
+                val date = Date(it.date)
+                date.year + 1900 == localDate.year && date.month + 1 == localDate.monthValue && date.date == localDate.dayOfMonth
+            }
+            state.copy(calendarPreviewsState = UiState.Success(filtered))
         }
     }
 

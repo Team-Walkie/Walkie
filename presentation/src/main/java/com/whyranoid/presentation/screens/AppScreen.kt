@@ -25,7 +25,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
@@ -41,6 +40,7 @@ import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -49,7 +49,7 @@ fun AppScreen(startWorker: () -> Unit) {
     val splashViewModel = koinViewModel<SplashViewModel>()
 
     val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
-    AppScreenContent(startWorker, navController)
+    // AppScreenContent(startWorker, navController)
     // TODO Splash 적용
     when (splashState.value) {
         SplashState.InitialState -> SplashScreen()
@@ -63,7 +63,10 @@ fun AppScreen(startWorker: () -> Unit) {
 }
 
 @Composable
-fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) {
+fun AppScreenContent(
+    startWorker: () -> Unit,
+    navController: NavHostController,
+) {
     Scaffold(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -131,7 +134,7 @@ fun AppScreenContent(startWorker: () -> Unit, navController: NavHostController) 
 
             // TODO: repo, viewModel로 하여금 uid를 받아오도록 변경 or MyPageScreen 내부적으로 uid 보관하도록 변경
             composable(Screen.MyPage.route) {
-                MyPageScreen(navController, User.DUMMY.uid)
+                MyPageScreen(navController)
             }
 
             composable(Screen.AddPostScreen.route) {
