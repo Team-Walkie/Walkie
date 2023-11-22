@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +45,7 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
         initialSelection = listOf(LocalDate.now()),
         initialSelectionMode = SelectionMode.Single,
     )
-    LaunchedEffect(Unit) {
-        onDayClicked(calendarState.selectionState.selection[0])
-    }
+    onDayClicked(calendarState.selectionState.selection[0])
 
     Column(
         modifier = modifier
