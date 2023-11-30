@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -119,13 +120,14 @@ fun ChallengeMainContent(
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+//                .padding(horizontal = 20.dp)
         ) {
 
             item {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
                     text = "신규",
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -138,7 +140,8 @@ fun ChallengeMainContent(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(13.dp)
+                    horizontalArrangement = Arrangement.spacedBy(13.dp),
+                    contentPadding = PaddingValues(20.dp)
                 ) {
 
                     state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
@@ -165,6 +168,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
                     text = "도전중인 챌린지",
                     fontSize = 20.sp,
                     color = Color.Black,
@@ -174,7 +178,9 @@ fun ChallengeMainContent(
             }
 
             item {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
 
                     state.challengingPreviewsState.getDataOrNull()?.let { challengingPreviews ->
                         challengingPreviews.take(4).forEach {
@@ -208,6 +214,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
                     text = "다른 챌린지도 도전해보세요!",
                     fontSize = 20.sp,
                     color = Color.Black,
@@ -218,6 +225,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
                     text = "인기 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -230,7 +238,8 @@ fun ChallengeMainContent(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(13.dp)
+                    horizontalArrangement = Arrangement.spacedBy(13.dp),
+                    contentPadding = PaddingValues(20.dp)
                 ) {
                     state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
                         newChallengePreviews.chunkedList(3).forEach { list ->
@@ -262,6 +271,7 @@ fun ChallengeMainContent(
 
             item {
                 Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
                     text = "유형별 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -299,6 +309,7 @@ fun ChallengeMainContent(
 
                 HorizontalPager(
                     state = pagerState,
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 ) {
 
                     state.typedChallengePreviewsState.getDataOrNull()
