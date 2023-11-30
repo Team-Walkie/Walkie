@@ -49,7 +49,6 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         return getMyPostPreviews(uid).onSuccess { posts ->
             posts.filter { postPreview ->
                 val date = Date(postPreview.date)
-                Log.d("TODOREMOVE", "${date.year}, ${date.month + 1}, ${date.date}")
                 date.month + 1 == month && year == date.year && day == date.date
             }
         }

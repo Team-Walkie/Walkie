@@ -75,7 +75,7 @@ fun MyPageScreen(
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         uid?.let {
             viewModel.getUserDetail(uid)
             viewModel.getUserBadges(uid)
@@ -110,11 +110,11 @@ fun MyPageScreen(
 @Composable
 fun MyPageContent(
     state: UserPageState,
-    onPostPreviewClicked: (id: Long) -> Unit = {}, // TODO 아이탬 클릭시 이벤트 처리
-    onPostCreateClicked: () -> Unit = {}, // TODO 아이탬 생성 이벤트 처리
-    onProfileEditClicked: () -> Unit = {}, // TODO
-    onSettingsClicked: () -> Unit = {}, // TODO
-    onLogoutClicked: () -> Unit = {}, // TODO
+    onPostPreviewClicked: (id: Long) -> Unit = {},
+    onPostCreateClicked: () -> Unit = {},
+    onProfileEditClicked: () -> Unit = {},
+    onSettingsClicked: () -> Unit = {},
+    onLogoutClicked: () -> Unit = {},
     onDateClicked: (LocalDate) -> Unit = {},
 ) {
     Scaffold(

@@ -26,7 +26,7 @@ data class PostResponse(
             id = this.poster.uid,
             isLiked = this.liked,
             likers = this.likers.map { it.toUser() },
-            imageUrl = this.photo,
+            imageUrl = this.photo.toRealUrl(),
             date = dateFormatter.parse(this.date.replace("T", " ")).time,
             textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
             distanceText = destructedHistoryContent[2],
@@ -34,5 +34,16 @@ data class PostResponse(
             paceText = destructedHistoryContent[4],
             address = destructedHistoryContent[1],
         )
+    }
+
+    private fun String.toRealUrl(): String {
+        return (FIREBASE_STORAGE_URL + this.split(DIVIDER)[1] + MEDIA_TYPE).also { println("test\n$it") }
+    }
+
+    companion object {
+        const val DIVIDER = "/post/"
+        const val FIREBASE_STORAGE_URL =
+            "https://firebasestorage.googleapis.com/v0/b/walkie-5bfb3.appspot.com/o/post%2F"
+        const val MEDIA_TYPE = "?alt=media"
     }
 }

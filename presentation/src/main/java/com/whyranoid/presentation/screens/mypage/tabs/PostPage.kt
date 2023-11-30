@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.post.TextVisibleState
-import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.reusable.NonLazyGrid
 import com.whyranoid.presentation.theme.WalkieColor
 import java.text.SimpleDateFormat
@@ -101,7 +100,7 @@ fun PostImagePreview(
         },
     ) {
         AsyncImage(
-            model = User.DUMMY.imageUrl, // TODO REMOVE postPreview.imageUrl,
+            model = postPreview.imageUrl,
             contentDescription = "postPreview Image",
             modifier = Modifier
                 .fillMaxWidth()
