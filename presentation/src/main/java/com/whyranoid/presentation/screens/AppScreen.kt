@@ -49,11 +49,10 @@ fun AppScreen(startWorker: () -> Unit) {
     val splashViewModel = koinViewModel<SplashViewModel>()
 
     val splashState = splashViewModel.splashState.collectAsStateWithLifecycle()
-    // AppScreenContent(startWorker, navController)
-    // TODO Splash 적용
+
     when (splashState.value) {
-        SplashState.InitialState -> SplashScreen()
-        SplashState.SignInState -> SignInScreen { splashViewModel.finishSignIn() }
+        SplashState.InitialState -> SplashScreen(isDay = splashViewModel.isDay)
+        SplashState.SignInState -> SignInScreen(isDay = splashViewModel.isDay) { splashViewModel.finishSignIn() }
         SplashState.SignedInState -> AppScreenContent(startWorker, navController)
     }
 
