@@ -60,11 +60,9 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
         }
     }
 
-    // TODO 회원가입 완료 처리
     fun goToDoneState() {
         (signInState.value as? SignInState.InfoState)?.let { state ->
             viewModelScope.launch {
-
                 _signInState.value = state.copy(isProgress = true)
 
                 accountRepository.signUp(
@@ -102,13 +100,6 @@ class SignInViewModel(private val accountRepository: AccountRepository) : ViewMo
                         Log.d("checkDupNickName", it.message.toString())
                     }
             }
-        }
-    }
-
-    // TODO 인증 확인 로직 추가
-    fun checkValidationNumber(number: String) {
-        (signInState.value as? SignInState.UserNameState)?.let { state ->
-            _signInState.value = state.copy(isValidate = true, validateResult = number)
         }
     }
 }

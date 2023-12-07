@@ -7,14 +7,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 class SplashViewModel(private val accountRepository: AccountRepository) : ViewModel() {
     private val _splashState: MutableStateFlow<SplashState> =
         MutableStateFlow(SplashState.InitialState)
     val splashState: StateFlow<SplashState> get() = _splashState.asStateFlow()
+
+    val isDay = LocalTime.now().hour in 6..18
 
     suspend fun splashStart() {
         viewModelScope.launch {
