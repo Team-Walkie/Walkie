@@ -140,7 +140,7 @@ val useCaseModule = module {
     single { SignOutUseCase(get()) }
     single { UploadPostUseCase(get(), get()) }
     single { SendLikeUseCase(get(), get()) }
-    single { GetSearchedUserUseCase(get()) }
+    single { GetSearchedUserUseCase(get(), get()) }
     single { AddGpsListener(get()) }
     single { AddNetworkListener(get()) }
     single { RemoveGpsListener(get()) }
