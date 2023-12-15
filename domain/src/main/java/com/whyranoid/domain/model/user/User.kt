@@ -39,3 +39,8 @@ data class User(
                 )
     }
 }
+
+data class UserWithFollowingState(
+    val user: User,
+    val isFollowing: Boolean,
+)
