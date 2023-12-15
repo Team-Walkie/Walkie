@@ -7,7 +7,7 @@ import com.whyranoid.domain.model.user.User
 class FollowDataSourceImpl(private val followService: FollowService) : FollowDataSource {
     override suspend fun follow(followerId: Long, followedId: Long): Result<Long> {
         return kotlin.runCatching {
-            val request = FollowRequest(followerId, followedId, false)
+            val request = FollowRequest(followerId, followedId)
             val response = followService.follow(request)
             requireNotNull(response.body()).followedId
         }
@@ -15,7 +15,7 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
 
     override suspend fun unfollow(followerId: Long, followedId: Long): Result<Long> {
         return kotlin.runCatching {
-            val request = FollowRequest(followerId, followedId, true)
+            val request = FollowRequest(followerId, followedId)
             val response = followService.unfollow(request)
             requireNotNull(response.body()).followedId
         }

@@ -6,6 +6,7 @@ import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.model.user.UserWithFollowingState
 import com.whyranoid.domain.usecase.community.FollowUseCase
 import com.whyranoid.domain.usecase.community.GetSearchedUserUseCase
+import com.whyranoid.domain.usecase.community.UnFollowUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 class SearchFriendViewModel(
     private val getSearchedUserUseCase: GetSearchedUserUseCase,
     private val followUseCase: FollowUseCase,
-    private val unFollowUseCase: FollowUseCase,
+    private val unFollowUseCase: UnFollowUseCase,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
