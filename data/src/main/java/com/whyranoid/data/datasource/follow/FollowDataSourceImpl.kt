@@ -44,4 +44,12 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
             followerList.map { it.toUser() }
         }
     }
+
+    override suspend fun searchNickname(keyword: String): Result<List<User>> {
+        return kotlin.runCatching {
+            val response = followService.searchNickname(keyword)
+            val userList = requireNotNull(response.body())
+            userList.map { it.toUser() }
+        }
+    }
 }

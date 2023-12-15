@@ -24,4 +24,8 @@ class FollowRepositoryImpl(private val followDataSource: FollowDataSource) : Fol
     override suspend fun getFollowers(uid: Long): Result<List<User>> {
         return followDataSource.getFollowers(uid)
     }
+
+    override suspend fun searchNickname(keyword: String): Result<List<User>> {
+        return followDataSource.searchNickname(keyword)
+    }
 }
