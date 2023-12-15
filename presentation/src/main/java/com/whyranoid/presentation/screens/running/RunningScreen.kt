@@ -493,7 +493,7 @@ fun RunningMapScreen(
                     }
                     items(notRunning.size) {
                         RunningFollowerItemWithLikable(
-                            user = running[it].user,
+                            user = notRunning[it],
                             circleBorderColor = WalkieColor.GrayBorder,
                         )
                     }
@@ -726,6 +726,7 @@ fun RunningBottomButton(
                             Text("러닝 시작", style = WalkieTypography.Title)
                         }
                     }
+
                     is RunningState.Paused -> {
                         Row(
                             Modifier
@@ -756,6 +757,7 @@ fun RunningBottomButton(
                             }
                         }
                     }
+
                     is RunningState.Running -> {
                         Row(
                             Modifier
