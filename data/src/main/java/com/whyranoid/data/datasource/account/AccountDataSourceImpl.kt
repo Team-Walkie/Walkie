@@ -12,7 +12,6 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
         agreeMarketing: Boolean,
     ): Result<Long> {
         return kotlin.runCatching {
-
             val request = SignUpRequest(
                 userName = nickName,
                 profileImg = profileUrl ?: "",

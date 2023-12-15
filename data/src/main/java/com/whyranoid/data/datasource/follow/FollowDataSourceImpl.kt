@@ -16,7 +16,7 @@ class FollowDataSourceImpl(private val followService: FollowService) : FollowDat
     override suspend fun unfollow(followerId: Long, followedId: Long): Result<Long> {
         return kotlin.runCatching {
             val request = FollowRequest(followerId, followedId, true)
-            val response = followService.follow(request)
+            val response = followService.unfollow(request)
             requireNotNull(response.body()).followedId
         }
     }

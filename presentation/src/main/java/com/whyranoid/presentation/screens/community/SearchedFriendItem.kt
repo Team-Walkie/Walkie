@@ -9,56 +9,75 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.whyranoid.domain.model.user.User
+import com.whyranoid.domain.model.user.UserWithFollowingState
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
 fun SearchedFriendItem(
     modifier: Modifier = Modifier,
-    nickname: String
+    userWithFollowingState: UserWithFollowingState,
+    onClickFollow: (User) -> Unit = {},
+    onClickUnFollow: (User) -> Unit = {},
 ) {
+    var isFollowing by remember { mutableStateOf(userWithFollowingState.isFollowing) }
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         AsyncImage(
-            model = "https://picsum.photos/250/250 ", contentDescription = "",
+            model = userWithFollowingState.user.imageUrl,
+            contentDescription = "user image",
             modifier = Modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(50.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         Text(
             modifier = Modifier.padding(15.dp),
-            text = nickname,
-            style = WalkieTypography.Body2
+            text = userWithFollowingState.user.nickname,
+            style = WalkieTypography.Body2,
         )
 
         Text(
             text = "·",
-            style = WalkieTypography.Body2
+            style = WalkieTypography.Body2,
         )
 
         Spacer(modifier = Modifier.width(5.dp))
 
         Text(
             modifier = Modifier.clickable {
-
+                if (isFollowing) {
+                    onClickUnFollow(userWithFollowingState.user)
+                } else {
+                    onClickFollow(
+                        userWithFollowingState.user,
+                    )
+                }
+                isFollowing = isFollowing.not()
             },
-            text = "팔로우",
+            text = if (isFollowing) {
+                "언팔로우"
+            } else {
+                "팔로우"
+            },
             style = WalkieTypography.Body2.copy(
-                color = WalkieColor.Primary
-            )
+                color = WalkieColor.Primary,
+            ),
         )
-
     }
 }

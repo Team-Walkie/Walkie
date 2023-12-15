@@ -48,7 +48,6 @@ import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
-import com.whyranoid.domain.usecase.GetSearchedUserUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
@@ -60,6 +59,9 @@ import com.whyranoid.domain.usecase.broadcast.GetGpsState
 import com.whyranoid.domain.usecase.broadcast.GetNetworkState
 import com.whyranoid.domain.usecase.broadcast.RemoveGpsListener
 import com.whyranoid.domain.usecase.broadcast.RemoveNetworkListener
+import com.whyranoid.domain.usecase.community.FollowUseCase
+import com.whyranoid.domain.usecase.community.GetSearchedUserUseCase
+import com.whyranoid.domain.usecase.community.UnFollowUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
@@ -99,7 +101,7 @@ val viewModelModule = module {
     factory { SelectHistoryViewModel(get()) }
     factory { EditProfileViewModel(get()) }
     factory { AddPostViewModel(get()) }
-    factory { SearchFriendViewModel(get()) }
+    factory { SearchFriendViewModel(get(), get(), get()) }
     factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
@@ -147,6 +149,8 @@ val useCaseModule = module {
     single { RemoveNetworkListener(get()) }
     single { GetGpsState(get()) }
     single { GetNetworkState(get()) }
+    single { FollowUseCase(get(), get()) }
+    single { UnFollowUseCase(get(), get()) }
 }
 
 val databaseModule = module {

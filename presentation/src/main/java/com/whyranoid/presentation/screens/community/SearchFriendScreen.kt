@@ -21,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -158,8 +156,16 @@ fun SearchFriendScreen(
                     SearchedFriendItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        nickname = item.nickname,
+                            .padding(horizontal = 20.dp)
+                            .clickable {
+                            },
+                        userWithFollowingState = item,
+                        onClickFollow = { user ->
+                            viewModel.follow(user)
+                        },
+                        onClickUnFollow = { user ->
+                            viewModel.unFollow(user)
+                        },
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }
