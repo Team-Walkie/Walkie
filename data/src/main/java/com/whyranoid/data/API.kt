@@ -23,6 +23,8 @@ object API {
 
     const val LIST_UP_POST = "api/community/listup-post"
 
+    const val SEARCH = "api/community/search-nickname"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 
