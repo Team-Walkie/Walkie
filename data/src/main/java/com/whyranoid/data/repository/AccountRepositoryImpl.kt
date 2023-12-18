@@ -6,6 +6,7 @@ import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.model.account.Sex
 import com.whyranoid.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class AccountRepositoryImpl(
     private val accountDataSource: AccountDataSource,
@@ -17,7 +18,10 @@ class AccountRepositoryImpl(
     override val userName: Flow<String?> = accountDataStore.userName
     override val nickName: Flow<String?> = accountDataStore.nickName
 
-    // TODO API Call
+    override suspend fun getUID(): Long {
+        return requireNotNull(uId.first())
+    }
+
     override suspend fun signUp(
         authId: String,
         userName: String,

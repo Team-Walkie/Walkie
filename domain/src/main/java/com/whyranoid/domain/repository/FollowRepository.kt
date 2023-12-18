@@ -12,4 +12,6 @@ interface FollowRepository {
     suspend fun getFollowings(uid: Long): Result<List<User>>
 
     suspend fun getFollowers(uid: Long): Result<List<User>>
+
+    suspend fun searchNickname(keyword: String): Result<List<User>>
 }

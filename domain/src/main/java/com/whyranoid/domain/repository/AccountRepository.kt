@@ -24,6 +24,8 @@ interface AccountRepository {
         agreeSubscription: Boolean,
     ): Result<Long>
 
+    suspend fun getUID(): Long
+
     suspend fun signIn(): Result<Long>
 
     suspend fun singOut(): Result<Boolean>

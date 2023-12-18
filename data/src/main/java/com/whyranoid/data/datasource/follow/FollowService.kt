@@ -6,10 +6,11 @@ import com.whyranoid.data.model.follow.FollowRequest
 import com.whyranoid.data.model.follow.FollowResponse
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FollowService {
 
@@ -33,8 +34,13 @@ interface FollowService {
         @Path("uid") uid: Long,
     ): Response<List<UserResponse>>
 
-    @DELETE(API.UNFOLLOW)
+    @HTTP(method = "DELETE", path = API.UNFOLLOW, hasBody = true)
     suspend fun unfollow(
         @Body followRequest: FollowRequest,
     ): Response<FollowResponse>
+
+    @GET(API.SEARCH)
+    suspend fun searchNickname(
+        @Query("keyword") keyword: String,
+    ): Response<List<UserResponse>>
 }
