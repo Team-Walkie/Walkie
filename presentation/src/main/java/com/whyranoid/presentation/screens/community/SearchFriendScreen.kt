@@ -139,17 +139,6 @@ fun SearchFriendScreen(
             val userList = viewModel.userList.collectAsStateWithLifecycle()
 
             LazyColumn {
-//                if (lazyPagingItems.loadState.refresh == LoadState.Loading) {
-//                    item {
-//                        Text(
-//                            text = "Waiting for items to load from the backend",
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .wrapContentWidth(Alignment.CenterHorizontally),
-//                        )
-//                    }
-//                }
-
                 items(count = userList.value.size) { index ->
 
                     val item = userList.value[index]
@@ -169,16 +158,6 @@ fun SearchFriendScreen(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }
-
-//                if (lazyPagingItems.loadState.append == LoadState.Loading) {
-//                    item {
-//                        CircularProgressIndicator(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .wrapContentWidth(Alignment.CenterHorizontally),
-//                        )
-//                    }
-//                }
             }
         }
     }
