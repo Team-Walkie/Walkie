@@ -31,4 +31,6 @@ interface PostRepository {
         history: String,
         imagePath: String,
     ): Result<String>
+
+    suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>>
 }
