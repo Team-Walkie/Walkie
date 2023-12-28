@@ -17,6 +17,8 @@ class GetSearchedUserUseCase(
                     user,
                     followingList.contains(user),
                 )
+            }.filter {
+                it.user.uid != uid
             }
         }
     }
