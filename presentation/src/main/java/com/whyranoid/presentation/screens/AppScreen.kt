@@ -32,6 +32,7 @@ import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.community.SearchFriendScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
+import com.whyranoid.presentation.screens.mypage.UserPageScreen
 import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
@@ -40,7 +41,6 @@ import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -136,6 +136,10 @@ fun AppScreenContent(
                 MyPageScreen(navController)
             }
 
+            composable(Screen.MyPage.route) {
+                MyPageScreen(navController)
+            }
+
             composable(Screen.AddPostScreen.route) {
                 AddPostScreen(navController = navController)
             }
@@ -169,6 +173,17 @@ fun AppScreenContent(
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
                 ChallengeCompleteScreen(navController, challengeId)
+            }
+
+            composable(
+                Screen.UserPageScreen.route,
+                Screen.UserPageScreen.arguments,
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val uid = arguments.getLong(Screen.UID_ARGUMENT)
+                val nickname = requireNotNull(arguments.getString(Screen.NICKNAME_ARGUMENT))
+                val isFollowing = arguments.getBoolean(Screen.NICKNAME_ARGUMENT)
+                UserPageScreen(navController, uid, nickname, isFollowing)
             }
         }
     }

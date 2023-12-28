@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
 import com.whyranoid.presentation.screens.mypage.tabs.ChallengePage
@@ -71,26 +72,20 @@ import java.util.*
 @Composable
 fun MyPageScreen(
     navController: NavController,
-    uid: Long? = null,
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
 
     LaunchedEffect(Unit) {
-        uid?.let {
-            viewModel.getUserDetail(uid)
-            viewModel.getUserBadges(uid)
-            viewModel.getUserPostPreviews(uid)
-        } ?: run {
-            val myUid = requireNotNull(viewModel.accountRepository.uId.first())
-            viewModel.getUserDetail(myUid)
-            viewModel.getUserBadges(myUid)
-            viewModel.getUserPostPreviews(myUid)
-        }
+        val myUid = requireNotNull(viewModel.accountRepository.uId.first())
+        viewModel.getUserDetail(myUid, true)
+        viewModel.getUserBadges(myUid)
+        viewModel.getUserPostPreviews(myUid)
     }
 
     val state by viewModel.collectAsState()
 
-    MyPageContent(
+    UserPageContent(
+        nickname = null,
         state,
         onPostCreateClicked = {
             navController.navigate(Screen.AddPostScreen.route)
@@ -108,7 +103,8 @@ fun MyPageScreen(
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MyPageContent(
+fun UserPageContent(
+    nickname: String? = null,
     state: UserPageState,
     onPostPreviewClicked: (id: Long) -> Unit = {},
     onPostCreateClicked: () -> Unit = {},
@@ -119,30 +115,37 @@ fun MyPageContent(
 ) {
     Scaffold(
         topBar = {
-            // TODO change to WalkieTopBar()
-            MyPageTopAppBar(
-                onProfileEditClicked,
-                onSettingsClicked,
-                onLogoutClicked,
-            )
+            nickname?.let { UserPageTopAppBar(it) } ?: run {
+                MyPageTopAppBar(
+                    onProfileEditClicked,
+                    onSettingsClicked,
+                    onLogoutClicked,
+                )
+            }
         },
     ) { paddingValues ->
 
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier.padding(paddingValues).padding(top = 28.dp)
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(top = 28.dp)
                 .verticalScroll(scrollState),
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AsyncImage(
                         model = userDetail.user.imageUrl,
                         contentDescription = "유저 프로필 이미지",
-                        modifier = Modifier.clip(shape = CircleShape).size(70.dp),
+                        modifier = Modifier
+                            .clip(shape = CircleShape)
+                            .size(70.dp),
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
@@ -177,14 +180,18 @@ fun MyPageContent(
 
             state.userBadgesState.getDataOrNull()?.let { userBadges ->
                 LazyRow(
-                    modifier = Modifier.fillMaxWidth().padding(start = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp),
                 ) {
                     items(userBadges.size) { index ->
                         AsyncImage(
                             model = userBadges[index].imageUrl,
                             contentDescription = "badge image",
-                            modifier = Modifier.padding(vertical = 8.dp)
-                                .clip(RoundedCornerShape(8.dp)).size(56.dp),
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .size(56.dp),
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                     }
@@ -238,6 +245,7 @@ fun MyPageContent(
                 when (pagerNum) {
                     0 -> state.userPostPreviewsState.getDataOrNull()?.let { postPreviews ->
                         PostPage(
+                            nickname == null,
                             postPreviews,
                             onPostPreviewClicked,
                             onPostCreateClicked,
@@ -247,18 +255,20 @@ fun MyPageContent(
                     1 -> {
                         Column {
                             HistoryPage(onDayClicked = onDateClicked)
-                            state.calendarPreviewsState.getDataOrNull()?.let { postPreviews ->
-                                postPreviews.forEach { postPreview ->
-                                    PostImagePreview(
-                                        Modifier.fillMaxSize().padding(40.dp),
-                                        postPreview,
-                                        onPostPreviewClicked,
-                                    )
+                            state.calendarPreviewsState.getDataOrNull()
+                                ?.let { postPreviews ->
+                                    postPreviews.forEach { postPreview ->
+                                        PostImagePreview(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .padding(40.dp),
+                                            postPreview,
+                                            onPostPreviewClicked,
+                                        )
+                                    }
                                 }
-                            }
                         }
                     }
-
                     2 -> ChallengePage()
                 }
             }
@@ -291,7 +301,6 @@ fun MyPageTopAppBar(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
             ) {
-                // TODO: 리소스 분리
                 DropdownMenuItem(onClick = { onProfileEditClicked() }) {
                     Text(text = "프로필 편집")
                 }
@@ -304,5 +313,19 @@ fun MyPageTopAppBar(
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+    )
+}
+
+@Composable
+fun UserPageTopAppBar(nickname: String) {
+    WalkieTopBar(
+        leftContent = {
+            Row {
+                Text(
+                    text = nickname,
+                    style = WalkieTypography.Title.copy(fontWeight = FontWeight(600)),
+                )
+            }
+        },
     )
 }

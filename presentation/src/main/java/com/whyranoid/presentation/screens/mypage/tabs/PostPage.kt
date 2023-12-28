@@ -40,6 +40,7 @@ import java.util.*
 
 @Composable
 fun PostPage(
+    isMyPage: Boolean = true,
     postPreviews: List<PostPreview>,
     onPostPreviewClicked: (id: Long) -> Unit,
     onPostCreateClicked: () -> Unit,
@@ -54,7 +55,7 @@ fun PostPage(
                 postPreview = postPreviews[index],
                 onPostPreviewClicked = onPostPreviewClicked,
             )
-        } else {
+        } else if (isMyPage) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

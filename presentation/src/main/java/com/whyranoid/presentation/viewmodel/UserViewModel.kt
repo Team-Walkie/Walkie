@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.post.PostPreview
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.model.user.UserDetail
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.usecase.GetPostUseCase
@@ -40,14 +41,14 @@ class UserPageViewModel(
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
 
-    fun getUserDetail(uid: Long) = intent {
+    fun getUserDetail(uid: Long, isFollowing: Boolean) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
         }
         getUserDetailUseCase(uid).onSuccess { userDetail ->
             reduce {
                 state.copy(
-                    userDetailState = UiState.Success(userDetail),
+                    userDetailState = UiState.Success(userDetail.copy(isFollowing = isFollowing)),
                 )
             }
         }.onFailure {
@@ -82,6 +83,16 @@ class UserPageViewModel(
             reduce {
                 state.copy(
                     userPostPreviewsState = UiState.Success(userPostPreviews),
+                    userDetailState = UiState.Success(
+                        UserDetail(
+                            state.userDetailState.getDataOrNull()?.user ?: User.DUMMY,
+                            state.userDetailState.getDataOrNull()?.postCount
+                                ?: userPostPreviews.size,
+                            state.userDetailState.getDataOrNull()?.followerCount ?: 0,
+                            state.userDetailState.getDataOrNull()?.followingCount ?: 0,
+                            state.userDetailState.getDataOrNull()?.isFollowing ?: false,
+                        ),
+                    ),
                 )
             }
         }.onFailure {
