@@ -155,6 +155,9 @@ fun SearchFriendScreen(
                         onClickUnFollow = { user ->
                             viewModel.unFollow(user)
                         },
+                        onClickItem = { user ->
+                            navController.navigate("userPage/${user.uid}/${user.nickname}/${item.isFollowing}")
+                        },
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }

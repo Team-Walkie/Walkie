@@ -30,11 +30,12 @@ fun SearchedFriendItem(
     userWithFollowingState: UserWithFollowingState,
     onClickFollow: (User) -> Unit = {},
     onClickUnFollow: (User) -> Unit = {},
+    onClickItem: (User) -> Unit = {},
 ) {
     var isFollowing by remember { mutableStateOf(userWithFollowingState.isFollowing) }
 
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable { onClickItem(userWithFollowingState.user) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
