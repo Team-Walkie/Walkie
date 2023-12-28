@@ -47,4 +47,8 @@ class PostRepositoryImpl(
     ): Result<String> {
         return postDataSource.uploadPost(uid, content, colorMode, history, imagePath)
     }
+
+    override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
+        return postDataSource.getMyFollowingsPost(uid)
+    }
 }

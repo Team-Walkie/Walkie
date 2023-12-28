@@ -11,9 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.whyranoid.domain.model.post.Post
 
 @Composable
-fun PostItem() {
+fun PostItem(post: Post) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -25,18 +26,17 @@ fun PostItem() {
                 .height(1.dp)
         )
 
-        PostProfileItem()
+        PostProfileItem(post.author)
 
         AsyncImage(
-            model = "https://picsum.photos/250/250 ", contentDescription = "게시글 사진",
+            model = post.imageUrl, contentDescription = "게시글 사진",
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
             contentScale = ContentScale.Crop
         )
 
-        PostContentItem()
-
+        PostContentItem(post)
 
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,11 +24,18 @@ import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.component.community.PostItem
 import com.whyranoid.presentation.component.community.RunningFollowerItem
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun CommunityScreen(
     navController: NavController,
 ) {
+
+    val viewModel = koinViewModel<CommunityScreenViewModel>()
+    val state by viewModel.collectAsState()
+
     Scaffold(
         topBar = {
             WalkieTopBar(
@@ -85,9 +93,9 @@ fun CommunityScreen(
                 }
             }
 
-            repeat(10) {
+            state.posts.getDataOrNull()?.forEach { post ->
                 item {
-                    PostItem()
+                    PostItem(post = post)
                 }
             }
         }

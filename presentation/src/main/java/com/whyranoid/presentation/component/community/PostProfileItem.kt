@@ -17,11 +17,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
-fun PostProfileItem() {
+fun PostProfileItem(user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +38,7 @@ fun PostProfileItem() {
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                model = "https://picsum.photos/250/250 ", contentDescription = "내 프로필 이미지",
+                model = user.imageUrl, contentDescription = "내 프로필 이미지",
                 modifier = Modifier
                     .size(24.dp)
                     .border(0.5.dp, WalkieColor.GrayBorder, CircleShape)
@@ -48,7 +49,7 @@ fun PostProfileItem() {
         Spacer(modifier = Modifier.size(11.dp))
         Column {
             Text(
-                "tiny_soo_99",
+                user.nickname,
                 style = WalkieTypography.Body1
             )
             Text(

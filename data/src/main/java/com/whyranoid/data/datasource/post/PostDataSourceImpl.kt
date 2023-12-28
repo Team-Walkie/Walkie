@@ -89,4 +89,11 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
             uploadPostResponse?.message.toString()
         }
     }
+
+    override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
+        return kotlin.runCatching {
+            val posts = requireNotNull(postService.getPosts(uid).body())
+            posts.map { it.toPost() }
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.whyranoid.data.model.post
 
 import com.google.gson.annotations.SerializedName
 import com.whyranoid.data.model.account.UserResponse
+import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.post.TextVisibleState
 import com.whyranoid.domain.util.dateFormatter
@@ -20,7 +21,6 @@ data class PostResponse(
 ) {
     fun toPostPreview(): PostPreview {
         val destructedHistoryContent = historyContent.split('_')
-        println(destructedHistoryContent)
         return PostPreview(
             author = poster.toUser(),
             id = this.poster.uid,
@@ -33,6 +33,17 @@ data class PostResponse(
             timeText = destructedHistoryContent[3],
             paceText = destructedHistoryContent[4],
             address = destructedHistoryContent[1],
+        )
+    }
+
+    fun toPost(): Post {
+        return Post(
+            id = this.postId,
+            imageUrl = this.photo.toRealUrl(),
+            likeCount = this.likers.size,
+            contents = this.content,
+            author = this.poster.toUser(),
+            date = dateFormatter.parse(this.date.replace("T", " ")).time,
         )
     }
 

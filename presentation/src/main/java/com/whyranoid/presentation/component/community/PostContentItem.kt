@@ -14,12 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.whyranoid.domain.model.post.Post
 import com.whyranoid.presentation.icons.buttoniconpack.CommentButtonIcon
 import com.whyranoid.presentation.icons.buttoniconpack.HeartButtonIcon
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
-fun PostContentItem() {
+fun PostContentItem(post: Post) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +33,7 @@ fun PostContentItem() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "좋아요 11",
+                text = "좋아요 ${post.likeCount}",
                 style = WalkieTypography.Body1
             )
 
@@ -67,7 +68,7 @@ fun PostContentItem() {
         Spacer(modifier = Modifier.size(13.dp))
 
         Text(
-            text = "사랑이 넘쳐나는... 더보기",
+            text = post.contents,
             style = WalkieTypography.Body1_Normal
         )
     }
