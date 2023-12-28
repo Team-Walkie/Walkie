@@ -86,8 +86,7 @@ class UserPageViewModel(
                     userDetailState = UiState.Success(
                         UserDetail(
                             state.userDetailState.getDataOrNull()?.user ?: User.DUMMY,
-                            state.userDetailState.getDataOrNull()?.postCount
-                                ?: userPostPreviews.size,
+                            userPostPreviews.size,
                             state.userDetailState.getDataOrNull()?.followerCount ?: 0,
                             state.userDetailState.getDataOrNull()?.followingCount ?: 0,
                             state.userDetailState.getDataOrNull()?.isFollowing ?: false,
