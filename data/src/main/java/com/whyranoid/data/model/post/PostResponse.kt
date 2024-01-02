@@ -39,7 +39,7 @@ data class PostResponse(
     fun toPost(): Post {
         return Post(
             id = this.postId,
-            imageUrl = this.photo.toRealUrl(),
+            imageUrl = this.photo,
             likeCount = this.likers.size,
             contents = this.content,
             author = this.poster.toUser(),
