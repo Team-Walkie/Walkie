@@ -26,7 +26,7 @@ data class PostResponse(
             id = this.poster.uid,
             isLiked = this.liked,
             likers = this.likers.map { it.toUser() },
-            imageUrl = this.photo.toRealUrl(),
+            imageUrl = this.photo,
             date = dateFormatter.parse(this.date.replace("T", " ")).time,
             textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
             distanceText = destructedHistoryContent[2],
