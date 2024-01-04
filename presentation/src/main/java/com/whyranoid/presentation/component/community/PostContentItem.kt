@@ -17,10 +17,15 @@ import androidx.compose.ui.unit.dp
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.presentation.icons.buttoniconpack.CommentButtonIcon
 import com.whyranoid.presentation.icons.buttoniconpack.HeartButtonIcon
+import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
-fun PostContentItem(post: Post) {
+fun PostContentItem(
+    post: Post,
+    onLikeClicked: (Long) -> Unit = {}
+) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,11 +48,11 @@ fun PostContentItem(post: Post) {
                     modifier = Modifier
                         .size(20.dp)
                         .clickable {
-
-                        }
-                    ,
+                            onLikeClicked(post.id)
+                        },
                     imageVector = HeartButtonIcon,
                     contentDescription = "좋아요 버튼",
+                    tint = if (post.isLiked) WalkieColor.Primary else WalkieColor.GrayBorder
                 )
 
                 Spacer(modifier = Modifier.size(16.dp))
@@ -57,8 +62,7 @@ fun PostContentItem(post: Post) {
                         .size(20.dp)
                         .clickable {
 
-                        }
-                    ,
+                        },
                     imageVector = CommentButtonIcon,
                     contentDescription = "댓글 버튼",
                 )

@@ -95,7 +95,9 @@ fun CommunityScreen(
 
             state.posts.getDataOrNull()?.forEach { post ->
                 item {
-                    PostItem(post = post)
+                    PostItem(post = post) { postId ->
+                        viewModel.likePost(postId)
+                    }
                 }
             }
         }

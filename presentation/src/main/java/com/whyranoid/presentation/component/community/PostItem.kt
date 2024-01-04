@@ -14,7 +14,10 @@ import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.Post
 
 @Composable
-fun PostItem(post: Post) {
+fun PostItem(
+    post: Post,
+    onLikeClicked: (Long) -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -36,7 +39,9 @@ fun PostItem(post: Post) {
             contentScale = ContentScale.Crop
         )
 
-        PostContentItem(post)
+        PostContentItem(post) {
+            onLikeClicked(it)
+        }
 
     }
 }
