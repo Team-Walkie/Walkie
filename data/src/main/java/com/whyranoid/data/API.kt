@@ -25,6 +25,8 @@ object API {
 
     const val SEARCH = "api/community/search-nickname"
 
+    const val SEND_LIKE = "api/community/send-like"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 
