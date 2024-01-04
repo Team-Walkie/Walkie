@@ -26,7 +26,7 @@ data class PostResponse(
             id = this.poster.uid,
             isLiked = this.liked,
             likers = this.likers.map { it.toUser() },
-            imageUrl = this.photo.toRealUrl(),
+            imageUrl = this.photo,
             date = dateFormatter.parse(this.date.replace("T", " ")).time,
             textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
             distanceText = destructedHistoryContent[2],
@@ -39,7 +39,7 @@ data class PostResponse(
     fun toPost(): Post {
         return Post(
             id = this.postId,
-            imageUrl = this.photo.toRealUrl(),
+            imageUrl = this.photo,
             likeCount = this.likers.size,
             contents = this.content,
             author = this.poster.toUser(),
