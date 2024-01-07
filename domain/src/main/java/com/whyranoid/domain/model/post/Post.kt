@@ -6,6 +6,7 @@ data class Post(
     val id: Long,
     val imageUrl: String,
     val likeCount: Int,
+    val isLiked: Boolean,
     val contents: String,
     val author: User,
     val date: Long = 0L,
@@ -17,6 +18,7 @@ data class Post(
             likeCount = 3,
             contents = "오늘도 상쾌한 달리기~",
             author = User.DUMMY,
+            isLiked = false
         )
     }
 }

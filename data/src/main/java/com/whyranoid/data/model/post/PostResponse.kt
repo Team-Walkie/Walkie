@@ -36,13 +36,14 @@ data class PostResponse(
         )
     }
 
-    fun toPost(): Post {
+    fun toPost(myUid: Long): Post {
         return Post(
             id = this.postId,
             imageUrl = this.photo,
             likeCount = this.likers.size,
             contents = this.content,
             author = this.poster.toUser(),
+            isLiked = this.likers.firstOrNull { it.uid == myUid } != null,
             date = dateFormatter.parse(this.date.replace("T", " ")).time,
         )
     }

@@ -11,6 +11,9 @@ import com.whyranoid.data.datasource.OtherUserPagingSource
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
+import com.whyranoid.data.datasource.community.CommunityDataSource
+import com.whyranoid.data.datasource.community.CommunityDataSourceImpl
+import com.whyranoid.data.datasource.community.CommunityService
 import com.whyranoid.data.datasource.follow.FollowDataSourceImpl
 import com.whyranoid.data.datasource.follow.FollowService
 import com.whyranoid.data.datasource.post.PostDataSourceImpl
@@ -19,6 +22,7 @@ import com.whyranoid.data.datasource.running.RunningControlDataSourceImpl
 import com.whyranoid.data.datasource.running.RunningService
 import com.whyranoid.data.repository.AccountRepositoryImpl
 import com.whyranoid.data.repository.ChallengeRepositoryImpl
+import com.whyranoid.data.repository.CommunityRepositoryImpl
 import com.whyranoid.data.repository.FollowRepositoryImpl
 import com.whyranoid.data.repository.GpsRepositoryImpl
 import com.whyranoid.data.repository.NetworkRepositoryImpl
@@ -35,6 +39,7 @@ import com.whyranoid.domain.datasource.RunningControlDataSource
 import com.whyranoid.domain.datasource.UserDataSource
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.ChallengeRepository
+import com.whyranoid.domain.repository.CommunityRepository
 import com.whyranoid.domain.repository.FollowRepository
 import com.whyranoid.domain.repository.GpsRepository
 import com.whyranoid.domain.repository.NetworkRepository
@@ -53,6 +58,7 @@ import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.broadcast.AddGpsListener
@@ -106,7 +112,7 @@ val viewModelModule = module {
     factory { AddPostViewModel(get()) }
     factory { SearchFriendViewModel(get(), get(), get()) }
     factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { CommunityScreenViewModel(get(), get()) }
+    factory { CommunityScreenViewModel(get(), get(), get()) }
 }
 
 val repositoryModule = module {
@@ -120,6 +126,7 @@ val repositoryModule = module {
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<GpsRepository> { GpsRepositoryImpl(get()) }
     single<OtherUserRepository> { OtherUserRepositoryImpl(OtherUserPagingSource()) }
+    single<CommunityRepository> { CommunityRepositoryImpl(get()) }
 }
 
 val dataSourceModule = module {
@@ -129,6 +136,7 @@ val dataSourceModule = module {
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
     single<FollowDataSource> { FollowDataSourceImpl(get()) }
     single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
+    single<CommunityDataSource> { CommunityDataSourceImpl(get()) }
 }
 
 val useCaseModule = module {
@@ -157,6 +165,7 @@ val useCaseModule = module {
     single { UnFollowUseCase(get(), get()) }
     single { GetMyFollowingUseCase(get(), get()) }
     single { GetFollowingsPostsUseCase(get(), get()) }
+    single { LikePostUseCase(get(), get()) }
 }
 
 val databaseModule = module {
@@ -222,4 +231,6 @@ val networkModule = module {
     single { get<Retrofit>().create(PostService::class.java) }
 
     single { get<Retrofit>().create(RunningService::class.java) }
+
+    single { get<Retrofit>().create(CommunityService::class.java) }
 }

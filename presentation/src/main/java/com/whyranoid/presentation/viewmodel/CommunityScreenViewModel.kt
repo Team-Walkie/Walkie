@@ -5,6 +5,7 @@ import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.usecase.GetMyFollowingUseCase
 import com.whyranoid.domain.usecase.GetFollowingsPostsUseCase
+import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.presentation.model.UiState
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -22,7 +23,8 @@ data class CommunityScreenState(
 
 class CommunityScreenViewModel(
     private val getMyFollowingUseCase: GetMyFollowingUseCase,
-    private val getFollowingsPostsUseCase: GetFollowingsPostsUseCase
+    private val getFollowingsPostsUseCase: GetFollowingsPostsUseCase,
+    private val likePostUseCase: LikePostUseCase
 ) : ViewModel(), ContainerHost<CommunityScreenState, CommunityScreenSideEffect> {
 
     override val container =
@@ -44,7 +46,6 @@ class CommunityScreenViewModel(
 
     fun getPosts() = intent {
         val result = getFollowingsPostsUseCase()
-        println("결과 : $result")
         result.onSuccess { posts ->
             reduce {
                 state.copy(
@@ -55,5 +56,32 @@ class CommunityScreenViewModel(
                 )
             }
         }
+    }
+
+    fun likePost(postId: Long) = intent {
+        val result = likePostUseCase(postId)
+
+        result.onSuccess { updatedLikeCount ->
+
+            reduce {
+                state.copy(
+                    posts = UiState.Success(
+                        state.posts.getDataOrNull()?.map {
+                            if (it.id == postId) {
+                                it.copy(
+                                    likeCount = if (updatedLikeCount == -1L) it.likeCount - 1 else updatedLikeCount.toInt(),
+                                    isLiked = it.isLiked.not()
+                                )
+                            } else {
+                                it
+                            }
+                        } ?: emptyList()
+                    )
+                )
+            }
+        }.onFailure {
+            // TODO: Error handling
+        }
+
     }
 }
