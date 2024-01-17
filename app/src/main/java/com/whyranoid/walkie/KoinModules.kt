@@ -133,7 +133,7 @@ val repositoryModule = module {
 val dataSourceModule = module {
     single<ChallengeDataSource> { ChallengeDataSourceImpl() }
     single<PostDataSource> { PostDataSourceImpl(get()) }
-    single<UserDataSource> { UserDataSourceImpl(get()) }
+    single<UserDataSource> { UserDataSourceImpl(get(), get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
     single<FollowDataSource> { FollowDataSourceImpl(get()) }
     single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
