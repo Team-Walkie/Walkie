@@ -133,7 +133,7 @@ val repositoryModule = module {
 val dataSourceModule = module {
     single<ChallengeDataSource> { ChallengeDataSourceImpl() }
     single<PostDataSource> { PostDataSourceImpl(get()) }
-    single<UserDataSource> { UserDataSourceImpl(get(), get()) }
+    single<UserDataSource> { UserDataSourceImpl(get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
     single<FollowDataSource> { FollowDataSourceImpl(get()) }
     single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
@@ -148,7 +148,7 @@ val useCaseModule = module {
     single { GetPostUseCase(get()) }
     single { GetUserPostPreviewsUseCase(get(), get()) }
     single { GetUserBadgesUseCase(get()) }
-    single { GetUserDetailUseCase(get()) }
+    single { GetUserDetailUseCase(get(), get()) }
     single { GetRunningFollowerUseCase(get(), get()) }
     single { RunningFinishUseCase(get(), get()) }
     single { RunningStartUseCase(get(), get()) }
