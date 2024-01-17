@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
@@ -12,6 +13,7 @@ import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.model.UiState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
@@ -52,6 +54,7 @@ class UserPageViewModel(
                 )
             }
         }.onFailure {
+            Log.d("userDetail", it.message.toString())
             reduce {
                 state.copy(userDetailState = UiState.Error(it.message.toString()))
             }
@@ -85,7 +88,8 @@ class UserPageViewModel(
                     userPostPreviewsState = UiState.Success(userPostPreviews),
                     userDetailState = UiState.Success(
                         UserDetail(
-                            state.userDetailState.getDataOrNull()?.user ?: User.DUMMY,
+                            state.userDetailState.getDataOrNull()?.user
+                                ?: User.DUMMY.copy(imageUrl = String.EMPTY),
                             userPostPreviews.size,
                             state.userDetailState.getDataOrNull()?.followerCount ?: 0,
                             state.userDetailState.getDataOrNull()?.followingCount ?: 0,
