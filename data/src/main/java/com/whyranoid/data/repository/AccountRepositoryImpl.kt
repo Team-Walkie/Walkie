@@ -49,10 +49,19 @@ class AccountRepositoryImpl(
         }
     }
 
-    override suspend fun signIn(): Result<Long> {
+    override suspend fun signIn(authorId: String, name: String): Result<Long> {
         return kotlin.runCatching {
-            // TODO API CALL and update
-            0L
+            accountDataSource.signIn(authorId).onSuccess {
+                val (uid, nickname, profileImg) = it
+                accountDataStore.updateUId(uid)
+                accountDataStore.updateUserName(name)
+                accountDataStore.updateNickName(nickname)
+                profileImg?.let { url -> accountDataStore.updateProfileUrl(url) }
+                return@runCatching it.walkieId
+            }.onFailure {
+                // Error handling
+            }
+            return Result.failure(Exception("로그인 실패"))
         }
     }
 

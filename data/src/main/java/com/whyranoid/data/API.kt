@@ -27,6 +27,8 @@ object API {
 
     const val SEND_LIKE = "api/community/send-like"
 
+    const val LOGIN = "api/walkies/login"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 

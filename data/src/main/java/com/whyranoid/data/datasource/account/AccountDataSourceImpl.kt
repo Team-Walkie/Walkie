@@ -1,7 +1,10 @@
 package com.whyranoid.data.datasource.account
 
+import com.whyranoid.data.getResult
 import com.whyranoid.data.model.account.SignUpRequest
+import com.whyranoid.data.model.account.toLoginData
 import com.whyranoid.domain.datasource.AccountDataSource
+import com.whyranoid.domain.model.account.LoginData
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
     override suspend fun signUp(
@@ -36,6 +39,15 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
                 throw Exception(response.errorBody().toString())
             } else if (response.body() == null) throw Exception(response.message())
             requireNotNull(response.body()).let { Pair(it.isDuplicated, it.nickName ?: "empty") }
+        }
+    }
+
+    override suspend fun signIn(authorId: String): Result<LoginData> {
+        return kotlin.runCatching {
+            val response = accountService.login(authorId)
+            response.getResult {
+                it.toLoginData()
+            }
         }
     }
 }

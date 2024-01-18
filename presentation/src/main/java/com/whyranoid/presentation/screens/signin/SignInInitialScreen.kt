@@ -39,19 +39,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SignInInitialScreen(
     isDay: Boolean = true,
+    alreadySignUp: () -> Unit,
     goToAgreeState: (authId: String, name: String, url: String?) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+
+    val requestLoginUseCase = get<RequestLoginUseCase>()
 
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -60,12 +65,27 @@ fun SignInInitialScreen(
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(data)
                 task.getResult(ApiException::class.java)?.let { account ->
-                    handleSignInResult(
-                        account = account,
-                        goToAgreeState = goToAgreeState,
-                    ) { errorMsg ->
-                        scope.launch { scaffoldState.snackbarHostState.showSnackbar(errorMsg) }
+
+                    scope.launch {
+                        val isRegistered = requestLoginUseCase(
+                            requireNotNull(account.id),
+                            requireNotNull(account.displayName)
+                        ).getOrNull()
+
+                        if (isRegistered != -1L && isRegistered != null) {
+                            alreadySignUp()
+                        } else {
+                            handleSignInResult(
+                                account = account,
+                                goToAgreeState = goToAgreeState,
+                            ) { errorMsg ->
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(errorMsg)
+                                }
+                            }
+                        }
                     }
+
                 }
             } else {
                 scope.launch {
@@ -157,7 +177,7 @@ private fun signInWithGoogle(
 @Composable
 fun DaySignInInitialScreenPreview() {
     WalkieTheme {
-        SignInInitialScreen(true) { _, _, _ -> }
+        SignInInitialScreen(true, {}) { _, _, _ -> }
     }
 }
 
@@ -165,6 +185,6 @@ fun DaySignInInitialScreenPreview() {
 @Composable
 fun NightSignInInitialScreenPreview() {
     WalkieTheme {
-        SignInInitialScreen(false) { _, _, _ -> }
+        SignInInitialScreen(false, {}) { _, _, _ -> }
     }
 }
