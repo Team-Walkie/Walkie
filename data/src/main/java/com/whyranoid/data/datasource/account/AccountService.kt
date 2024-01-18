@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.account
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.account.LoginDataResponse
 import com.whyranoid.data.model.account.NickCheckResponse
 import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.data.model.account.SignUpResponse
@@ -20,4 +21,9 @@ interface AccountService {
     suspend fun signUp(
         @Body signUpRequest: SignUpRequest,
     ): Response<SignUpResponse>
+
+    @GET(API.LOGIN)
+    suspend fun login(
+        @Query("uid") uid: String,
+    ): Response<LoginDataResponse>
 }

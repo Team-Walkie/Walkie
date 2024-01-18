@@ -26,7 +26,7 @@ interface AccountRepository {
 
     suspend fun getUID(): Long
 
-    suspend fun signIn(): Result<Long>
+    suspend fun signIn(authorId: String, name: String): Result<Long>
 
     suspend fun singOut(): Result<Boolean>
     suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>>
