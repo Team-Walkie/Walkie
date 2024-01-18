@@ -17,7 +17,7 @@ fun SignInScreen(
     val signInState = viewModel.signInState.collectAsStateWithLifecycle()
 
     when (signInState.value) {
-        is SignInState.InitialState -> SignInInitialScreen(isDay = isDay) { authId, name, url ->
+        is SignInState.InitialState -> SignInInitialScreen(isDay = isDay, finishSignIn) { authId, name, url ->
             viewModel.goToAgreeState(authId, name, url)
         }
 

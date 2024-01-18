@@ -59,6 +59,7 @@ import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
+import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.broadcast.AddGpsListener
@@ -166,6 +167,7 @@ val useCaseModule = module {
     single { GetMyFollowingUseCase(get(), get()) }
     single { GetFollowingsPostsUseCase(get(), get()) }
     single { LikePostUseCase(get(), get()) }
+    single { RequestLoginUseCase(get()) }
 }
 
 val databaseModule = module {
