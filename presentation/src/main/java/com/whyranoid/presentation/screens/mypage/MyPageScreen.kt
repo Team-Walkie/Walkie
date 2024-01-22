@@ -2,7 +2,10 @@ package com.whyranoid.presentation.screens.mypage
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -51,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
@@ -77,7 +82,7 @@ fun MyPageScreen(
 
     LaunchedEffect(Unit) {
         val myUid = requireNotNull(viewModel.accountRepository.uId.first())
-        viewModel.getUserDetail(myUid, true)
+        viewModel.getUserDetail(myUid, null)
         viewModel.getUserBadges(myUid)
         viewModel.getUserPostPreviews(myUid)
     }
@@ -150,30 +155,66 @@ fun UserPageContent(
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        // TODO: 스트링 리소스 분리
-                        TextWithCountSpaceBetween(
-                            text = "게시물",
-                            count = userDetail.postCount,
-                            textStyle = WalkieTypography.Body1_Normal,
-                            countTextStyle = WalkieTypography.SubTitle,
-                        )
-                        TextWithCountSpaceBetween(
-                            text = "팔로워",
-                            count = userDetail.followerCount,
-                            textStyle = WalkieTypography.Body1_Normal,
-                            countTextStyle = WalkieTypography.SubTitle,
-                        )
-                        TextWithCountSpaceBetween(
-                            text = "팔로잉",
-                            count = userDetail.followingCount,
-                            textStyle = WalkieTypography.Body1_Normal,
-                            countTextStyle = WalkieTypography.SubTitle,
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            TextWithCountSpaceBetween(
+                                text = "게시물",
+                                count = userDetail.postCount,
+                                textStyle = WalkieTypography.Body1_Normal,
+                                countTextStyle = WalkieTypography.SubTitle,
+                            )
+                            TextWithCountSpaceBetween(
+                                text = "팔로워",
+                                count = userDetail.followerCount,
+                                textStyle = WalkieTypography.Body1_Normal,
+                                countTextStyle = WalkieTypography.SubTitle,
+                            )
+                            TextWithCountSpaceBetween(
+                                text = "팔로잉",
+                                count = userDetail.followingCount,
+                                textStyle = WalkieTypography.Body1_Normal,
+                                countTextStyle = WalkieTypography.SubTitle,
+                            )
+                        }
+                        nickname?.let {
+                            val isFollowing = state.userDetailState.getDataOrNull()?.isFollowing
+                            val followingButtonBackground = if (isFollowing == false) WalkieColor.Primary else Color.White
+                            val followButtonText =
+                                if (isFollowing == true) "팔로잉" else if (isFollowing == false) "팔로우" else String.EMPTY
+                            Box(
+                                modifier = Modifier
+                                    .wrapContentHeight()
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 28.dp)
+                                    .padding(vertical = 12.dp)
+                                    .clip(
+                                        RoundedCornerShape(12.dp),
+                                    )
+                                    .border(
+                                        1.dp,
+                                        WalkieColor.GrayBorder,
+                                        RoundedCornerShape(10.dp),
+                                    )
+                                    .background(followingButtonBackground),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(vertical = 6.dp),
+                                    text = followButtonText,
+                                    style = WalkieTypography.Body1_SemiBold,
+                                )
+                            }
+                        }
                     }
                 }
                 Spacer(Modifier.height(12.dp))

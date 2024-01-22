@@ -43,7 +43,7 @@ class UserPageViewModel(
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
 
-    fun getUserDetail(uid: Long, isFollowing: Boolean) = intent {
+    fun getUserDetail(uid: Long, isFollowing: Boolean?) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
         }
