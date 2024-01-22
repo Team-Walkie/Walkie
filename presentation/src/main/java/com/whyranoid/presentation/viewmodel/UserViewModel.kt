@@ -121,35 +121,35 @@ class UserPageViewModel(
             }
             state.copy(calendarPreviewsState = UiState.Success(filtered))
         }
+    }
 
-        fun follow(uid: Long) {
-            viewModelScope.launch {
-                followUseCase(uid).onSuccess {
-                    reduce {
-                        state.copy(
-                            userDetailState = UiState.Success(
-                                requireNotNull(state.userDetailState.getDataOrNull()).copy(
-                                    isFollowing = true,
-                                ),
+    fun follow(uid: Long) = intent {
+        viewModelScope.launch {
+            followUseCase(uid).onSuccess {
+                reduce {
+                    state.copy(
+                        userDetailState = UiState.Success(
+                            requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                isFollowing = true,
                             ),
-                        )
-                    }
+                        ),
+                    )
                 }
             }
         }
+    }
 
-        fun unFollow(uid: Long) {
-            viewModelScope.launch {
-                unFollowUseCase(uid).onSuccess {
-                    reduce {
-                        state.copy(
-                            userDetailState = UiState.Success(
-                                requireNotNull(state.userDetailState.getDataOrNull()).copy(
-                                    isFollowing = false,
-                                ),
+    fun unFollow(uid: Long) = intent {
+        viewModelScope.launch {
+            unFollowUseCase(uid).onSuccess {
+                reduce {
+                    state.copy(
+                        userDetailState = UiState.Success(
+                            requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                isFollowing = false,
                             ),
-                        )
-                    }
+                        ),
+                    )
                 }
             }
         }
