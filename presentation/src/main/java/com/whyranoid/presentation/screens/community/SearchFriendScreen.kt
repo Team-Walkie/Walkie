@@ -116,7 +116,7 @@ fun SearchFriendScreen(
                         },
                         cursorBrush = SolidColor(WalkieColor.Primary),
                         singleLine = true,
-                    ) {
+                    ) { innerTextField ->
                         if (query.value.isEmpty()) {
                             Text(
                                 text = "워키 아이디로 친구찾기",
@@ -130,6 +130,7 @@ fun SearchFriendScreen(
                                 style = WalkieTypography.Body1_Normal,
                             )
                         }
+                        innerTextField()
                     }
                 }
             }
