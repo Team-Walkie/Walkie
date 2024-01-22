@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,7 +118,8 @@ fun UserPageContent(
     onSettingsClicked: () -> Unit = {},
     onLogoutClicked: () -> Unit = {},
     onDateClicked: (LocalDate) -> Unit = {},
-    onFollowButtonClicked: (uid: Long) -> Unit = {}, // TODO 상대방일 때 팔로잉 버튼 보이게
+    onFollowButtonClicked: () -> Unit = {},
+    onUnFollowButtonClicked: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -188,7 +190,8 @@ fun UserPageContent(
                         }
                         nickname?.let {
                             val isFollowing = state.userDetailState.getDataOrNull()?.isFollowing
-                            val followingButtonBackground = if (isFollowing == false) WalkieColor.Primary else Color.White
+                            val followingButtonBackground =
+                                if (isFollowing == false) WalkieColor.Primary else Color.White
                             val followButtonText =
                                 if (isFollowing == true) "팔로잉" else if (isFollowing == false) "팔로우" else String.EMPTY
                             Box(
@@ -198,14 +201,20 @@ fun UserPageContent(
                                     .padding(horizontal = 28.dp)
                                     .padding(vertical = 12.dp)
                                     .clip(
-                                        RoundedCornerShape(12.dp),
+                                        RoundedCornerShape(10.dp),
                                     )
                                     .border(
                                         1.dp,
                                         WalkieColor.GrayBorder,
                                         RoundedCornerShape(10.dp),
                                     )
-                                    .background(followingButtonBackground),
+                                    .background(followingButtonBackground).clickable {
+                                        if (isFollowing == true) {
+                                            onUnFollowButtonClicked()
+                                        } else if (isFollowing == false) {
+                                            onFollowButtonClicked()
+                                        }
+                                    },
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(

@@ -131,6 +131,10 @@ class UserPageViewModel(
                         userDetailState = UiState.Success(
                             requireNotNull(state.userDetailState.getDataOrNull()).copy(
                                 isFollowing = true,
+                                followerCount = (
+                                    state.userDetailState.getDataOrNull()?.followerCount
+                                        ?: 0
+                                    ) + 1,
                             ),
                         ),
                     )
@@ -147,6 +151,10 @@ class UserPageViewModel(
                         userDetailState = UiState.Success(
                             requireNotNull(state.userDetailState.getDataOrNull()).copy(
                                 isFollowing = false,
+                                followerCount = (
+                                    state.userDetailState.getDataOrNull()?.followerCount
+                                        ?: 0
+                                    ) - 1,
                             ),
                         ),
                     )

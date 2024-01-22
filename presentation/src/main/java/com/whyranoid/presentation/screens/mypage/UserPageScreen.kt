@@ -29,5 +29,11 @@ fun UserPageScreen(
         nickname,
         state,
         onDateClicked = viewModel::selectDate,
+        onFollowButtonClicked = {
+            viewModel.follow(uid)
+        },
+        onUnFollowButtonClicked = {
+            viewModel.unFollow(uid)
+        },
     )
 }
