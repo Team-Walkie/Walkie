@@ -95,9 +95,18 @@ fun CommunityScreen(
 
             state.posts.getDataOrNull()?.forEach { post ->
                 item {
-                    PostItem(post = post) { postId ->
-                        viewModel.likePost(postId)
-                    }
+                    PostItem(
+                        post = post,
+                        onLikeClicked = { postId ->
+                            viewModel.likePost(postId)
+                        },
+                        onProfileClicked = { user ->
+                            state.following.getDataOrNull()?.let { followings ->
+                                val isFollowing = followings.contains(user)
+                                navController.navigate("userPage/${user.uid}/${user.nickname}/$isFollowing")
+                            }
+                        },
+                    )
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.component.community
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,39 +23,42 @@ import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
-fun PostProfileItem(user: User) {
+fun PostProfileItem(
+    user: User,
+    onProfileClicked: (User) -> Unit = {},
+) {
     Row(
-        modifier = Modifier
+        Modifier.clickable { onProfileClicked(user) }
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Box(
             modifier = Modifier
                 .size(27.dp)
                 .border(1.dp, WalkieColor.Primary, CircleShape)
                 .clip(CircleShape),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
-                model = user.imageUrl, contentDescription = "내 프로필 이미지",
+                model = user.imageUrl,
+                contentDescription = "내 프로필 이미지",
                 modifier = Modifier
                     .size(24.dp)
                     .border(0.5.dp, WalkieColor.GrayBorder, CircleShape)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
         }
         Spacer(modifier = Modifier.size(11.dp))
         Column {
             Text(
                 user.nickname,
-                style = WalkieTypography.Body1
+                style = WalkieTypography.Body1,
             )
             Text(
                 "Seoul, park",
-                style = WalkieTypography.Body2
+                style = WalkieTypography.Body2,
             )
         }
     }

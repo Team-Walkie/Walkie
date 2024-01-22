@@ -12,36 +12,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.Post
+import com.whyranoid.domain.model.user.User
 
 @Composable
 fun PostItem(
     post: Post,
     onLikeClicked: (Long) -> Unit = {},
+    onProfileClicked: (User) -> Unit = {},
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxHeight()
+        Modifier.fillMaxHeight(),
     ) {
-
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1.dp)
+                .height(1.dp),
         )
 
-        PostProfileItem(post.author)
+        PostProfileItem(
+            post.author,
+            onProfileClicked,
+        )
 
         AsyncImage(
-            model = post.imageUrl, contentDescription = "게시글 사진",
+            model = post.imageUrl,
+            contentDescription = "게시글 사진",
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         PostContentItem(post) {
             onLikeClicked(it)
         }
-
     }
 }
