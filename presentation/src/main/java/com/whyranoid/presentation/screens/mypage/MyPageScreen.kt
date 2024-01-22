@@ -112,6 +112,7 @@ fun UserPageContent(
     onSettingsClicked: () -> Unit = {},
     onLogoutClicked: () -> Unit = {},
     onDateClicked: (LocalDate) -> Unit = {},
+    onFollowButtonClicked: (uid: Long) -> Unit = {}, // TODO 상대방일 때 팔로잉 버튼 보이게
 ) {
     Scaffold(
         topBar = {
@@ -269,6 +270,7 @@ fun UserPageContent(
                                 }
                         }
                     }
+
                     2 -> ChallengePage()
                 }
             }

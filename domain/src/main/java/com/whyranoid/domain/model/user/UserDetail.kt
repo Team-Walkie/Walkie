@@ -7,7 +7,7 @@ data class UserDetail(
     val postCount: Int,
     val followerCount: Int,
     val followingCount: Int,
-    val isFollowing: Boolean,
+    val isFollowing: Boolean? = null,
 ) {
     companion object {
         val DUMMY = UserDetail(

@@ -89,11 +89,11 @@ class UserPageViewModel(
                     userDetailState = UiState.Success(
                         UserDetail(
                             state.userDetailState.getDataOrNull()?.user
-                                ?: User.DUMMY.copy(imageUrl = String.EMPTY),
+                                ?: User.DUMMY.copy(imageUrl = String.EMPTY), // TODO 사람 실루엣 url
                             userPostPreviews.size,
                             state.userDetailState.getDataOrNull()?.followerCount ?: 0,
                             state.userDetailState.getDataOrNull()?.followingCount ?: 0,
-                            state.userDetailState.getDataOrNull()?.isFollowing ?: false,
+                            state.userDetailState.getDataOrNull()?.isFollowing,
                         ),
                     ),
                 )
