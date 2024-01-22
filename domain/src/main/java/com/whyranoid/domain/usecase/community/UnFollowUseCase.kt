@@ -8,10 +8,10 @@ class UnFollowUseCase(
     private val accountRepository: AccountRepository,
     private val followRepository: FollowRepository,
 ) {
-    suspend operator fun invoke(otherUId: Long) {
-        runCatching {
+    suspend operator fun invoke(otherUId: Long): Result<Long> {
+        return runCatching {
             val uid = requireNotNull(accountRepository.uId.first())
-            followRepository.unfollow(uid, otherUId)
+            followRepository.unfollow(uid, otherUId).getOrThrow()
         }
     }
 }
