@@ -13,6 +13,8 @@ import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.usecase.community.FollowUseCase
+import com.whyranoid.domain.usecase.community.UnFollowUseCase
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.model.UiState
 import kotlinx.coroutines.launch
@@ -39,6 +41,8 @@ class UserPageViewModel(
     private val getUserPostPreviewsUseCase: GetUserPostPreviewsUseCase,
     private val getPostUseCase: GetPostUseCase,
     private val signOutUseCase: SignOutUseCase,
+    private val followUseCase: FollowUseCase,
+    private val unFollowUseCase: UnFollowUseCase,
 ) : ViewModel(), ContainerHost<UserPageState, UserPageSideEffect> {
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
@@ -116,6 +120,38 @@ class UserPageViewModel(
                 date.year + 1900 == localDate.year && date.month + 1 == localDate.monthValue && date.date == localDate.dayOfMonth
             }
             state.copy(calendarPreviewsState = UiState.Success(filtered))
+        }
+
+        fun follow(uid: Long) {
+            viewModelScope.launch {
+                followUseCase(uid).onSuccess {
+                    reduce {
+                        state.copy(
+                            userDetailState = UiState.Success(
+                                requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                    isFollowing = true,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+
+        fun unFollow(uid: Long) {
+            viewModelScope.launch {
+                unFollowUseCase(uid).onSuccess {
+                    reduce {
+                        state.copy(
+                            userDetailState = UiState.Success(
+                                requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                    isFollowing = false,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            }
         }
     }
 
