@@ -182,7 +182,7 @@ fun AppScreenContent(
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val uid = arguments.getLong(Screen.UID_ARGUMENT)
                 val nickname = requireNotNull(arguments.getString(Screen.NICKNAME_ARGUMENT))
-                val isFollowing = arguments.getBoolean(Screen.NICKNAME_ARGUMENT)
+                val isFollowing = arguments.getBoolean(Screen.IS_FOLLOWING_ARGUMENT)
                 UserPageScreen(navController, uid, nickname, isFollowing)
             }
         }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
 fun CheckableCustomTextField(
@@ -37,7 +38,7 @@ fun CheckableCustomTextField(
             onTextChanged?.invoke(it)
         },
         singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        cursorBrush = SolidColor(WalkieColor.Primary),
         textStyle = textStyle,
         decorationBox = { innerTextField ->
             Row(

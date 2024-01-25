@@ -34,13 +34,13 @@ class SearchFriendViewModel(
 
     fun follow(other: User) {
         viewModelScope.launch {
-            followUseCase(other)
+            followUseCase(other.uid)
         }
     }
 
     fun unFollow(other: User) {
         viewModelScope.launch {
-            unFollowUseCase(other)
+            unFollowUseCase(other.uid)
         }
     }
 }

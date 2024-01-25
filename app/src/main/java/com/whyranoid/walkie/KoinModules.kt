@@ -103,7 +103,7 @@ val viewModelModule = module {
     single { ChallengeMainViewModel(get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
-    factory { UserPageViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
     factory { RunningEditViewModel() }
     factory { SplashViewModel(get()) }
@@ -148,7 +148,7 @@ val useCaseModule = module {
     single { GetPostUseCase(get()) }
     single { GetUserPostPreviewsUseCase(get(), get()) }
     single { GetUserBadgesUseCase(get()) }
-    single { GetUserDetailUseCase(get()) }
+    single { GetUserDetailUseCase(get(), get()) }
     single { GetRunningFollowerUseCase(get(), get()) }
     single { RunningFinishUseCase(get(), get()) }
     single { RunningStartUseCase(get(), get()) }

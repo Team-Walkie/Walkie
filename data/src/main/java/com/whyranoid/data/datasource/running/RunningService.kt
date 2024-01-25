@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.running
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.account.NickProfileResponse
 import com.whyranoid.data.model.running.LikeTotalResponse
 import com.whyranoid.data.model.running.RunningFinishRequest
 import com.whyranoid.data.model.running.RunningStartRequest

@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.model.user.UserWithFollowingState
-import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
@@ -32,7 +27,7 @@ fun SearchedFriendItem(
     onClickUnFollow: (User) -> Unit = {},
     onClickItem: (User) -> Unit = {},
 ) {
-    var isFollowing by remember { mutableStateOf(userWithFollowingState.isFollowing) }
+    // var isFollowing by remember { mutableStateOf(userWithFollowingState.isFollowing) }
 
     Row(
         modifier = modifier.clickable { onClickItem(userWithFollowingState.user) },
@@ -60,25 +55,25 @@ fun SearchedFriendItem(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        Text(
-            modifier = Modifier.clickable {
-                if (isFollowing) {
-                    onClickUnFollow(userWithFollowingState.user)
-                } else {
-                    onClickFollow(
-                        userWithFollowingState.user,
-                    )
-                }
-                isFollowing = isFollowing.not()
-            },
-            text = if (isFollowing) {
-                "언팔로우"
-            } else {
-                "팔로우"
-            },
-            style = WalkieTypography.Body2.copy(
-                color = WalkieColor.Primary,
-            ),
-        )
+//        Text(
+//            modifier = Modifier.clickable {
+//                if (isFollowing) {
+//                    onClickUnFollow(userWithFollowingState.user)
+//                } else {
+//                    onClickFollow(
+//                        userWithFollowingState.user,
+//                    )
+//                }
+//                isFollowing = isFollowing.not()
+//            },
+//            text = if (isFollowing) {
+//                "언팔로우"
+//            } else {
+//                "팔로우"
+//            },
+//            style = WalkieTypography.Body2.copy(
+//                color = WalkieColor.Primary,
+//            ),
+//        )
     }
 }

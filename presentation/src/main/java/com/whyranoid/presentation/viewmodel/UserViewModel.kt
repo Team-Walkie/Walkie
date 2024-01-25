@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
@@ -12,6 +13,9 @@ import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.usecase.community.FollowUseCase
+import com.whyranoid.domain.usecase.community.UnFollowUseCase
+import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.model.UiState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
@@ -37,11 +41,13 @@ class UserPageViewModel(
     private val getUserPostPreviewsUseCase: GetUserPostPreviewsUseCase,
     private val getPostUseCase: GetPostUseCase,
     private val signOutUseCase: SignOutUseCase,
+    private val followUseCase: FollowUseCase,
+    private val unFollowUseCase: UnFollowUseCase,
 ) : ViewModel(), ContainerHost<UserPageState, UserPageSideEffect> {
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
 
-    fun getUserDetail(uid: Long, isFollowing: Boolean) = intent {
+    fun getUserDetail(uid: Long, isFollowing: Boolean?) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
         }
@@ -52,6 +58,7 @@ class UserPageViewModel(
                 )
             }
         }.onFailure {
+            Log.d("userDetail", it.message.toString())
             reduce {
                 state.copy(userDetailState = UiState.Error(it.message.toString()))
             }
@@ -85,12 +92,12 @@ class UserPageViewModel(
                     userPostPreviewsState = UiState.Success(userPostPreviews),
                     userDetailState = UiState.Success(
                         UserDetail(
-                            state.userDetailState.getDataOrNull()?.user ?: User.DUMMY,
-                            state.userDetailState.getDataOrNull()?.postCount
-                                ?: userPostPreviews.size,
+                            state.userDetailState.getDataOrNull()?.user
+                                ?: User.DUMMY.copy(imageUrl = String.EMPTY), // TODO 사람 실루엣 url
+                            userPostPreviews.size,
                             state.userDetailState.getDataOrNull()?.followerCount ?: 0,
                             state.userDetailState.getDataOrNull()?.followingCount ?: 0,
-                            state.userDetailState.getDataOrNull()?.isFollowing ?: false,
+                            state.userDetailState.getDataOrNull()?.isFollowing,
                         ),
                     ),
                 )
@@ -113,6 +120,46 @@ class UserPageViewModel(
                 date.year + 1900 == localDate.year && date.month + 1 == localDate.monthValue && date.date == localDate.dayOfMonth
             }
             state.copy(calendarPreviewsState = UiState.Success(filtered))
+        }
+    }
+
+    fun follow(uid: Long) = intent {
+        viewModelScope.launch {
+            followUseCase(uid).onSuccess {
+                reduce {
+                    state.copy(
+                        userDetailState = UiState.Success(
+                            requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                isFollowing = true,
+                                followerCount = (
+                                    state.userDetailState.getDataOrNull()?.followerCount
+                                        ?: 0
+                                    ) + 1,
+                            ),
+                        ),
+                    )
+                }
+            }
+        }
+    }
+
+    fun unFollow(uid: Long) = intent {
+        viewModelScope.launch {
+            unFollowUseCase(uid).onSuccess {
+                reduce {
+                    state.copy(
+                        userDetailState = UiState.Success(
+                            requireNotNull(state.userDetailState.getDataOrNull()).copy(
+                                isFollowing = false,
+                                followerCount = (
+                                    state.userDetailState.getDataOrNull()?.followerCount
+                                        ?: 0
+                                    ) - 1,
+                            ),
+                        ),
+                    )
+                }
+            }
         }
     }
 

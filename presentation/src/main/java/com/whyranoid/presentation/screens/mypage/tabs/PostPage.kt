@@ -1,11 +1,15 @@
 package com.whyranoid.presentation.screens.mypage.tabs
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,8 +38,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.post.TextVisibleState
+import com.whyranoid.presentation.R
 import com.whyranoid.presentation.reusable.NonLazyGrid
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,39 +52,64 @@ fun PostPage(
     onPostPreviewClicked: (id: Long) -> Unit,
     onPostCreateClicked: () -> Unit,
 ) {
-    NonLazyGrid(
-        columns = 3,
-        itemCount = postPreviews.size + 1,
-        contentPadding = 4,
-    ) { index ->
-        if (index < postPreviews.size) {
-            PostImagePreview(
-                postPreview = postPreviews[index],
-                onPostPreviewClicked = onPostPreviewClicked,
-            )
-        } else if (isMyPage) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(4.dp))
-                    .border(
-                        width = 2.dp,
-                        color = WalkieColor.GrayDefault,
-                        shape = RectangleShape,
-                    )
-                    .clickable {
-                        onPostCreateClicked()
-                    },
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (isMyPage.not() && postPreviews.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(22.dp),
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "포스트 생성",
-                    tint = WalkieColor.GrayDefault,
+                Image(
+                    modifier = Modifier.padding(top = 100.dp).size(64.dp),
+                    painter = painterResource(id = R.drawable.ic_circle_footprint),
+                    contentDescription = "empty post",
                 )
+
+                Text(
+                    modifier = Modifier.padding(top = 24.dp),
+                    text = "아직 게시물이 없습니다.",
+                    style = WalkieTypography.Body1_Normal.copy(color = WalkieColor.GrayBorder),
+                )
+            }
+        } else {
+            NonLazyGrid(
+                columns = 3,
+                itemCount = postPreviews.size + 1,
+                contentPadding = 4,
+            ) { index ->
+                if (index < postPreviews.size) {
+                    PostImagePreview(
+                        postPreview = postPreviews[index],
+                        onPostPreviewClicked = onPostPreviewClicked,
+                    )
+                } else if (isMyPage) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(4.dp))
+                            .border(
+                                width = 2.dp,
+                                color = WalkieColor.GrayDefault,
+                                shape = RectangleShape,
+                            )
+                            .clickable {
+                                onPostCreateClicked()
+                            },
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(22.dp),
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "포스트 생성",
+                            tint = WalkieColor.GrayDefault,
+                        )
+                    }
+                }
             }
         }
     }

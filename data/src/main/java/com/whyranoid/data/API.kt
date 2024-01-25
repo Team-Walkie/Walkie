@@ -39,5 +39,7 @@ object API {
         const val LIKE_TOTAL = "api/walk/count-total"
 
         const val LIKE_COUNT = "api/walk/count-like"
+
+        const val MY = "/api/walkies/my"
     }
 }
