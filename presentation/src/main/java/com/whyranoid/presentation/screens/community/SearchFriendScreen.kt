@@ -149,13 +149,7 @@ fun SearchFriendScreen(
                             .padding(horizontal = 20.dp)
                             .clickable {
                             },
-                        userWithFollowingState = item,
-                        onClickFollow = { user ->
-                            viewModel.follow(user)
-                        },
-                        onClickUnFollow = { user ->
-                            viewModel.unFollow(user)
-                        },
+                        user = item.user,
                         onClickItem = { user ->
                             navController.navigate("userPage/${user.uid}/${user.nickname}/${item.isFollowing}")
                         },
