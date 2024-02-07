@@ -35,6 +35,7 @@ import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.mypage.UserPageScreen
 import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
+import com.whyranoid.presentation.screens.mypage.following.FollowingScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
 import com.whyranoid.presentation.screens.signin.SignInScreen
 import com.whyranoid.presentation.screens.splash.SplashScreen
@@ -184,6 +185,16 @@ fun AppScreenContent(
                 val nickname = requireNotNull(arguments.getString(Screen.NICKNAME_ARGUMENT))
                 val isFollowing = arguments.getBoolean(Screen.IS_FOLLOWING_ARGUMENT)
                 UserPageScreen(navController, uid, nickname, isFollowing)
+            }
+
+            composable(
+                Screen.FollowingScreen.route,
+                Screen.FollowingScreen.arguments,
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val uid = arguments.getLong(Screen.UID_ARGUMENT)
+                val pageNo = arguments.getInt(Screen.PAGE_NO)
+                FollowingScreen(navController = navController, uid = uid, pageNo = pageNo)
             }
         }
     }

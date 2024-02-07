@@ -51,8 +51,11 @@ import com.whyranoid.domain.repository.UserRepository
 import com.whyranoid.domain.usecase.GetChallengeDetailUseCase
 import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
+import com.whyranoid.domain.usecase.GetFollowerUseCase
+import com.whyranoid.domain.usecase.GetFollowingUseCase
 import com.whyranoid.domain.usecase.GetFollowingsPostsUseCase
 import com.whyranoid.domain.usecase.GetMyFollowingUseCase
+import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
@@ -70,12 +73,14 @@ import com.whyranoid.domain.usecase.broadcast.RemoveGpsListener
 import com.whyranoid.domain.usecase.broadcast.RemoveNetworkListener
 import com.whyranoid.domain.usecase.community.FollowUseCase
 import com.whyranoid.domain.usecase.community.GetSearchedUserUseCase
+import com.whyranoid.domain.usecase.community.RemoveFollowerUseCase
 import com.whyranoid.domain.usecase.community.UnFollowUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
 import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.domain.usecase.running.SendLikeUseCase
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
+import com.whyranoid.presentation.screens.mypage.following.FollowingViewModel
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
 import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
@@ -114,6 +119,7 @@ val viewModelModule = module {
     factory { SearchFriendViewModel(get(), get(), get()) }
     factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
     factory { CommunityScreenViewModel(get(), get(), get()) }
+    factory { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
 }
 
 val repositoryModule = module {
@@ -164,10 +170,14 @@ val useCaseModule = module {
     single { GetNetworkState(get()) }
     single { FollowUseCase(get(), get()) }
     single { UnFollowUseCase(get(), get()) }
-    single { GetMyFollowingUseCase(get(), get()) }
+    single { GetFollowingUseCase(get()) }
+    single { GetFollowerUseCase(get()) }
     single { GetFollowingsPostsUseCase(get(), get()) }
     single { LikePostUseCase(get(), get()) }
     single { RequestLoginUseCase(get()) }
+    single { GetMyUidUseCase(get()) }
+    single { RemoveFollowerUseCase(get(), get()) }
+    single { GetMyFollowingUseCase(get(), get()) }
 }
 
 val databaseModule = module {
