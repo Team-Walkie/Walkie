@@ -16,7 +16,7 @@ android {
         minSdk = 26
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0.9"
+        versionName = "1.0.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -121,7 +121,6 @@ dependencies {
 
     // collectAsStateWithLifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-crashlytics")
