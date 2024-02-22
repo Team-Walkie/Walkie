@@ -74,6 +74,7 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.whyranoid.domain.model.running.UserLocation
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.component.running.RunningFollowerItemWithLikable
 import com.whyranoid.presentation.model.running.SavingState
 import com.whyranoid.presentation.model.running.TrackingMode
@@ -124,6 +125,10 @@ fun RunningScreen(
         viewModel::saveHistory,
         viewModel::takeSnapShot,
         viewModel::sendLike,
+        onClickProfile = { user ->
+            Log.d("t", "ju0828 - c")
+            navController.navigate("userPage/${user.uid}/${user.nickname}/${true}")
+        },
     )
 }
 
@@ -142,6 +147,7 @@ fun RunningContent(
     saveHistory: (Bitmap, RunningFinishData) -> Unit,
     onTakeSnapShot: (RunningFinishData) -> Unit,
     onSendLike: (uid: Long) -> Unit,
+    onClickProfile: (user: User) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxHeight(),
@@ -155,6 +161,7 @@ fun RunningContent(
             onEditClose,
             saveHistory,
             onSendLike,
+            onClickProfile,
         )
         RunningInfoScreen(
             modifier = Modifier.height(280.dp),
@@ -191,6 +198,7 @@ fun RunningMapScreen(
     onEditClose: () -> Unit,
     onSaveHistory: (Bitmap, RunningFinishData) -> Unit,
     onSendLike: (uid: Long) -> Unit,
+    onClickProfile: (user: User) -> Unit,
 ) {
     var mapProperties by remember {
         mutableStateOf(
@@ -486,6 +494,7 @@ fun RunningMapScreen(
                     items(running.size) {
                         RunningFollowerItemWithLikable(
                             user = running[it].user,
+                            onClickProfile = onClickProfile,
                             onClick = onSendLike,
                             circleBorderColor = WalkieColor.Primary,
                             isLiked = running[it].isLiked,

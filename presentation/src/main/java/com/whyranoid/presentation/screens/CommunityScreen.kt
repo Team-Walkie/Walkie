@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.component.community.PostItem
-import com.whyranoid.presentation.component.community.RunningFollowerItem
+import com.whyranoid.presentation.component.running.RunningFollowerItemWithLikable
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -32,7 +32,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun CommunityScreen(
     navController: NavController,
 ) {
-
     val viewModel = koinViewModel<CommunityScreenViewModel>()
     val state by viewModel.collectAsState()
 
@@ -88,7 +87,7 @@ fun CommunityScreen(
             item {
                 LazyRow {
                     repeat(10) {
-                        item { RunningFollowerItem() }
+                        item { RunningFollowerItemWithLikable(isDisplayName = true) }
                     }
                 }
             }
