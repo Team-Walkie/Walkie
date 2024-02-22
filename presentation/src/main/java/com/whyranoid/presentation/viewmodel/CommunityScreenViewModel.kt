@@ -3,8 +3,8 @@ package com.whyranoid.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.user.User
-import com.whyranoid.domain.usecase.GetMyFollowingUseCase
 import com.whyranoid.domain.usecase.GetFollowingsPostsUseCase
+import com.whyranoid.domain.usecase.GetMyFollowingUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.presentation.model.UiState
 import org.orbitmvi.orbit.ContainerHost
@@ -12,9 +12,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
-sealed interface CommunityScreenSideEffect {
-
-}
+sealed interface CommunityScreenSideEffect
 
 data class CommunityScreenState(
     val posts: UiState<List<Post>> = UiState.Idle,
@@ -24,7 +22,7 @@ data class CommunityScreenState(
 class CommunityScreenViewModel(
     private val getMyFollowingUseCase: GetMyFollowingUseCase,
     private val getFollowingsPostsUseCase: GetFollowingsPostsUseCase,
-    private val likePostUseCase: LikePostUseCase
+    private val likePostUseCase: LikePostUseCase,
 ) : ViewModel(), ContainerHost<CommunityScreenState, CommunityScreenSideEffect> {
 
     override val container =
@@ -36,7 +34,7 @@ class CommunityScreenViewModel(
             result.onSuccess { myFollowing ->
                 reduce {
                     state.copy(
-                        following = UiState.Success(myFollowing)
+                        following = UiState.Success(myFollowing),
                     )
                 }
             }
@@ -51,8 +49,8 @@ class CommunityScreenViewModel(
                 state.copy(
                     posts = UiState.Success(
                         (state.posts.getDataOrNull() ?: emptyList()) +
-                                posts
-                    )
+                            posts,
+                    ),
                 )
             }
         }
@@ -70,18 +68,17 @@ class CommunityScreenViewModel(
                             if (it.id == postId) {
                                 it.copy(
                                     likeCount = if (updatedLikeCount == -1L) it.likeCount - 1 else updatedLikeCount.toInt(),
-                                    isLiked = it.isLiked.not()
+                                    isLiked = it.isLiked.not(),
                                 )
                             } else {
                                 it
                             }
-                        } ?: emptyList()
-                    )
+                        } ?: emptyList(),
+                    ),
                 )
             }
         }.onFailure {
             // TODO: Error handling
         }
-
     }
 }

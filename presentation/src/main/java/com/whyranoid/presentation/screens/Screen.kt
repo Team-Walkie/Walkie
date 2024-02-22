@@ -96,11 +96,24 @@ sealed class Screen(
         ),
     )
 
+    object FollowingScreen : Screen(
+        route = "followingScreen/{$UID_ARGUMENT}/{$PAGE_NO}",
+        arguments = listOf(
+            navArgument(UID_ARGUMENT) { type = NavType.LongType },
+            navArgument(PAGE_NO) { type = NavType.IntType },
+        ),
+    ) {
+        fun route(uid: Long, pageNo: Int): String {
+            return "followingScreen/$uid/$pageNo"
+        }
+    }
+
     companion object {
         val bottomNavigationItems = listOf(Running, Community, ChallengeMainScreen, MyPage)
 
         const val UID_ARGUMENT = "uid"
         const val NICKNAME_ARGUMENT = "nickname"
         const val IS_FOLLOWING_ARGUMENT = "isFollowing"
+        const val PAGE_NO = "pageNo"
     }
 }

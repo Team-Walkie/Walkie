@@ -46,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +61,7 @@ import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
+import com.whyranoid.presentation.screens.mypage.following.FollowingViewModel
 import com.whyranoid.presentation.screens.mypage.tabs.ChallengePage
 import com.whyranoid.presentation.screens.mypage.tabs.HistoryPage
 import com.whyranoid.presentation.screens.mypage.tabs.PostImagePreview
@@ -80,9 +82,11 @@ fun MyPageScreen(
     navController: NavController,
 ) {
     val viewModel = koinViewModel<UserPageViewModel>()
+    var uid by rememberSaveable { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
         val myUid = requireNotNull(viewModel.accountRepository.uId.first())
+        uid = myUid
         viewModel.getUserDetail(myUid, null)
         viewModel.getUserBadges(myUid)
         viewModel.getUserPostPreviews(myUid)
@@ -103,6 +107,26 @@ fun MyPageScreen(
             viewModel.signOut()
         },
         onDateClicked = viewModel::selectDate,
+        onFollowerCountClicked = {
+            uid?.let {
+                navController.navigate(
+                    Screen.FollowingScreen.route(
+                        it,
+                        FollowingViewModel.FOLLOWER_PAGE_NO,
+                    ),
+                )
+            }
+        },
+        onFollowingCountClicked = {
+            uid?.let {
+                navController.navigate(
+                    Screen.FollowingScreen.route(
+                        it,
+                        FollowingViewModel.FOLLOWING_PAGE_NO,
+                    ),
+                )
+            }
+        },
     )
 }
 
@@ -120,6 +144,8 @@ fun UserPageContent(
     onDateClicked: (LocalDate) -> Unit = {},
     onFollowButtonClicked: () -> Unit = {},
     onUnFollowButtonClicked: () -> Unit = {},
+    onFollowerCountClicked: () -> Unit = {},
+    onFollowingCountClicked: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -176,12 +202,18 @@ fun UserPageContent(
                                 countTextStyle = WalkieTypography.SubTitle,
                             )
                             TextWithCountSpaceBetween(
+                                modifier = Modifier.clickable {
+                                    onFollowerCountClicked()
+                                },
                                 text = "팔로워",
                                 count = userDetail.followerCount,
                                 textStyle = WalkieTypography.Body1_Normal,
                                 countTextStyle = WalkieTypography.SubTitle,
                             )
                             TextWithCountSpaceBetween(
+                                modifier = Modifier.clickable {
+                                    onFollowingCountClicked()
+                                },
                                 text = "팔로잉",
                                 count = userDetail.followingCount,
                                 textStyle = WalkieTypography.Body1_Normal,
@@ -208,7 +240,8 @@ fun UserPageContent(
                                         WalkieColor.GrayBorder,
                                         RoundedCornerShape(10.dp),
                                     )
-                                    .background(followingButtonBackground).clickable {
+                                    .background(followingButtonBackground)
+                                    .clickable {
                                         if (isFollowing == true) {
                                             onUnFollowButtonClicked()
                                         } else if (isFollowing == false) {
