@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens.community
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -153,7 +155,37 @@ fun SearchFriendScreen(
                         onClickItem = { user ->
                             navController.navigate("userPage/${user.uid}/${user.nickname}/${item.isFollowing}")
                         },
-                    )
+                    ) {
+                        if (item.isFollowing) {
+                            Box(modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFE4E4E4))
+                                .clickable {
+                                    viewModel.unFollow(item.user)
+                                }
+                                .padding(horizontal = 12.dp, vertical = 5.dp)) {
+                                Text(
+                                    text = "팔로잉",
+                                    style = WalkieTypography.Body2,
+                                )
+                            }
+                        } else {
+                            Box(modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(WalkieColor.Primary)
+                                .clickable {
+                                    viewModel.follow(item.user)
+                                }
+                                .padding(horizontal = 12.dp, vertical = 5.dp)) {
+                                Text(
+                                    text = "팔로우",
+                                    style = WalkieTypography.Body2.copy(
+                                        Color.White
+                                    ),
+                                )
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
             }
