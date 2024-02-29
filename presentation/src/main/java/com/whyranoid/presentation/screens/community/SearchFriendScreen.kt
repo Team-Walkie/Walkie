@@ -163,6 +163,7 @@ fun SearchFriendScreen(
                             }
                         } else {
                             SmallFollowButton(
+                                textColor = Color.White,
                                 backgroundColor = WalkieColor.Primary,
                                 text = "팔로우") {
                                 viewModel.follow(item.user)

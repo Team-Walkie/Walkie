@@ -15,6 +15,7 @@ import com.whyranoid.presentation.theme.WalkieTypography
 
 @Composable
 fun SmallFollowButton(
+    textColor: Color = Color.Black,
     backgroundColor: Color,
     text: String,
     onclick: () -> Unit
@@ -29,7 +30,7 @@ fun SmallFollowButton(
         Text(
             text = text,
             style = WalkieTypography.Body2.copy(
-                Color.White
+                textColor
             ),
         )
     }
