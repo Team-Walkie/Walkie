@@ -1,6 +1,5 @@
 package com.whyranoid.presentation.screens.community
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.whyranoid.domain.model.user.User
 import com.whyranoid.presentation.component.bar.WalkieTopBar
+import com.whyranoid.presentation.component.button.SmallFollowButton
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.SearchFriendViewModel
@@ -157,32 +156,16 @@ fun SearchFriendScreen(
                         },
                     ) {
                         if (item.isFollowing) {
-                            Box(modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFE4E4E4))
-                                .clickable {
-                                    viewModel.unFollow(item.user)
-                                }
-                                .padding(horizontal = 12.dp, vertical = 5.dp)) {
-                                Text(
-                                    text = "팔로잉",
-                                    style = WalkieTypography.Body2,
-                                )
+                            SmallFollowButton(
+                                backgroundColor = Color(0xFFE4E4E4),
+                                text = "팔로잉") {
+                                viewModel.unFollow(item.user)
                             }
                         } else {
-                            Box(modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(WalkieColor.Primary)
-                                .clickable {
-                                    viewModel.follow(item.user)
-                                }
-                                .padding(horizontal = 12.dp, vertical = 5.dp)) {
-                                Text(
-                                    text = "팔로우",
-                                    style = WalkieTypography.Body2.copy(
-                                        Color.White
-                                    ),
-                                )
+                            SmallFollowButton(
+                                backgroundColor = WalkieColor.Primary,
+                                text = "팔로우") {
+                                viewModel.follow(item.user)
                             }
                         }
                     }
