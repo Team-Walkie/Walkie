@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.whyranoid.presentation.component.bar.WalkieTopBar
+import com.whyranoid.presentation.component.button.SmallFollowButton
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.SearchFriendViewModel
@@ -153,7 +154,22 @@ fun SearchFriendScreen(
                         onClickItem = { user ->
                             navController.navigate("userPage/${user.uid}/${user.nickname}/${item.isFollowing}")
                         },
-                    )
+                    ) {
+                        if (item.isFollowing) {
+                            SmallFollowButton(
+                                backgroundColor = Color(0xFFE4E4E4),
+                                text = "팔로잉") {
+                                viewModel.unFollow(item.user)
+                            }
+                        } else {
+                            SmallFollowButton(
+                                textColor = Color.White,
+                                backgroundColor = WalkieColor.Primary,
+                                text = "팔로우") {
+                                viewModel.follow(item.user)
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
             }
