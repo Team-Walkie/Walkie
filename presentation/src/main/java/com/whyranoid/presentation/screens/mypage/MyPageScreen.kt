@@ -21,10 +21,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Scaffold
@@ -159,12 +157,11 @@ fun UserPageContent(
         },
     ) { paddingValues ->
 
-        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(top = 28.dp)
-                .verticalScroll(scrollState),
+            ,
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
@@ -354,7 +351,9 @@ fun UserPageContent(
                         }
                     }
 
-                    2 -> ChallengePage()
+                    2 -> ChallengePage {
+
+                    }
                 }
             }
         }
