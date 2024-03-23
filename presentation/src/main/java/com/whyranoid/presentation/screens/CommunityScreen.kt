@@ -105,6 +105,9 @@ fun CommunityScreen(
                                 navController.navigate("userPage/${user.uid}/${user.nickname}/$isFollowing")
                             }
                         },
+                        onCommentClicked = { post ->
+
+                        }
                     )
                 }
             }
