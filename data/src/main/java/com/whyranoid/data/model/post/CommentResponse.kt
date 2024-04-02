@@ -1,8 +1,8 @@
-package com.whyranoid.domain.model.post
+package com.whyranoid.data.model.post
 
 import com.whyranoid.domain.model.user.User
 
-data class Comment(
+data class CommentResponse(
     val postId: Long,
     val commenterId: Long,
     val date: String,

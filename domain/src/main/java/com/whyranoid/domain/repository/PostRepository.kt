@@ -1,5 +1,6 @@
 package com.whyranoid.domain.repository
 
+import com.whyranoid.domain.model.post.Comment
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 
@@ -33,4 +34,6 @@ interface PostRepository {
     ): Result<String>
 
     suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>>
+
+    suspend fun getComments(postId: Long): Result<List<Comment>>
 }

@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.post
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.post.CommentResponse
 import com.whyranoid.data.model.post.PostResponse
 import com.whyranoid.data.model.post.UploadPostResponse
 import okhttp3.MultipartBody
@@ -24,8 +25,17 @@ interface PostService {
     ): Response<UploadPostResponse>
 
     @GET(API.LIST_UP_MY_POST)
-    suspend fun myPosts(@Query("walkieId") uid: Long): Response<List<PostResponse>>
+    suspend fun myPosts(
+        @Query("walkieId") uid: Long,
+    ): Response<List<PostResponse>>
 
     @GET(API.LIST_UP_POST)
-    suspend fun getPosts(@Query("walkieId") uid: Long): Response<List<PostResponse>>
+    suspend fun getPosts(
+        @Query("walkieId") uid: Long,
+    ): Response<List<PostResponse>>
+
+    @GET(API.LIST_UP_COMMENT)
+    suspend fun getComments(
+        @Query("postId") postId: Long,
+    ): Response<List<CommentResponse>>
 }

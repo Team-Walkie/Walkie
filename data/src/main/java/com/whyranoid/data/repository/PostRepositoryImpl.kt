@@ -1,6 +1,7 @@
 package com.whyranoid.data.repository
 
 import com.whyranoid.domain.datasource.PostDataSource
+import com.whyranoid.domain.model.post.Comment
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.repository.PostRepository
@@ -50,5 +51,9 @@ class PostRepositoryImpl(
 
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
         return postDataSource.getMyFollowingsPost(uid)
+    }
+
+    override suspend fun getComments(postId: Long): Result<List<Comment>> {
+        return postDataSource.getComments(postId)
     }
 }
