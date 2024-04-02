@@ -29,9 +29,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-fun CommunityScreen(
-    navController: NavController,
-) {
+fun CommunityScreen(navController: NavController) {
     val viewModel = koinViewModel<CommunityScreenViewModel>()
     val state by viewModel.collectAsState()
 
@@ -48,9 +46,10 @@ fun CommunityScreen(
                         Spacer(modifier = Modifier.width(7.dp))
 
                         Icon(
-                            modifier = Modifier
-                                .clickable {
-                                },
+                            modifier =
+                                Modifier
+                                    .clickable {
+                                    },
                             imageVector = Icons.Filled.KeyboardArrowDown,
                             contentDescription = "Down Arrow",
                         )
@@ -59,9 +58,10 @@ fun CommunityScreen(
                 rightContent = {
                     Row {
                         Icon(
-                            modifier = Modifier
-                                .clickable {
-                                },
+                            modifier =
+                                Modifier
+                                    .clickable {
+                                    },
                             imageVector = Icons.Filled.Add,
                             contentDescription = "추가 버튼",
                         )
@@ -69,10 +69,11 @@ fun CommunityScreen(
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Icon(
-                            modifier = Modifier
-                                .clickable {
-                                    navController.navigate(Screen.SearchFriendScreen.route)
-                                },
+                            modifier =
+                                Modifier
+                                    .clickable {
+                                        navController.navigate(Screen.SearchFriendScreen.route)
+                                    },
                             imageVector = Icons.Filled.Search,
                             contentDescription = "검색 버튼",
                         )
@@ -106,8 +107,9 @@ fun CommunityScreen(
                             }
                         },
                         onCommentClicked = { post ->
-
-                        }
+                            navController.currentBackStackEntry?.savedStateHandle?.set("post", post)
+                            navController.navigate(Screen.CommentScreen.route)
+                        },
                     )
                 }
             }
