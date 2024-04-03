@@ -28,6 +28,15 @@ class ChallengeDataSourceImpl(
         }
     }
 
+    override suspend fun getTopRankChallengePreviews(): Result<List<ChallengePreview>> {
+        return kotlin.runCatching {
+            val response = challengeService.getTopRankChallenges()
+            response.getResult { list ->
+                list.map { it.toChallengePreview()}
+            }
+        }
+    }
+
     // TODO: change to api call
     override suspend fun getChallengeDetail(challengeId: Long): Challenge {
         return Challenge.DUMMY.copy(

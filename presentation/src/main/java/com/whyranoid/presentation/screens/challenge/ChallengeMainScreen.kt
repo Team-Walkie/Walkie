@@ -247,7 +247,7 @@ fun ChallengeMainContent(
                     horizontalArrangement = Arrangement.spacedBy(13.dp),
                     contentPadding = PaddingValues(20.dp)
                 ) {
-                    state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
+                    state.topRankChallengePreviewState.getDataOrNull()?.let { newChallengePreviews ->
                         newChallengePreviews.chunkedList(3).forEach { list ->
                             item {
                                 Column() {

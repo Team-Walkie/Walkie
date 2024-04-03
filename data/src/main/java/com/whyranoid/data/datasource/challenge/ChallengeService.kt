@@ -16,4 +16,7 @@ interface ChallengeService {
     @GET(API.PROGRESSING_CHALLENGE)
     suspend fun getMyProcessingChallenges(@Query("walkieId") uid: Int): Response<List<ChallengePreviewResponse>>
 
+    @GET(API.TOP_RANK_CHALLENGE)
+    suspend fun getTopRankChallenges(): Response<List<ChallengePreviewResponse>>
+
 }

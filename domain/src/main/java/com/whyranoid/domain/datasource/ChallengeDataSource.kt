@@ -11,6 +11,8 @@ interface ChallengeDataSource {
 
     suspend fun getChallengingPreviews(uid: Int): Result<List<ChallengePreview>>
 
+    suspend fun getTopRankChallengePreviews(): Result<List<ChallengePreview>>
+
     suspend fun getChallengeDetail(challengeId: Long): Challenge
 
     suspend fun getChallengePreviewsByType(type: ChallengeType): List<ChallengePreview>

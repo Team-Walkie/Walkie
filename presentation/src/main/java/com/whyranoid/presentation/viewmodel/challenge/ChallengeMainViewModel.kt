@@ -7,6 +7,7 @@ import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
+import com.whyranoid.domain.usecase.GetTopRankChallengePreviewsUseCase
 import com.whyranoid.presentation.model.UiState
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -22,12 +23,14 @@ data class ChallengeMainState(
     val newChallengePreviewsState: UiState<List<ChallengePreview>> = UiState.Idle,
     val challengingPreviewsState: UiState<List<ChallengePreview>> = UiState.Idle,
     val typedChallengePreviewsState: UiState<List<List<ChallengePreview>>> = UiState.Idle,
+    val topRankChallengePreviewState: UiState<List<ChallengePreview>> = UiState.Idle,
 )
 
 class ChallengeMainViewModel(
     private val getNewChallengePreviewsUseCase: GetNewChallengePreviewsUseCase,
     private val getChallengingPreviewsUseCase: GetChallengingPreviewsUseCase,
     private val getChallengePreviewsByTypeUseCase: GetChallengePreviewsByTypeUseCase,
+    private val getTopRankChallengePreviewsUseCase: GetTopRankChallengePreviewsUseCase,
     private val getMyUidUseCase: GetMyUidUseCase
 ) : ViewModel(), ContainerHost<ChallengeMainState, ChallengeMainSideEffect> {
 
@@ -45,6 +48,7 @@ class ChallengeMainViewModel(
         getNewChallengeItems()
         getChallengingItems()
         getTypedChallengeItems()
+        getTopRankChallengeItems()
     }
 
     private fun getNewChallengeItems() = intent {
@@ -52,7 +56,9 @@ class ChallengeMainViewModel(
             state.copy(newChallengePreviewsState = UiState.Loading)
         }
 
-        getNewChallengePreviewsUseCase(state.uid.getDataOrNull() ?: 0).onSuccess { newChallengePreviews ->
+        getNewChallengePreviewsUseCase(
+            state.uid.getDataOrNull() ?: 0
+        ).onSuccess { newChallengePreviews ->
             reduce {
                 state.copy(
                     newChallengePreviewsState = UiState.Success(newChallengePreviews)
@@ -68,7 +74,9 @@ class ChallengeMainViewModel(
         reduce {
             state.copy(challengingPreviewsState = UiState.Loading)
         }
-        getChallengingPreviewsUseCase(state.uid.getDataOrNull() ?: 0).onSuccess { challengingPreviews ->
+        getChallengingPreviewsUseCase(
+            state.uid.getDataOrNull() ?: 0
+        ).onSuccess { challengingPreviews ->
             reduce {
                 state.copy(
                     challengingPreviewsState = UiState.Success(challengingPreviews)
@@ -78,6 +86,21 @@ class ChallengeMainViewModel(
 
         }
 
+    }
+
+    private fun getTopRankChallengeItems() = intent {
+        reduce {
+            state.copy(typedChallengePreviewsState = UiState.Loading)
+        }
+        getTopRankChallengePreviewsUseCase().onSuccess { topRankChallengeItem ->
+            reduce {
+                state.copy(
+                    topRankChallengePreviewState = UiState.Success(topRankChallengeItem)
+                )
+            }
+        }.onFailure {
+
+        }
     }
 
     private fun getTypedChallengeItems() = intent {

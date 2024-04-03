@@ -59,6 +59,7 @@ import com.whyranoid.domain.usecase.GetMyFollowingUseCase
 import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
+import com.whyranoid.domain.usecase.GetTopRankChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
@@ -106,7 +107,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val viewModelModule = module {
-    single { ChallengeMainViewModel(get(), get(), get(), get()) }
+    single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
@@ -152,6 +153,7 @@ val useCaseModule = module {
     single { GetChallengingPreviewsUseCase(get()) }
     single { GetChallengeDetailUseCase(get()) }
     single { GetChallengePreviewsByTypeUseCase(get()) }
+    single { GetTopRankChallengePreviewsUseCase(get()) }
     single { GetPostUseCase(get()) }
     single { GetUserPostPreviewsUseCase(get(), get()) }
     single { GetUserBadgesUseCase(get()) }
