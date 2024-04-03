@@ -6,7 +6,7 @@ import com.whyranoid.domain.repository.ChallengeRepository
 class GetChallengingPreviewsUseCase(
     private val challengeRepository: ChallengeRepository
 ) {
-    suspend operator fun invoke() : List<ChallengePreview> {
-        return challengeRepository.getChallengingPreviews()
+    suspend operator fun invoke(uid: Int) : Result<List<ChallengePreview>> {
+        return challengeRepository.getChallengingPreviews(uid)
     }
 }

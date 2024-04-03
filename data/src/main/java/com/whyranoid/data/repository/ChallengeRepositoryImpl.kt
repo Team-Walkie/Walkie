@@ -14,8 +14,8 @@ class ChallengeRepositoryImpl(
         return challengeDataSource.getNewChallengePreviews(uid)
     }
 
-    override suspend fun getChallengingPreviews(): List<ChallengePreview> {
-        return challengeDataSource.getChallengingPreviews()
+    override suspend fun getChallengingPreviews(uid: Int): Result<List<ChallengePreview>> {
+        return challengeDataSource.getChallengingPreviews(uid)
     }
 
     override suspend fun getChallengeDetail(challengeId: Long): Challenge {

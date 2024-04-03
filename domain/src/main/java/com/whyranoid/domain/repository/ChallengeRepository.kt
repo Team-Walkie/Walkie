@@ -9,7 +9,7 @@ interface ChallengeRepository {
 
     suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>>
 
-    suspend fun getChallengingPreviews(): List<ChallengePreview>
+    suspend fun getChallengingPreviews(uid: Int): Result<List<ChallengePreview>>
 
     suspend fun getChallengeDetail(challengeId: Long): Challenge
 

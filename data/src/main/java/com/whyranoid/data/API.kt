@@ -31,6 +31,8 @@ object API {
 
     const val NEW_CHALLENGE = "/api/challenge/challenges/new"
 
+    const val PROGRESSING_CHALLENGE = "api/challenge/challenges/progress"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 

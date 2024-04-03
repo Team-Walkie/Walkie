@@ -68,12 +68,16 @@ class ChallengeMainViewModel(
         reduce {
             state.copy(challengingPreviewsState = UiState.Loading)
         }
-        val challengingPreviews = getChallengingPreviewsUseCase()
-        reduce {
-            state.copy(
-                challengingPreviewsState = UiState.Success(challengingPreviews)
-            )
+        getChallengingPreviewsUseCase(state.uid.getDataOrNull() ?: 0).onSuccess { challengingPreviews ->
+            reduce {
+                state.copy(
+                    challengingPreviewsState = UiState.Success(challengingPreviews)
+                )
+            }
+        }.onFailure {
+
         }
+
     }
 
     private fun getTypedChallengeItems() = intent {

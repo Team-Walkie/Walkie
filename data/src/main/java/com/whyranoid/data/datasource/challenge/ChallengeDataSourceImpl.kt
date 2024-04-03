@@ -10,7 +10,6 @@ import com.whyranoid.domain.model.challenge.ChallengeType
 class ChallengeDataSourceImpl(
     private val challengeService: ChallengeService,
 ) : ChallengeDataSource {
-    // TODO: change to api call
     override suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>> {
         return kotlin.runCatching {
             val response = challengeService.getNewChallenges(uid)
@@ -20,9 +19,13 @@ class ChallengeDataSourceImpl(
         }
     }
 
-    // TODO: change to api call
-    override suspend fun getChallengingPreviews(): List<ChallengePreview> {
-        return List(10) { ChallengePreview.DUMMY }
+    override suspend fun getChallengingPreviews(uid: Int): Result<List<ChallengePreview>> {
+        return kotlin.runCatching {
+            val response = challengeService.getMyProcessingChallenges(uid)
+            response.getResult { list ->
+                list.map { it.toChallengePreview()}
+            }
+        }
     }
 
     // TODO: change to api call
