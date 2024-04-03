@@ -29,6 +29,8 @@ object API {
 
     const val LOGIN = "api/walkies/login"
 
+    const val NEW_CHALLENGE = "/api/challenge/challenges/new"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 

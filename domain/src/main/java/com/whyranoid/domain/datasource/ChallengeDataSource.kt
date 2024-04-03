@@ -7,7 +7,7 @@ import com.whyranoid.domain.model.challenge.ChallengeType
 
 interface ChallengeDataSource {
 
-    suspend fun getNewChallengePreviews(): List<ChallengePreview>
+    suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>>
 
     suspend fun getChallengingPreviews(): List<ChallengePreview>
 

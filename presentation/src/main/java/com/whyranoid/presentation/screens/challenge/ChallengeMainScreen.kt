@@ -120,7 +120,6 @@ fun ChallengeMainContent(
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-//                .padding(horizontal = 20.dp)
         ) {
 
             item {

@@ -6,11 +6,12 @@ import com.google.gson.GsonBuilder
 import com.whyranoid.data.API
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
-import com.whyranoid.data.datasource.ChallengeDataSourceImpl
+import com.whyranoid.data.datasource.challenge.ChallengeDataSourceImpl
 import com.whyranoid.data.datasource.OtherUserPagingSource
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
+import com.whyranoid.data.datasource.challenge.ChallengeService
 import com.whyranoid.data.datasource.community.CommunityDataSource
 import com.whyranoid.data.datasource.community.CommunityDataSourceImpl
 import com.whyranoid.data.datasource.community.CommunityService
@@ -105,7 +106,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val viewModelModule = module {
-    single { ChallengeMainViewModel(get(), get(), get()) }
+    single { ChallengeMainViewModel(get(), get(), get(), get()) }
     single { ChallengeDetailViewModel(get()) }
     single { ChallengeExitViewModel(get()) }
     factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
@@ -137,7 +138,7 @@ val repositoryModule = module {
 }
 
 val dataSourceModule = module {
-    single<ChallengeDataSource> { ChallengeDataSourceImpl() }
+    single<ChallengeDataSource> { ChallengeDataSourceImpl(get()) }
     single<PostDataSource> { PostDataSourceImpl(get()) }
     single<UserDataSource> { UserDataSourceImpl(get()) }
     single<AccountDataSource> { AccountDataSourceImpl(get()) }
@@ -245,4 +246,6 @@ val networkModule = module {
     single { get<Retrofit>().create(RunningService::class.java) }
 
     single { get<Retrofit>().create(CommunityService::class.java) }
+
+    single { get<Retrofit>().create(ChallengeService::class.java) }
 }

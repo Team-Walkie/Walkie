@@ -10,8 +10,8 @@ import com.whyranoid.domain.repository.ChallengeRepository
 class ChallengeRepositoryImpl(
     private val challengeDataSource: ChallengeDataSource,
 ) : ChallengeRepository {
-    override suspend fun getNewChallengePreviews(): List<ChallengePreview> {
-        return challengeDataSource.getNewChallengePreviews()
+    override suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>> {
+        return challengeDataSource.getNewChallengePreviews(uid)
     }
 
     override suspend fun getChallengingPreviews(): List<ChallengePreview> {

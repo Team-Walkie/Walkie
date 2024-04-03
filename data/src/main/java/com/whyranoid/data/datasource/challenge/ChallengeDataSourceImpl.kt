@@ -1,15 +1,23 @@
-package com.whyranoid.data.datasource
+package com.whyranoid.data.datasource.challenge
 
+import com.whyranoid.data.getResult
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.challenge.Challenge
 import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.challenge.ChallengeType
 
-class ChallengeDataSourceImpl : ChallengeDataSource {
+class ChallengeDataSourceImpl(
+    private val challengeService: ChallengeService,
+) : ChallengeDataSource {
     // TODO: change to api call
-    override suspend fun getNewChallengePreviews(): List<ChallengePreview> {
-        return List(10) { ChallengePreview.DUMMY }
+    override suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>> {
+        return kotlin.runCatching {
+            val response = challengeService.getNewChallenges(uid)
+            response.getResult { list ->
+                list.map { it.toChallengePreview() }
+            }
+        }
     }
 
     // TODO: change to api call

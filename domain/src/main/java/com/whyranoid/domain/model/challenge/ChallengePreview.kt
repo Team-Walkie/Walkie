@@ -3,7 +3,6 @@ package com.whyranoid.domain.model.challenge
 data class ChallengePreview(
     val id: Long,
     val title: String,
-    val badgeImageUrl: String,
     val progress: Float?,
     val type: ChallengeType
 ) {
@@ -40,7 +39,6 @@ data class ChallengePreview(
             get() = ChallengePreview(
                 id = DUMMY_ID_LIST.shuffled().first(),
                 title = DUMMY_NAME_LIST.shuffled().first(),
-                badgeImageUrl = "https://picsum.photos/250/250",
                 progress = DUMMY_PROGRESS_LIST.shuffled().first(),
                 type = ChallengeType.values().toList().shuffled().first(),
             )
