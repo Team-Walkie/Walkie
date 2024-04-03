@@ -19,6 +19,7 @@ fun PostItem(
     post: Post,
     onLikeClicked: (Long) -> Unit = {},
     onProfileClicked: (User) -> Unit = {},
+    onCommentClicked: (Post) -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxHeight(),
@@ -43,8 +44,10 @@ fun PostItem(
             contentScale = ContentScale.Crop,
         )
 
-        PostContentItem(post) {
-            onLikeClicked(it)
-        }
+        PostContentItem(
+            post = post,
+            onLikeClicked =  { onLikeClicked(it) },
+            onCommentClicked = onCommentClicked
+        )
     }
 }
