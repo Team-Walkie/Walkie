@@ -36,4 +36,6 @@ interface PostRepository {
     suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>>
 
     suspend fun getComments(postId: Long): Result<List<Comment>>
+
+    suspend fun sendComment(comment: Comment): Result<Unit>
 }

@@ -113,4 +113,16 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
             }
         }
     }
+
+    override suspend fun sendComment(comment: Comment): Result<Unit> {
+        return kotlin.runCatching {
+            return if (postService.sendComment(comment).isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    Exception("fail to send comment"),
+                )
+            }
+        }
+    }
 }
