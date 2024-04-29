@@ -37,5 +37,10 @@ interface PostRepository {
 
     suspend fun getComments(postId: Long): Result<List<Comment>>
 
-    suspend fun sendComment(comment: Comment): Result<Unit>
+    suspend fun sendComment(
+        postId: Long,
+        commenterId: Long,
+        date: String,
+        content: String,
+    ): Result<Unit>
 }

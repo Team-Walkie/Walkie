@@ -3,6 +3,7 @@ package com.whyranoid.data.datasource.post
 import com.whyranoid.data.API
 import com.whyranoid.data.model.post.CommentResponse
 import com.whyranoid.data.model.post.PostResponse
+import com.whyranoid.data.model.post.SendCommentRequest
 import com.whyranoid.data.model.post.UploadPostResponse
 import com.whyranoid.domain.model.post.Comment
 import okhttp3.MultipartBody
@@ -43,6 +44,6 @@ interface PostService {
 
     @POST(API.WRITE_COMMENT)
     suspend fun sendComment(
-        @Body comment: Comment,
+        @Body sendCommentRequest: SendCommentRequest,
     ): Response<Comment>
 }
