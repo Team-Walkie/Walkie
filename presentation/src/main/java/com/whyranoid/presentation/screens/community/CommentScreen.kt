@@ -1,6 +1,7 @@
 package com.whyranoid.presentation.screens.community
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Scaffold
@@ -28,11 +31,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,10 +54,12 @@ import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.UserRepository
 import com.whyranoid.domain.usecase.GetMyUidUseCase
+import com.whyranoid.domain.usecase.community.SendCommentUseCase
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
@@ -64,14 +71,17 @@ fun CommentScreen(
     postRepo: PostRepository = get(),
     userRepo: UserRepository = get(),
     myUid: GetMyUidUseCase = get(),
+    sendCommentUseCase: SendCommentUseCase = get(),
 ) {
     var comments by remember { mutableStateOf<List<Comment>?>(null) }
     var user by remember { mutableStateOf<User?>(null) }
     var isProgress by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    LaunchedEffect(post.id) {
+    LaunchedEffect(post.id, isProgress) {
         postRepo.getComments(post.id).onSuccess {
-            comments = it
+            comments = it.reversed()
             Log.d("ju0828", it.toString())
         }
 
@@ -83,7 +93,7 @@ fun CommentScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.imePadding(),
         topBar = {
             WalkieTopBar(
                 middleContent = {
@@ -110,18 +120,27 @@ fun CommentScreen(
         },
         bottomBar = {
             BottomTextField(
-                modifier = Modifier.imePadding(),
+                modifier = Modifier, // .imePadding(),
                 imageUrl = user?.imageUrl ?: User.DUMMY.imageUrl,
-            ) {
-                isProgress = true
-                // todo send comment and remove progress bar
-            }
+                onSendClicked = { content ->
+                    isProgress = true
+                    scope.launch {
+                        sendCommentUseCase(post.id, content).onSuccess {
+                            isProgress = false
+                        }.onFailure {
+                            isProgress = false
+                            Toast.makeText(context, "댓글 작성에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                },
+            )
         },
     ) { paddingValues ->
         LazyColumn(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .wrapContentHeight()
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
                     .padding(paddingValues),
@@ -154,7 +173,8 @@ fun CommentScreen(
                     PostComment(
                         modifier =
                             Modifier
-                                .padding(horizontal = 20.dp),
+                                .padding(horizontal = 20.dp)
+                                .padding(top = 8.dp),
                         list[index].commenterId,
                         list[index].commenter.imageUrl,
                         list[index].commenter.nickname,
@@ -164,6 +184,13 @@ fun CommentScreen(
                 }
             }
         }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize().imePadding(),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (isProgress) CircularProgressIndicator()
     }
 }
 
@@ -181,7 +208,7 @@ fun PostComment(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
-            model = imageUrl,
+            model = imageUrl.ifBlank { User.DUMMY.imageUrl },
             contentDescription = "user image",
             modifier =
                 Modifier
@@ -239,7 +266,10 @@ fun BottomTextField(
                         Modifier.clip(RoundedCornerShape(6.dp))
                             .clickable {
                                 val newCursorPosition = textFieldValue.text.length + 2
-                                textFieldValue = TextFieldValue(textFieldValue.text + it).copy(selection = TextRange(newCursorPosition))
+                                textFieldValue =
+                                    TextFieldValue(textFieldValue.text + it).copy(
+                                        selection = TextRange(newCursorPosition),
+                                    )
                             }.padding(6.dp),
                     fontSize = 20.sp,
                     text = it,
@@ -267,7 +297,7 @@ fun BottomTextField(
             }
 
             AsyncImage(
-                model = imageUrl,
+                model = imageUrl.ifBlank { User.DUMMY.imageUrl },
                 contentDescription = "user image",
                 modifier =
                     Modifier
@@ -281,12 +311,18 @@ fun BottomTextField(
             Text(
                 modifier =
                     Modifier.clickable {
-                        onSendClicked(textFieldValue.text)
-                        textFieldValue = TextFieldValue("")
+                        if (textFieldValue.text.isNotBlank()) {
+                            onSendClicked(textFieldValue.text)
+                            textFieldValue = TextFieldValue("")
+                        }
                     }.padding(12.dp)
                         .align(Alignment.TopEnd),
                 text = "게시",
-                style = LocalTextStyle.current.copy(fontSize = 16.sp, color = WalkieColor.Primary),
+                style =
+                    LocalTextStyle.current.copy(
+                        fontSize = 16.sp,
+                        color = if (textFieldValue.text.isNotBlank()) WalkieColor.Primary else WalkieColor.GrayDisable,
+                    ),
             )
 
             BasicTextField(
