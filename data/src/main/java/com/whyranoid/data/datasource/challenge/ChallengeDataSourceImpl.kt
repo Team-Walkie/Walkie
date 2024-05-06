@@ -44,9 +44,10 @@ class ChallengeDataSourceImpl(
         )
     }
 
-    // TODO: change to api call
-    override suspend fun getChallengePreviewsByType(type: ChallengeType): List<ChallengePreview> {
-        return List(3) { ChallengePreview.DUMMY }
+    override suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview> {
+        return challengeService.getChallengePreviewsByType(uid, type.serverString).getResult { list ->
+            list.map { it.toChallengePreview() }
+        }
     }
 
     // TODO: change to api call

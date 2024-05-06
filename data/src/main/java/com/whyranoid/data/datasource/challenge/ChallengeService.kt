@@ -19,4 +19,10 @@ interface ChallengeService {
     @GET(API.TOP_RANK_CHALLENGE)
     suspend fun getTopRankChallenges(): Response<List<ChallengePreviewResponse>>
 
+    @GET(API.CHALLENGE_CATEGORY)
+    suspend fun getChallengePreviewsByType(
+        @Query("walkieId") uid: Int,
+        @Query("category") type: String
+    ): Response<List<ChallengePreviewResponse>>
+
 }

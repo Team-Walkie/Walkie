@@ -152,7 +152,7 @@ val useCaseModule = module {
     single { GetNewChallengePreviewsUseCase(get()) }
     single { GetChallengingPreviewsUseCase(get()) }
     single { GetChallengeDetailUseCase(get()) }
-    single { GetChallengePreviewsByTypeUseCase(get()) }
+    single { GetChallengePreviewsByTypeUseCase(get(), get()) }
     single { GetTopRankChallengePreviewsUseCase(get()) }
     single { GetPostUseCase(get()) }
     single { GetUserPostPreviewsUseCase(get(), get()) }
