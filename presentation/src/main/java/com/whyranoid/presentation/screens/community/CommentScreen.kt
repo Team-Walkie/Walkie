@@ -93,7 +93,6 @@ fun CommentScreen(
     }
 
     Scaffold(
-        modifier = modifier.imePadding(),
         topBar = {
             WalkieTopBar(
                 middleContent = {
