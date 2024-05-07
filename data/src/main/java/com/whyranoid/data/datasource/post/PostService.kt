@@ -3,10 +3,13 @@ package com.whyranoid.data.datasource.post
 import com.whyranoid.data.API
 import com.whyranoid.data.model.post.CommentResponse
 import com.whyranoid.data.model.post.PostResponse
+import com.whyranoid.data.model.post.SendCommentRequest
 import com.whyranoid.data.model.post.UploadPostResponse
+import com.whyranoid.domain.model.post.Comment
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -38,4 +41,9 @@ interface PostService {
     suspend fun getComments(
         @Query("postId") postId: Long,
     ): Response<List<CommentResponse>>
+
+    @POST(API.WRITE_COMMENT)
+    suspend fun sendComment(
+        @Body sendCommentRequest: SendCommentRequest,
+    ): Response<Comment>
 }

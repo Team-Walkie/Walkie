@@ -56,4 +56,13 @@ class PostRepositoryImpl(
     override suspend fun getComments(postId: Long): Result<List<Comment>> {
         return postDataSource.getComments(postId)
     }
+
+    override suspend fun sendComment(
+        postId: Long,
+        commenterId: Long,
+        date: String,
+        content: String,
+    ): Result<Unit> {
+        return postDataSource.sendComment(postId, commenterId, date, content)
+    }
 }

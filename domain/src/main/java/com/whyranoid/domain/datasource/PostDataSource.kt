@@ -36,4 +36,11 @@ interface PostDataSource {
     suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>>
 
     suspend fun getComments(postId: Long): Result<List<Comment>>
+
+    suspend fun sendComment(
+        postId: Long,
+        commenterId: Long,
+        date: String,
+        content: String,
+    ): Result<Unit>
 }
