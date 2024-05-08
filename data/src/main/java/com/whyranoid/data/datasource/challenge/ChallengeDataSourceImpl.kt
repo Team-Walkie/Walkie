@@ -23,7 +23,7 @@ class ChallengeDataSourceImpl(
         return kotlin.runCatching {
             val response = challengeService.getMyProcessingChallenges(uid)
             response.getResult { list ->
-                list.map { it.toChallengePreview()}
+                list.map { it.toChallengePreview() }
             }
         }
     }
@@ -32,22 +32,23 @@ class ChallengeDataSourceImpl(
         return kotlin.runCatching {
             val response = challengeService.getTopRankChallenges()
             response.getResult { list ->
-                list.map { it.toChallengePreview()}
+                list.map { it.toChallengePreview() }
             }
         }
     }
 
-    // TODO: change to api call
-    override suspend fun getChallengeDetail(challengeId: Long): Challenge {
-        return Challenge.DUMMY.copy(
-            id = challengeId,
-        )
+    override suspend fun getChallengeDetail(uid: Int, challengeId: Long): Challenge {
+        return challengeService.getChallengeDetail(challengeId, uid).getResult { it.toChallenge() }
     }
 
-    override suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview> {
-        return challengeService.getChallengePreviewsByType(uid, type.serverString).getResult { list ->
-            list.map { it.toChallengePreview() }
-        }
+    override suspend fun getChallengePreviewsByType(
+        uid: Int,
+        type: ChallengeType
+    ): List<ChallengePreview> {
+        return challengeService.getChallengePreviewsByType(uid, type.serverString)
+            .getResult { list ->
+                list.map { it.toChallengePreview() }
+            }
     }
 
     // TODO: change to api call

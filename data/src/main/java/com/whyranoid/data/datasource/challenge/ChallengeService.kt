@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.challenge
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.challenge.ChallengeDetailResponse
 import com.whyranoid.data.model.challenge.ChallengePreviewResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -25,4 +26,9 @@ interface ChallengeService {
         @Query("category") type: String
     ): Response<List<ChallengePreviewResponse>>
 
+    @GET(API.CHALLENGE_DETAIL)
+    suspend fun getChallengeDetail(
+        @Query("challengeId") challengeId: Long,
+        @Query("walkieId") uid: Int,
+    ): Response<ChallengeDetailResponse>
 }

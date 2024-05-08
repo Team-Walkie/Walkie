@@ -13,7 +13,7 @@ interface ChallengeRepository {
 
     suspend fun getTopRankChallengePreviews(): Result<List<ChallengePreview>>
 
-    suspend fun getChallengeDetail(challengeId: Long): Challenge
+    suspend fun getChallengeDetail(uid: Int, challengeId: Long): Challenge
 
     suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview>
 

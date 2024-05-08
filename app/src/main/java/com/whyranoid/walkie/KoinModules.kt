@@ -151,7 +151,7 @@ val dataSourceModule = module {
 val useCaseModule = module {
     single { GetNewChallengePreviewsUseCase(get()) }
     single { GetChallengingPreviewsUseCase(get()) }
-    single { GetChallengeDetailUseCase(get()) }
+    single { GetChallengeDetailUseCase(get(), get()) }
     single { GetChallengePreviewsByTypeUseCase(get(), get()) }
     single { GetTopRankChallengePreviewsUseCase(get()) }
     single { GetPostUseCase(get()) }

@@ -22,8 +22,8 @@ class ChallengeRepositoryImpl(
         return challengeDataSource.getTopRankChallengePreviews()
     }
 
-    override suspend fun getChallengeDetail(challengeId: Long): Challenge {
-        return challengeDataSource.getChallengeDetail(challengeId)
+    override suspend fun getChallengeDetail(uid: Int, challengeId: Long): Challenge {
+        return challengeDataSource.getChallengeDetail(uid, challengeId)
     }
 
     override suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview> {

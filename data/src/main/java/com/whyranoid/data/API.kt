@@ -37,6 +37,8 @@ object API {
 
     const val CHALLENGE_CATEGORY = "api/challenge/challenges/category"
 
+    const val CHALLENGE_DETAIL = "api/challenge/challenge-detail"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 
