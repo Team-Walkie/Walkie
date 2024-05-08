@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens.challenge
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -46,11 +48,13 @@ import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.SystemColor
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailSideEffect
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailState
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ChallengeDetailScreen(
@@ -59,6 +63,7 @@ fun ChallengeDetailScreen(
     isChallenging: Boolean
 ) {
 
+    val context = LocalContext.current
     val viewModel = koinViewModel<ChallengeDetailViewModel>()
 
     LaunchedEffect(true) {
@@ -67,11 +72,27 @@ fun ChallengeDetailScreen(
 
     val state by viewModel.collectAsState()
 
+    viewModel.collectSideEffect {
+        when (it) {
+            ChallengeDetailSideEffect.StartChallengeSuccess -> {
+                Toast.makeText(context, "챌린지를 성공적으로 시작하였습니다.", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
+
+            ChallengeDetailSideEffect.StartChallengeFailure -> {
+                Toast.makeText(context, "챌린지를 시작할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     ChallengeDetailContent(state, isChallenging,
         onNegativeButtonClicked = {
             navController.navigate(
                 "challengeExit/${challengeId}"
             )
+        },
+        onStartChallengeButtonClicked = {
+            viewModel.startChallenge(it)
         })
 }
 
@@ -81,6 +102,7 @@ fun ChallengeDetailContent(
     state: ChallengeDetailState,
     isChallenging: Boolean,
     onNegativeButtonClicked: (Long) -> Unit = {},
+    onStartChallengeButtonClicked: (Int) -> Unit = { }
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -149,8 +171,7 @@ fun ChallengeDetailContent(
                                 color = Color(0xFF989898),
                                 text = challenge.contents,
                                 fontSize = 15.sp,
-                                fontWeight = FontWeight(500)
-                                ,
+                                fontWeight = FontWeight(500),
                             )
                         }
 
@@ -247,7 +268,9 @@ fun ChallengeDetailContent(
                             }
                         } else {
                             Spacer(modifier = Modifier.height(28.dp))
-                            WalkiePositiveButton(text = "도전하기")
+                            WalkiePositiveButton(text = "도전하기") {
+                                onStartChallengeButtonClicked(challenge.id.toInt())
+                            }
                         }
 
                     }

@@ -33,4 +33,8 @@ class ChallengeRepositoryImpl(
     override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
         return challengeDataSource.getUserBadges(uid)
     }
+
+    override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {
+        return challengeDataSource.startChallenge(uid, challengeId)
+    }
 }

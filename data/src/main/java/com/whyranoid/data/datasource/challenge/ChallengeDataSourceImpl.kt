@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.challenge
 
 import com.whyranoid.data.getResult
+import com.whyranoid.data.model.challenge.request.ChallengeStartRequest
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.model.challenge.Challenge
@@ -54,5 +55,11 @@ class ChallengeDataSourceImpl(
     // TODO: change to api call
     override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
         return Result.success(Badge.DUMMY_LIST)
+    }
+
+    override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {
+        return runCatching {
+            challengeService.startChallenge(ChallengeStartRequest(uid, challengeId))
+        }
     }
 }

@@ -18,4 +18,6 @@ interface ChallengeRepository {
     suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview>
 
     suspend fun getUserBadges(uid: Long): Result<List<Badge>>
+
+    suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit>
 }

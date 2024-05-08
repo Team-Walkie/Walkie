@@ -66,6 +66,7 @@ import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.usecase.StartChallengeUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.broadcast.AddGpsListener
 import com.whyranoid.domain.usecase.broadcast.AddNetworkListener
@@ -108,7 +109,7 @@ import java.util.concurrent.TimeUnit
 
 val viewModelModule = module {
     single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
-    single { ChallengeDetailViewModel(get()) }
+    single { ChallengeDetailViewModel(get(), get()) }
     single { ChallengeExitViewModel(get()) }
     factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
@@ -181,6 +182,7 @@ val useCaseModule = module {
     single { GetMyUidUseCase(get()) }
     single { RemoveFollowerUseCase(get(), get()) }
     single { GetMyFollowingUseCase(get(), get()) }
+    single { StartChallengeUseCase(get(), get()) }
 }
 
 val databaseModule = module {
