@@ -23,7 +23,8 @@ import com.whyranoid.presentation.theme.WalkieTypography
 @Composable
 fun PostContentItem(
     post: Post,
-    onLikeClicked: (Long) -> Unit = {}
+    onLikeClicked: (Long) -> Unit = {},
+    onCommentClicked: (Post) -> Unit = {},
 ) {
 
     Column(
@@ -61,7 +62,7 @@ fun PostContentItem(
                     modifier = Modifier
                         .size(20.dp)
                         .clickable {
-
+                            onCommentClicked(post)
                         },
                     imageVector = CommentButtonIcon,
                     contentDescription = "댓글 버튼",

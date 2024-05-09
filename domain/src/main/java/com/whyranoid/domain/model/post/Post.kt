@@ -1,6 +1,7 @@
 package com.whyranoid.domain.model.post
 
 import com.whyranoid.domain.model.user.User
+import java.io.Serializable
 
 data class Post(
     val id: Long,
@@ -10,15 +11,16 @@ data class Post(
     val contents: String,
     val author: User,
     val date: Long = 0L,
-) {
+) : Serializable {
     companion object {
-        val DUMMY = Post(
-            id = 0L,
-            imageUrl = "https://picsum.photos/250/250",
-            likeCount = 3,
-            contents = "오늘도 상쾌한 달리기~",
-            author = User.DUMMY,
-            isLiked = false
-        )
+        val DUMMY =
+            Post(
+                id = 0L,
+                imageUrl = "https://picsum.photos/250/250",
+                likeCount = 3,
+                contents = "오늘도 상쾌한 달리기~",
+                author = User.DUMMY,
+                isLiked = false,
+            )
     }
 }

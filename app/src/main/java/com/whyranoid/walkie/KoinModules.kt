@@ -77,6 +77,7 @@ import com.whyranoid.domain.usecase.broadcast.RemoveNetworkListener
 import com.whyranoid.domain.usecase.community.FollowUseCase
 import com.whyranoid.domain.usecase.community.GetSearchedUserUseCase
 import com.whyranoid.domain.usecase.community.RemoveFollowerUseCase
+import com.whyranoid.domain.usecase.community.SendCommentUseCase
 import com.whyranoid.domain.usecase.community.UnFollowUseCase
 import com.whyranoid.domain.usecase.running.GetRunningFollowerUseCase
 import com.whyranoid.domain.usecase.running.RunningFinishUseCase
@@ -107,149 +108,156 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-val viewModelModule = module {
-    single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
-    single { ChallengeDetailViewModel(get(), get()) }
-    single { ChallengeExitViewModel(get()) }
-    factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { RunningEditViewModel() }
-    factory { SplashViewModel(get()) }
-    factory { SignInViewModel(get()) }
-    factory { SelectHistoryViewModel(get()) }
-    factory { EditProfileViewModel(get()) }
-    factory { AddPostViewModel(get()) }
-    factory { SearchFriendViewModel(get(), get(), get()) }
-    factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { CommunityScreenViewModel(get(), get(), get()) }
-    factory { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
-}
-
-val repositoryModule = module {
-    single<ChallengeRepository> { ChallengeRepositoryImpl(get()) }
-    single<PostRepository> { PostRepositoryImpl(get()) }
-    single<UserRepository> { UserRepositoryImpl(get()) }
-    single<RunningRepository> { RunningRepositoryImpl(get(), get()) }
-    single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
-    single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
-    single<FollowRepository> { FollowRepositoryImpl(get()) }
-    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
-    single<GpsRepository> { GpsRepositoryImpl(get()) }
-    single<OtherUserRepository> { OtherUserRepositoryImpl(OtherUserPagingSource()) }
-    single<CommunityRepository> { CommunityRepositoryImpl(get()) }
-}
-
-val dataSourceModule = module {
-    single<ChallengeDataSource> { ChallengeDataSourceImpl(get()) }
-    single<PostDataSource> { PostDataSourceImpl(get()) }
-    single<UserDataSource> { UserDataSourceImpl(get()) }
-    single<AccountDataSource> { AccountDataSourceImpl(get()) }
-    single<FollowDataSource> { FollowDataSourceImpl(get()) }
-    single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
-    single<CommunityDataSource> { CommunityDataSourceImpl(get()) }
-}
-
-val useCaseModule = module {
-    single { GetNewChallengePreviewsUseCase(get()) }
-    single { GetChallengingPreviewsUseCase(get()) }
-    single { GetChallengeDetailUseCase(get(), get()) }
-    single { GetChallengePreviewsByTypeUseCase(get(), get()) }
-    single { GetTopRankChallengePreviewsUseCase(get()) }
-    single { GetPostUseCase(get()) }
-    single { GetUserPostPreviewsUseCase(get(), get()) }
-    single { GetUserBadgesUseCase(get()) }
-    single { GetUserDetailUseCase(get(), get()) }
-    single { GetRunningFollowerUseCase(get(), get()) }
-    single { RunningFinishUseCase(get(), get()) }
-    single { RunningStartUseCase(get(), get()) }
-    single { SignOutUseCase(get()) }
-    single { UploadPostUseCase(get(), get()) }
-    single { SendLikeUseCase(get(), get()) }
-    single { GetSearchedUserUseCase(get(), get()) }
-    single { AddGpsListener(get()) }
-    single { AddNetworkListener(get()) }
-    single { RemoveGpsListener(get()) }
-    single { RemoveNetworkListener(get()) }
-    single { GetGpsState(get()) }
-    single { GetNetworkState(get()) }
-    single { FollowUseCase(get(), get()) }
-    single { UnFollowUseCase(get(), get()) }
-    single { GetFollowingUseCase(get()) }
-    single { GetFollowerUseCase(get()) }
-    single { GetFollowingsPostsUseCase(get(), get()) }
-    single { LikePostUseCase(get(), get()) }
-    single { RequestLoginUseCase(get()) }
-    single { GetMyUidUseCase(get()) }
-    single { RemoveFollowerUseCase(get(), get()) }
-    single { GetMyFollowingUseCase(get(), get()) }
-    single { StartChallengeUseCase(get(), get()) }
-}
-
-val databaseModule = module {
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            AppDatabase::class.java,
-            "walkie_database",
-        ).build()
+val viewModelModule =
+    module {
+        single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
+        single { ChallengeDetailViewModel(get(), get()) }
+        single { ChallengeExitViewModel(get()) }
+        factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
+        factory { RunningEditViewModel() }
+        factory { SplashViewModel(get()) }
+        factory { SignInViewModel(get()) }
+        factory { SelectHistoryViewModel(get()) }
+        factory { EditProfileViewModel(get()) }
+        factory { AddPostViewModel(get()) }
+        factory { SearchFriendViewModel(get(), get(), get()) }
+        factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
+        factory { CommunityScreenViewModel(get(), get(), get()) }
+        factory { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
     }
 
-    single {
-        get<AppDatabase>().runningHistoryDao()
+val repositoryModule =
+    module {
+        single<ChallengeRepository> { ChallengeRepositoryImpl(get()) }
+        single<PostRepository> { PostRepositoryImpl(get()) }
+        single<UserRepository> { UserRepositoryImpl(get()) }
+        single<RunningRepository> { RunningRepositoryImpl(get(), get()) }
+        single<RunningHistoryRepository> { RunningHistoryRepositoryImpl(get(), get()) }
+        single<AccountRepository> { AccountRepositoryImpl(get(), get()) }
+        single<FollowRepository> { FollowRepositoryImpl(get()) }
+        single<NetworkRepository> { NetworkRepositoryImpl(get()) }
+        single<GpsRepository> { GpsRepositoryImpl(get()) }
+        single<OtherUserRepository> { OtherUserRepositoryImpl(OtherUserPagingSource()) }
+        single<CommunityRepository> { CommunityRepositoryImpl(get()) }
     }
 
-    single { Gson() }
+val dataSourceModule =
+    module {
+        single<ChallengeDataSource> { ChallengeDataSourceImpl() }
+        single<PostDataSource> { PostDataSourceImpl(get()) }
+        single<UserDataSource> { UserDataSourceImpl(get()) }
+        single<AccountDataSource> { AccountDataSourceImpl(get()) }
+        single<FollowDataSource> { FollowDataSourceImpl(get()) }
+        single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
+        single<CommunityDataSource> { CommunityDataSourceImpl(get()) }
+    }
 
-    single { AccountDataStore(get()) }
-}
+val useCaseModule =
+    module {
+        single { GetNewChallengePreviewsUseCase(get()) }
+        single { GetChallengingPreviewsUseCase(get()) }
+        single { GetChallengeDetailUseCase(get()) }
+        single { GetChallengePreviewsByTypeUseCase(get()) }
+        single { GetPostUseCase(get()) }
+        single { GetUserPostPreviewsUseCase(get(), get()) }
+        single { GetUserBadgesUseCase(get()) }
+        single { GetUserDetailUseCase(get(), get()) }
+        single { GetRunningFollowerUseCase(get(), get()) }
+        single { RunningFinishUseCase(get(), get()) }
+        single { RunningStartUseCase(get(), get()) }
+        single { SignOutUseCase(get()) }
+        single { UploadPostUseCase(get(), get()) }
+        single { SendLikeUseCase(get(), get()) }
+        single { GetSearchedUserUseCase(get(), get()) }
+        single { AddGpsListener(get()) }
+        single { AddNetworkListener(get()) }
+        single { RemoveGpsListener(get()) }
+        single { RemoveNetworkListener(get()) }
+        single { GetGpsState(get()) }
+        single { GetNetworkState(get()) }
+        single { FollowUseCase(get(), get()) }
+        single { UnFollowUseCase(get(), get()) }
+        single { GetFollowingUseCase(get()) }
+        single { GetFollowerUseCase(get()) }
+        single { GetFollowingsPostsUseCase(get(), get()) }
+        single { LikePostUseCase(get(), get()) }
+        single { RequestLoginUseCase(get()) }
+        single { GetMyUidUseCase(get()) }
+        single { RemoveFollowerUseCase(get(), get()) }
+        single { GetMyFollowingUseCase(get(), get()) }
+        single { SendCommentUseCase(get(), get()) }
+    }
 
-val networkModule = module {
-    class WalkieInterceptor : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response {
-            val newRequest = chain.request()
-            return chain.proceed(newRequest)
+val databaseModule =
+    module {
+        single {
+            Room.databaseBuilder(
+                androidContext(),
+                AppDatabase::class.java,
+                "walkie_database",
+            ).build()
         }
+
+        single {
+            get<AppDatabase>().runningHistoryDao()
+        }
+
+        single { Gson() }
+
+        single { AccountDataStore(get()) }
     }
 
-    single {
-        OkHttpClient.Builder()
-            .readTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(WalkieInterceptor())
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                },
-            )
-            .build()
+val networkModule =
+    module {
+        class WalkieInterceptor : Interceptor {
+            override fun intercept(chain: Interceptor.Chain): Response {
+                val newRequest = chain.request()
+                return chain.proceed(newRequest)
+            }
+        }
+
+        single {
+            OkHttpClient.Builder()
+                .readTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(WalkieInterceptor())
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    },
+                )
+                .build()
+        }
+
+        single {
+            Retrofit.Builder()
+                .baseUrl(API.BASE_URL)
+                .client(get())
+                .addConverterFactory(
+                    GsonConverterFactory.create(
+                        GsonBuilder()
+                            .setLenient()
+                            .create(),
+                    ),
+                )
+                .build()
+        }
+
+        single {
+            get<Retrofit>().create(AccountService::class.java)
+        }
+
+        single { get<Retrofit>().create(FollowService::class.java) }
+
+        single { get<Retrofit>().create(CommunityService::class.java) }
+
+        single { get<Retrofit>().create(ChallengeService::class.java) }
+
+        single { get<Retrofit>().create(PostService::class.java) }
+
+        single { get<Retrofit>().create(RunningService::class.java) }
+
+        single { get<Retrofit>().create(CommunityService::class.java) }
     }
-
-    single {
-        Retrofit.Builder()
-            .baseUrl(API.BASE_URL)
-            .client(get())
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder()
-                        .setLenient()
-                        .create(),
-                ),
-            )
-            .build()
-    }
-
-    single {
-        get<Retrofit>().create(AccountService::class.java)
-    }
-
-    single { get<Retrofit>().create(FollowService::class.java) }
-
-    single { get<Retrofit>().create(PostService::class.java) }
-
-    single { get<Retrofit>().create(RunningService::class.java) }
-
-    single { get<Retrofit>().create(CommunityService::class.java) }
-
-    single { get<Retrofit>().create(ChallengeService::class.java) }
-}

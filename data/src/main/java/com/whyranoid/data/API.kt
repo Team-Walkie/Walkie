@@ -23,9 +23,13 @@ object API {
 
     const val LIST_UP_POST = "api/community/listup-post"
 
+    const val LIST_UP_COMMENT = "api/community/listup-comment"
+
     const val SEARCH = "api/community/search-nickname"
 
     const val SEND_LIKE = "api/community/send-like"
+
+    const val WRITE_COMMENT = "api/community/write-comment"
 
     const val LOGIN = "api/walkies/login"
 

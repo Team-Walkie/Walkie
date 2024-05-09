@@ -1,7 +1,9 @@
 package com.whyranoid.data.datasource.post
 
 import android.util.Log
+import com.whyranoid.data.model.post.SendCommentRequest
 import com.whyranoid.domain.datasource.PostDataSource
+import com.whyranoid.domain.model.post.Comment
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 import okhttp3.MediaType
@@ -94,6 +96,40 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getPosts(uid).body())
             posts.map { it.toPost(uid) }
+        }
+    }
+
+    override suspend fun getComments(postId: Long): Result<List<Comment>> {
+        return kotlin.runCatching {
+            val comments = requireNotNull(postService.getComments(postId).body())
+            comments.map {
+                Comment(
+                    it.postId,
+                    it.commenterId,
+                    it.date,
+                    it.content,
+                    it.commentId,
+                    it.commenter.toUser(),
+                )
+            }
+        }
+    }
+
+    override suspend fun sendComment(
+        postId: Long,
+        commenterId: Long,
+        date: String,
+        content: String,
+    ): Result<Unit> {
+        return kotlin.runCatching {
+            val sendCommentRequest = SendCommentRequest(postId, commenterId, date, content)
+            return if (postService.sendComment(sendCommentRequest).isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    Exception("fail to send comment"),
+                )
+            }
         }
     }
 }

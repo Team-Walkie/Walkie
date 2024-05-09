@@ -25,11 +25,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.whyranoid.domain.model.post.Post
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
+import com.whyranoid.presentation.screens.community.CommentScreen
 import com.whyranoid.presentation.screens.community.SearchFriendScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.mypage.UserPageScreen
@@ -195,6 +197,16 @@ fun AppScreenContent(
                 val uid = arguments.getLong(Screen.UID_ARGUMENT)
                 val pageNo = arguments.getInt(Screen.PAGE_NO)
                 FollowingScreen(navController = navController, uid = uid, pageNo = pageNo)
+            }
+
+            composable(Screen.CommentScreen.route) {
+                val post = navController.previousBackStackEntry?.savedStateHandle?.get<Post>("post")
+                post?.let {
+                    CommentScreen(
+                        post = it,
+                        onBackClicked = { navController.popBackStack() },
+                    )
+                }
             }
         }
     }
