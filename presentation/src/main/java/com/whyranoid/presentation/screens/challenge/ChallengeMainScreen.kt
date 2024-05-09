@@ -120,7 +120,6 @@ fun ChallengeMainContent(
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-//                .padding(horizontal = 20.dp)
         ) {
 
             item {
@@ -183,27 +182,34 @@ fun ChallengeMainContent(
                     horizontalAlignment = Alignment.CenterHorizontally) {
 
                     state.challengingPreviewsState.getDataOrNull()?.let { challengingPreviews ->
-                        challengingPreviews.take(4).forEach {
-                            ChallengingItem(
-                                text = it.title,
-                                progress = it.progress!!,
-                                challengeColor = it.type.getColor(),
-                            ) {
-                                onChallengeItemClicked(it, true)
+
+                        if (challengingPreviews.isNotEmpty()) {
+                            challengingPreviews.take(4).forEach {
+                                ChallengingItem(
+                                    text = it.title,
+                                    progress = it.progress!!,
+                                    challengeColor = it.type.getColor(),
+                                ) {
+                                    onChallengeItemClicked(it, true)
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
-                            Spacer(modifier = Modifier.height(10.dp))
+
+                            IconButton(
+                                onClick = { onExpandButtonClicked() }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.ExpandMore,
+                                    modifier = Modifier
+                                        .width(20.dp)
+                                        .height(20.dp),
+                                    contentDescription = "도전중인 챌린지 더보기"
+                                )
+                            }
+                        } else {
+
                         }
 
-                        IconButton(
-                            onClick = { onExpandButtonClicked() }) {
-                            Icon(
-                                imageVector = Icons.Rounded.ExpandMore,
-                                modifier = Modifier
-                                    .width(20.dp)
-                                    .height(20.dp),
-                                contentDescription = "도전중인 챌린지 더보기"
-                            )
-                        }
+
                     } ?: run {
                         WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                     }
@@ -241,7 +247,7 @@ fun ChallengeMainContent(
                     horizontalArrangement = Arrangement.spacedBy(13.dp),
                     contentPadding = PaddingValues(20.dp)
                 ) {
-                    state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
+                    state.topRankChallengePreviewState.getDataOrNull()?.let { newChallengePreviews ->
                         newChallengePreviews.chunkedList(3).forEach { list ->
                             item {
                                 Column() {

@@ -10,23 +10,31 @@ import com.whyranoid.domain.repository.ChallengeRepository
 class ChallengeRepositoryImpl(
     private val challengeDataSource: ChallengeDataSource,
 ) : ChallengeRepository {
-    override suspend fun getNewChallengePreviews(): List<ChallengePreview> {
-        return challengeDataSource.getNewChallengePreviews()
+    override suspend fun getNewChallengePreviews(uid: Int): Result<List<ChallengePreview>> {
+        return challengeDataSource.getNewChallengePreviews(uid)
     }
 
-    override suspend fun getChallengingPreviews(): List<ChallengePreview> {
-        return challengeDataSource.getChallengingPreviews()
+    override suspend fun getChallengingPreviews(uid: Int): Result<List<ChallengePreview>> {
+        return challengeDataSource.getChallengingPreviews(uid)
     }
 
-    override suspend fun getChallengeDetail(challengeId: Long): Challenge {
-        return challengeDataSource.getChallengeDetail(challengeId)
+    override suspend fun getTopRankChallengePreviews(): Result<List<ChallengePreview>> {
+        return challengeDataSource.getTopRankChallengePreviews()
     }
 
-    override suspend fun getChallengePreviewsByType(type: ChallengeType): List<ChallengePreview> {
-        return challengeDataSource.getChallengePreviewsByType(type)
+    override suspend fun getChallengeDetail(uid: Int, challengeId: Long): Challenge {
+        return challengeDataSource.getChallengeDetail(uid, challengeId)
+    }
+
+    override suspend fun getChallengePreviewsByType(uid: Int, type: ChallengeType): List<ChallengePreview> {
+        return challengeDataSource.getChallengePreviewsByType(uid, type)
     }
 
     override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
         return challengeDataSource.getUserBadges(uid)
+    }
+
+    override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {
+        return challengeDataSource.startChallenge(uid, challengeId)
     }
 }

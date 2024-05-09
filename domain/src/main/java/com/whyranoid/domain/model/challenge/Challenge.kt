@@ -7,12 +7,12 @@ data class Challenge(
     val imageUrl: String,
     val title: String,
     val contents: String,
-    val period: Int,
+    val period: Int? = null,
     val challengeType: ChallengeType,
     val badge: Badge,
     val participantCount: Int,
     val participants: List<User>,
-    val process: Int?,
+    val process: Int? = null,
 ) {
     companion object {
 

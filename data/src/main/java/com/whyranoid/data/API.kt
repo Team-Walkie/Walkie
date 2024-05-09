@@ -33,6 +33,18 @@ object API {
 
     const val LOGIN = "api/walkies/login"
 
+    const val NEW_CHALLENGE = "/api/challenge/challenges/new"
+
+    const val PROGRESSING_CHALLENGE = "api/challenge/challenges/progress"
+
+    const val TOP_RANK_CHALLENGE = "api/challenge/challenges/top-rank"
+
+    const val CHALLENGE_CATEGORY = "api/challenge/challenges/category"
+
+    const val CHALLENGE_DETAIL = "api/challenge/challenge-detail"
+
+    const val CHALLENGE_START = "api/challenge/challenge-detail/start"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 

@@ -6,11 +6,12 @@ import com.google.gson.GsonBuilder
 import com.whyranoid.data.API
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.data.AppDatabase
-import com.whyranoid.data.datasource.ChallengeDataSourceImpl
+import com.whyranoid.data.datasource.challenge.ChallengeDataSourceImpl
 import com.whyranoid.data.datasource.OtherUserPagingSource
 import com.whyranoid.data.datasource.UserDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountDataSourceImpl
 import com.whyranoid.data.datasource.account.AccountService
+import com.whyranoid.data.datasource.challenge.ChallengeService
 import com.whyranoid.data.datasource.community.CommunityDataSource
 import com.whyranoid.data.datasource.community.CommunityDataSourceImpl
 import com.whyranoid.data.datasource.community.CommunityService
@@ -58,12 +59,14 @@ import com.whyranoid.domain.usecase.GetMyFollowingUseCase
 import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetNewChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
+import com.whyranoid.domain.usecase.GetTopRankChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
+import com.whyranoid.domain.usecase.StartChallengeUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
 import com.whyranoid.domain.usecase.broadcast.AddGpsListener
 import com.whyranoid.domain.usecase.broadcast.AddNetworkListener
@@ -107,8 +110,8 @@ import java.util.concurrent.TimeUnit
 
 val viewModelModule =
     module {
-        single { ChallengeMainViewModel(get(), get(), get()) }
-        single { ChallengeDetailViewModel(get()) }
+        single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
+        single { ChallengeDetailViewModel(get(), get()) }
         single { ChallengeExitViewModel(get()) }
         factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
@@ -247,6 +250,10 @@ val networkModule =
         }
 
         single { get<Retrofit>().create(FollowService::class.java) }
+
+        single { get<Retrofit>().create(CommunityService::class.java) }
+
+        single { get<Retrofit>().create(ChallengeService::class.java) }
 
         single { get<Retrofit>().create(PostService::class.java) }
 

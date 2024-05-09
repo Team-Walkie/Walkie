@@ -56,7 +56,7 @@ fun ChallengeGoalContent(
 
         val progressBarColor = challengeColor.progressBarColor
 
-        val progress = requireNotNull(challenge.process) / 100f
+        val progress = if (challenge.process == null) 0f else requireNotNull(challenge.process) / 100f
 
         Spacer(modifier = Modifier.height(30.dp))
 
