@@ -144,7 +144,7 @@ val repositoryModule =
 
 val dataSourceModule =
     module {
-        single<ChallengeDataSource> { ChallengeDataSourceImpl() }
+        single<ChallengeDataSource> { ChallengeDataSourceImpl(get()) }
         single<PostDataSource> { PostDataSourceImpl(get()) }
         single<UserDataSource> { UserDataSourceImpl(get()) }
         single<AccountDataSource> { AccountDataSourceImpl(get()) }
@@ -157,8 +157,10 @@ val useCaseModule =
     module {
         single { GetNewChallengePreviewsUseCase(get()) }
         single { GetChallengingPreviewsUseCase(get()) }
-        single { GetChallengeDetailUseCase(get()) }
-        single { GetChallengePreviewsByTypeUseCase(get()) }
+        single { GetChallengeDetailUseCase(get(), get()) }
+        single { GetChallengePreviewsByTypeUseCase(get(), get()) }
+        single { GetTopRankChallengePreviewsUseCase(get()) }
+        single { StartChallengeUseCase(get(), get()) }
         single { GetPostUseCase(get()) }
         single { GetUserPostPreviewsUseCase(get(), get()) }
         single { GetUserBadgesUseCase(get()) }
