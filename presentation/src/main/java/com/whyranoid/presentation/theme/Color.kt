@@ -18,6 +18,8 @@ object SystemColor {
     val Error = Color(0xFFFF3257)
     val Positive = Color(0xFF414EF5)
     val Negative = Color(0xFF999999)
+    val StatusBar = Color.White
+    val SystemNavigationBar = Color.White
 }
 
 

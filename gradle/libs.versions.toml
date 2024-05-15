@@ -1,7 +1,7 @@
 [versions]
 
 androidx-navigation = "2.5.3"
-androidx-core = "1.9.0"
+androidx-core = "1.13.1"
 androidx-appcompat = "1.6.1"
 androidx-constraintlayout = "2.1.4"
 naver-maps-android-sdk = "3.16.2"
