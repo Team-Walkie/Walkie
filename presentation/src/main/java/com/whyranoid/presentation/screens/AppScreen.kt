@@ -2,6 +2,7 @@ package com.whyranoid.presentation.screens
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -70,6 +71,7 @@ fun AppScreenContent(
     navController: NavHostController,
 ) {
     Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
