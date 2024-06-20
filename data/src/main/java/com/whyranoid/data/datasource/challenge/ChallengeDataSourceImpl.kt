@@ -1,5 +1,6 @@
 package com.whyranoid.data.datasource.challenge
 
+import android.util.Log
 import com.whyranoid.data.getResult
 import com.whyranoid.data.model.challenge.request.ChallengeStartRequest
 import com.whyranoid.domain.datasource.ChallengeDataSource
@@ -52,9 +53,13 @@ class ChallengeDataSourceImpl(
             }
     }
 
-    // TODO: change to api call
     override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {
-        return Result.success(Badge.DUMMY_LIST)
+        return runCatching {
+            challengeService.getBadgeList(uid)
+                .getResult { badgeList ->
+                    badgeList.map { it.toBadge() }
+                }
+        }
     }
 
     override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {

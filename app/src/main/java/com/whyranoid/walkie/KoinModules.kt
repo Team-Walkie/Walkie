@@ -113,7 +113,7 @@ val viewModelModule =
         single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
         single { ChallengeDetailViewModel(get(), get()) }
         single { ChallengeExitViewModel(get()) }
-        factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
         factory { RunningEditViewModel() }
         factory { SplashViewModel(get()) }

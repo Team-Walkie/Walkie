@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
+import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.post.PostPreview
 import com.whyranoid.domain.model.user.User
 import com.whyranoid.domain.model.user.UserDetail
 import com.whyranoid.domain.repository.AccountRepository
+import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
 import com.whyranoid.domain.usecase.GetPostUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
@@ -32,6 +34,7 @@ data class UserPageState(
     val userBadgesState: UiState<List<Badge>> = UiState.Idle,
     val userPostPreviewsState: UiState<List<PostPreview>> = UiState.Idle,
     val calendarPreviewsState: UiState<List<PostPreview>> = UiState.Idle,
+    val challengingPreviewsState: UiState<List<ChallengePreview>> = UiState.Idle,
 )
 
 class UserPageViewModel(
@@ -43,6 +46,7 @@ class UserPageViewModel(
     private val signOutUseCase: SignOutUseCase,
     private val followUseCase: FollowUseCase,
     private val unFollowUseCase: UnFollowUseCase,
+    private val getChallengingPreviewsUseCase: GetChallengingPreviewsUseCase,
 ) : ViewModel(), ContainerHost<UserPageState, UserPageSideEffect> {
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
@@ -132,9 +136,9 @@ class UserPageViewModel(
                             requireNotNull(state.userDetailState.getDataOrNull()).copy(
                                 isFollowing = true,
                                 followerCount = (
-                                    state.userDetailState.getDataOrNull()?.followerCount
-                                        ?: 0
-                                    ) + 1,
+                                        state.userDetailState.getDataOrNull()?.followerCount
+                                            ?: 0
+                                        ) + 1,
                             ),
                         ),
                     )
@@ -152,13 +156,30 @@ class UserPageViewModel(
                             requireNotNull(state.userDetailState.getDataOrNull()).copy(
                                 isFollowing = false,
                                 followerCount = (
-                                    state.userDetailState.getDataOrNull()?.followerCount
-                                        ?: 0
-                                    ) - 1,
+                                        state.userDetailState.getDataOrNull()?.followerCount
+                                            ?: 0
+                                        ) - 1,
                             ),
                         ),
                     )
                 }
+            }
+        }
+    }
+
+    fun getChallengingPreviews(uid: Long) = intent {
+        reduce {
+            state.copy(challengingPreviewsState = UiState.Loading)
+        }
+        getChallengingPreviewsUseCase(uid.toInt()).onSuccess { list ->
+            reduce {
+                state.copy(
+                    challengingPreviewsState = UiState.Success(list),
+                )
+            }
+        }.onFailure {
+            reduce {
+                state.copy(challengingPreviewsState = UiState.Error(it.message.toString()))
             }
         }
     }

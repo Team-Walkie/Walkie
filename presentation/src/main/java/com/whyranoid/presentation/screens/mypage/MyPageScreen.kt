@@ -54,8 +54,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
+import com.whyranoid.presentation.component.badge.PlaceholderBadge
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
@@ -88,6 +90,7 @@ fun MyPageScreen(
         viewModel.getUserDetail(myUid, null)
         viewModel.getUserBadges(myUid)
         viewModel.getUserPostPreviews(myUid)
+        viewModel.getChallengingPreviews(myUid)
     }
 
     val state by viewModel.collectAsState()
@@ -125,14 +128,32 @@ fun MyPageScreen(
                 )
             }
         },
+        onChallengePreviewClicked = { challengeId: Long ->
+            val route = "challengeDetail/$challengeId/true"
+            navController.navigate(route)
+        },
+        goChallengeMainScreen = {
+            navController.navigate(Screen.ChallengeMainScreen.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
     )
 }
 
+/**
+ * User page content
+ *
+ * @param nickname 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
+ */
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserPageContent(
-    nickname: String? = null,
+    nickname: String? = null, // 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
     state: UserPageState,
     onPostPreviewClicked: (id: Long) -> Unit = {},
     onPostCreateClicked: () -> Unit = {},
@@ -144,6 +165,8 @@ fun UserPageContent(
     onUnFollowButtonClicked: () -> Unit = {},
     onFollowerCountClicked: () -> Unit = {},
     onFollowingCountClicked: () -> Unit = {},
+    onChallengePreviewClicked: (challengeId: Long) -> Unit = {},
+    goChallengeMainScreen: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -160,8 +183,7 @@ fun UserPageContent(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(top = 28.dp)
-            ,
+                .padding(top = 28.dp),
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
@@ -259,23 +281,52 @@ fun UserPageContent(
                 Spacer(Modifier.height(12.dp))
             }
 
-            state.userBadgesState.getDataOrNull()?.let { userBadges ->
-                LazyRow(
+            val badgeList = state.userBadgesState.getDataOrNull() ?: emptyList()
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(WalkieColor.GrayBackground)
+                    .padding(12.dp)
+            ) {
+                repeat(minOf(badgeList.size, 5)) {
+                    AsyncImage(
+                        model = badgeList[it].imageUrl,
+                        contentDescription = "badge image",
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .size(56.dp),
+                    )
+                }
+                repeat(5 - badgeList.size) { PlaceholderBadge() }
+            }
+
+            // 마이페이지인 경우
+            if (nickname == null) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(enabled = badgeList.size >= 5) {
+                            // TODO 전체 뱃지 페이지로 이동
+                        }
+                        .background(WalkieColor.GrayBackground)
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    items(userBadges.size) { index ->
-                        AsyncImage(
-                            model = userBadges[index].imageUrl,
-                            contentDescription = "badge image",
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .size(56.dp),
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                    }
+                    Text(
+                        text = "전체 뱃지 보기" + if (badgeList.size < 5) "(${badgeList.size}/5)" else "",
+                        fontSize = 14.sp,
+                        color = if (badgeList.size < 5) WalkieColor.GrayBorder else Color.Black
+                    )
                 }
             }
 
@@ -351,9 +402,11 @@ fun UserPageContent(
                         }
                     }
 
-                    2 -> ChallengePage {
-
-                    }
+                    2 -> ChallengePage(
+                        state.challengingPreviewsState.getDataOrNull() ?: emptyList(),
+                        onChallengePreviewClicked,
+                        goChallengeMainScreen
+                    )
                 }
             }
         }
