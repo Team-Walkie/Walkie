@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
+import com.whyranoid.presentation.component.badge.PlaceholderBadge
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
@@ -160,8 +161,7 @@ fun UserPageContent(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(top = 28.dp)
-            ,
+                .padding(top = 28.dp),
         ) {
             state.userDetailState.getDataOrNull()?.let { userDetail ->
                 Row(
@@ -259,24 +259,49 @@ fun UserPageContent(
                 Spacer(Modifier.height(12.dp))
             }
 
-            state.userBadgesState.getDataOrNull()?.let { userBadges ->
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp),
-                ) {
-                    items(userBadges.size) { index ->
-                        AsyncImage(
-                            model = userBadges[index].imageUrl,
-                            contentDescription = "badge image",
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .size(56.dp),
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                    }
+            val badgeList = state.userBadgesState.getDataOrNull() ?: emptyList()
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(WalkieColor.GrayBackground)
+                    .padding(12.dp)
+            ) {
+                repeat(minOf(badgeList.size, 5)) {
+                    AsyncImage(
+                        model = badgeList[it].imageUrl,
+                        contentDescription = "badge image",
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .size(56.dp),
+                    )
                 }
+                repeat(5 - badgeList.size) { PlaceholderBadge() }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable(enabled = badgeList.size >= 5) {
+                        // TODO 전체 뱃지 페이지로 이동
+                    }
+                    .background(WalkieColor.GrayBackground)
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "전체 뱃지 보기" + if (badgeList.size < 5) "(${badgeList.size}/5)" else "",
+                    fontSize = 14.sp,
+                    color = if (badgeList.size < 5) WalkieColor.GrayBorder else Color.Black
+                )
             }
 
             Spacer(Modifier.height(12.dp))
