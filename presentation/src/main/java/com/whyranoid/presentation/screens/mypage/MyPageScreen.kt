@@ -144,11 +144,16 @@ fun MyPageScreen(
     )
 }
 
+/**
+ * User page content
+ *
+ * @param nickname 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
+ */
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserPageContent(
-    nickname: String? = null,
+    nickname: String? = null, // 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
     state: UserPageState,
     onPostPreviewClicked: (id: Long) -> Unit = {},
     onPostCreateClicked: () -> Unit = {},
@@ -300,25 +305,29 @@ fun UserPageContent(
                 }
                 repeat(5 - badgeList.size) { PlaceholderBadge() }
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .clickable(enabled = badgeList.size >= 5) {
-                        // TODO 전체 뱃지 페이지로 이동
-                    }
-                    .background(WalkieColor.GrayBackground)
-                    .padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "전체 뱃지 보기" + if (badgeList.size < 5) "(${badgeList.size}/5)" else "",
-                    fontSize = 14.sp,
-                    color = if (badgeList.size < 5) WalkieColor.GrayBorder else Color.Black
-                )
+            // 마이페이지인 경우
+            if (nickname == null) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable(enabled = badgeList.size >= 5) {
+                            // TODO 전체 뱃지 페이지로 이동
+                        }
+                        .background(WalkieColor.GrayBackground)
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "전체 뱃지 보기" + if (badgeList.size < 5) "(${badgeList.size}/5)" else "",
+                        fontSize = 14.sp,
+                        color = if (badgeList.size < 5) WalkieColor.GrayBorder else Color.Black
+                    )
+                }
             }
 
             Spacer(Modifier.height(12.dp))
