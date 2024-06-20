@@ -23,6 +23,7 @@ fun UserPageScreen(
         viewModel.getUserDetail(uid, isFollowing)
         viewModel.getUserBadges(uid)
         viewModel.getUserPostPreviews(uid)
+        viewModel.getChallengingPreviews(uid)
     }
 
     val state by viewModel.collectAsState()

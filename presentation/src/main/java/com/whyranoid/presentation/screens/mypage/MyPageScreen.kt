@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.component.badge.PlaceholderBadge
@@ -89,6 +90,7 @@ fun MyPageScreen(
         viewModel.getUserDetail(myUid, null)
         viewModel.getUserBadges(myUid)
         viewModel.getUserPostPreviews(myUid)
+        viewModel.getChallengingPreviews(myUid)
     }
 
     val state by viewModel.collectAsState()
@@ -126,6 +128,19 @@ fun MyPageScreen(
                 )
             }
         },
+        onChallengePreviewClicked = { challengeId: Long ->
+            val route = "challengeDetail/$challengeId/true"
+            navController.navigate(route)
+        },
+        goChallengeMainScreen = {
+            navController.navigate(Screen.ChallengeMainScreen.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
     )
 }
 
@@ -145,6 +160,8 @@ fun UserPageContent(
     onUnFollowButtonClicked: () -> Unit = {},
     onFollowerCountClicked: () -> Unit = {},
     onFollowingCountClicked: () -> Unit = {},
+    onChallengePreviewClicked: (challengeId: Long) -> Unit = {},
+    goChallengeMainScreen: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -376,9 +393,11 @@ fun UserPageContent(
                         }
                     }
 
-                    2 -> ChallengePage {
-
-                    }
+                    2 -> ChallengePage(
+                        state.challengingPreviewsState.getDataOrNull() ?: emptyList(),
+                        onChallengePreviewClicked,
+                        goChallengeMainScreen
+                    )
                 }
             }
         }
