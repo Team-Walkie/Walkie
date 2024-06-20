@@ -58,4 +58,12 @@ object API {
 
         const val MY = "/api/walkies/my"
     }
+
+    object BadgeAPI {
+        const val BADGES = "/api/badge/badges"
+
+        const val OBTAIN_BADGE = "/api/badge/obtain-badges"
+
+        const val UPDATE_BADGE_INDICES = "/api/badge/update-badge-indices"
+    }
 }
