@@ -36,9 +36,11 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         }
     }
 
+    // TODO 서버 내려갔을 때 앱이 죽지 않도록 예외처리만 했음, 추후 수정 필요
     override suspend fun getMyPostPreviews(uid: Long): Result<List<PostPreview>> {
         val response = postService.myPosts(uid)
-        response.body()?.map { it.toPostPreview() } ?: throw Exception(response.message())
+        response.body()?.map { it.toPostPreview() }
+            ?: return Result.failure(Throwable(response.message().toString()))
         return Result.success(response.body()?.map { it.toPostPreview() }!!)
     }
 
