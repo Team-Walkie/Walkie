@@ -43,14 +43,18 @@ class ChallengeDataSourceImpl(
         return challengeService.getChallengeDetail(challengeId, uid).getResult { it.toChallenge() }
     }
 
+    // TODO 서버 내려갔을 때 앱이 죽지 않도록 예외처리만 했음, 추후 수정 필요
     override suspend fun getChallengePreviewsByType(
         uid: Int,
         type: ChallengeType
     ): List<ChallengePreview> {
-        return challengeService.getChallengePreviewsByType(uid, type.serverString)
+        kotlin.runCatching {
+            return challengeService.getChallengePreviewsByType(uid, type.serverString)
             .getResult { list ->
                 list.map { it.toChallengePreview() }
             }
+        }
+        return emptyList()
     }
 
     override suspend fun getUserBadges(uid: Long): Result<List<Badge>> {

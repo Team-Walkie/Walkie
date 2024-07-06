@@ -63,6 +63,7 @@ import com.whyranoid.domain.usecase.GetTopRankChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.GetUserUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
@@ -85,6 +86,7 @@ import com.whyranoid.domain.usecase.running.RunningStartUseCase
 import com.whyranoid.domain.usecase.running.SendLikeUseCase
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewModel
 import com.whyranoid.presentation.screens.mypage.following.FollowingViewModel
+import com.whyranoid.presentation.screens.setting.SettingViewModel
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
 import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
@@ -125,6 +127,7 @@ val viewModelModule =
         factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
         factory { CommunityScreenViewModel(get(), get(), get()) }
         factory { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
+        factory { SettingViewModel(get(), get()) }
     }
 
 val repositoryModule =
@@ -189,6 +192,7 @@ val useCaseModule =
         single { RemoveFollowerUseCase(get(), get()) }
         single { GetMyFollowingUseCase(get(), get()) }
         single { SendCommentUseCase(get(), get()) }
+        single { GetUserUseCase(get()) }
     }
 
 val databaseModule =

@@ -54,11 +54,11 @@ sealed class Screen(
     object EditProfileScreen : Screen(
         route = "editProfileScreen",
         arguments =
-            listOf(
-                navArgument("imageUrl") { type = NavType.StringType },
-                navArgument("name") { type = NavType.StringType },
-                navArgument("nickName") { type = NavType.StringType },
-            ),
+        listOf(
+            navArgument("imageUrl") { type = NavType.StringType },
+            navArgument("name") { type = NavType.StringType },
+            navArgument("nickName") { type = NavType.StringType },
+        ),
     ) {
         const val IMAGE_URL_KEY = "imageUrl"
         const val NAME_KEY = "name"
@@ -68,45 +68,45 @@ sealed class Screen(
     object ChallengeDetailScreen : Screen(
         route = "challengeDetail/{challengeId}/{isChallenging}",
         arguments =
-            listOf(
-                navArgument("challengeId") { type = NavType.LongType },
-                navArgument("isChallenging") { type = NavType.BoolType },
-            ),
+        listOf(
+            navArgument("challengeId") { type = NavType.LongType },
+            navArgument("isChallenging") { type = NavType.BoolType },
+        ),
     )
 
     object ChallengeExitScreen : Screen(
         route = "challengeExit/{challengeId}",
         arguments =
-            listOf(
-                navArgument("challengeId") { type = NavType.LongType },
-            ),
+        listOf(
+            navArgument("challengeId") { type = NavType.LongType },
+        ),
     )
 
     object ChallengeCompleteScreen : Screen(
         route = "challengeComplete/{challengeId}",
         arguments =
-            listOf(
-                navArgument("challengeId") { type = NavType.LongType },
-            ),
+        listOf(
+            navArgument("challengeId") { type = NavType.LongType },
+        ),
     )
 
     object UserPageScreen : Screen(
         route = "userPage/{$UID_ARGUMENT}/{$NICKNAME_ARGUMENT}/{$IS_FOLLOWING_ARGUMENT}",
         arguments =
-            listOf(
-                navArgument(UID_ARGUMENT) { type = NavType.LongType },
-                navArgument(NICKNAME_ARGUMENT) { type = NavType.StringType },
-                navArgument(IS_FOLLOWING_ARGUMENT) { type = NavType.BoolType },
-            ),
+        listOf(
+            navArgument(UID_ARGUMENT) { type = NavType.LongType },
+            navArgument(NICKNAME_ARGUMENT) { type = NavType.StringType },
+            navArgument(IS_FOLLOWING_ARGUMENT) { type = NavType.BoolType },
+        ),
     )
 
     object FollowingScreen : Screen(
         route = "followingScreen/{$UID_ARGUMENT}/{$PAGE_NO}",
         arguments =
-            listOf(
-                navArgument(UID_ARGUMENT) { type = NavType.LongType },
-                navArgument(PAGE_NO) { type = NavType.IntType },
-            ),
+        listOf(
+            navArgument(UID_ARGUMENT) { type = NavType.LongType },
+            navArgument(PAGE_NO) { type = NavType.IntType },
+        ),
     ) {
         fun route(
             uid: Long,
@@ -119,9 +119,13 @@ sealed class Screen(
     object CommentScreen : Screen(
         route = "commentScreen/{$POST_ID}",
         arguments =
-            listOf(
-                navArgument(POST_ID) { type = NavType.LongType },
-            ),
+        listOf(
+            navArgument(POST_ID) { type = NavType.LongType },
+        ),
+    )
+
+    object SettingScreen : Screen(
+        "settingScreen",
     )
 
     companion object {

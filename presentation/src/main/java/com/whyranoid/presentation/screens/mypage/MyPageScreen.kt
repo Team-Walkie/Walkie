@@ -75,7 +75,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.LocalDate
-import java.util.*
 
 @Composable
 fun MyPageScreen(
@@ -103,6 +102,9 @@ fun MyPageScreen(
         },
         onProfileEditClicked = {
             navController.navigate(Screen.EditProfileScreen.route)
+        },
+        onSettingsClicked = {
+            navController.navigate(Screen.SettingScreen.route)
         },
         onLogoutClicked = {
             viewModel.signOut()
@@ -430,23 +432,28 @@ fun MyPageTopAppBar(
             )
         },
         actions = {
-            IconButton(onClick = { showMenu = !showMenu }) {
+//            IconButton(onClick = { showMenu = !showMenu }) {
+//                Icon(Icons.Default.Menu, "")
+//            }
+//            DropdownMenu(
+//                modifier = Modifier.width(180.dp),
+//                expanded = showMenu,
+//                onDismissRequest = { showMenu = false },
+//            ) {
+//                DropdownMenuItem(onClick = { onProfileEditClicked() }) {
+//                    Text(text = "프로필 편집")
+//                }
+//                DropdownMenuItem(onClick = { onSettingsClicked() }) {
+//                    Text(text = "설정")
+//                }
+//                DropdownMenuItem(onClick = { onLogoutClicked() }) {
+//                    Text(text = "로그아웃")
+//                }
+//            }
+            IconButton(onClick = {
+                onSettingsClicked()
+            }) {
                 Icon(Icons.Default.Menu, "")
-            }
-            DropdownMenu(
-                modifier = Modifier.width(180.dp),
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false },
-            ) {
-                DropdownMenuItem(onClick = { onProfileEditClicked() }) {
-                    Text(text = "프로필 편집")
-                }
-                DropdownMenuItem(onClick = { onSettingsClicked() }) {
-                    Text(text = "설정")
-                }
-                DropdownMenuItem(onClick = { onLogoutClicked() }) {
-                    Text(text = "로그아웃")
-                }
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),

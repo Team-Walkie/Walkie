@@ -40,6 +40,7 @@ import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
 import com.whyranoid.presentation.screens.mypage.following.FollowingScreen
 import com.whyranoid.presentation.screens.running.RunningScreen
+import com.whyranoid.presentation.screens.setting.SettingsScreen
 import com.whyranoid.presentation.screens.signin.SignInScreen
 import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
@@ -209,6 +210,10 @@ fun AppScreenContent(
                         onBackClicked = { navController.popBackStack() },
                     )
                 }
+            }
+
+            composable(Screen.SettingScreen.route) {
+                SettingsScreen(navHostController = navController)
             }
         }
     }
