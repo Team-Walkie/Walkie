@@ -83,4 +83,23 @@ class AccountRepositoryImpl(
             return Result.failure(Exception("중복 검사 실패"))
         }
     }
+
+    override suspend fun changeMyInfo(
+        walkieId: Long,
+        nickName: String,
+        profileUrl: String?
+    ): Result<Boolean> {
+        return kotlin.runCatching {
+            accountDataSource.changeMyInfo(
+                walkieId,
+                nickName,
+                profileUrl
+            ).onSuccess {
+                accountDataStore.updateProfileUrl(profileUrl ?: "")
+                accountDataStore.updateNickName(nickName)
+                return@runCatching it
+            }
+            return Result.failure(Exception("마이페이지 정보 수정 실패"))
+        }
+    }
 }

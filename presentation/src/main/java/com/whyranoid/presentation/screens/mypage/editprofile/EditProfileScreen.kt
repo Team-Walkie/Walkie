@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens.mypage.editprofile
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -48,17 +50,20 @@ import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieTextField
 import com.whyranoid.presentation.theme.WalkieTypography
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val viewModel = koinViewModel<EditProfileViewModel>()
+    val walkieId = viewModel.walkieId.collectAsStateWithLifecycle(initialValue = 0L)
     val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
     val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
     val profileImg = viewModel.profileImg.collectAsStateWithLifecycle(initialValue = String.EMPTY)
 
     EditProfileContent(
+        walkieId = walkieId.value ?: 0L,
         name = name.value.orEmpty(),
         nick = nick.value.orEmpty(),
         profileImg = profileImg.value.orEmpty(),
@@ -70,17 +75,31 @@ fun EditProfileScreen(navController: NavController) {
 
 @Composable
 fun EditProfileContent(
+    walkieId: Long,
     name: String,
     nick: String,
     profileImg: String,
     viewModel: EditProfileViewModel,
-    onCloseClicked: () -> Unit
+    popBackStack: () -> Unit
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
     val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
     val isDuplicateNickName by viewModel.isDuplicateNickName.collectAsStateWithLifecycle()
+    var isChangeEnabled by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel.isMyInfoChanged) {
+        viewModel.isMyInfoChanged.collectLatest {
+            Toast.makeText(context, "정보가 수정되었습니다.", Toast.LENGTH_SHORT).show()
+            popBackStack()
+        }
+    }
+
+    LaunchedEffect(isDuplicateNickName) {
+        if (isDuplicateNickName == false) isChangeEnabled = true
+    }
 
     LaunchedEffect(keyboardHeight) {
         coroutineScope.launch {
@@ -109,7 +128,7 @@ fun EditProfileContent(
                     .size(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable {
-                        onCloseClicked()
+                        popBackStack()
                     },
             )
         }
@@ -179,7 +198,7 @@ fun EditProfileContent(
         var nickName by remember { mutableStateOf(nick) }
         var isEditMode by remember { mutableStateOf(false) }
 
-        LaunchedEffect(key1 = nick) {
+        LaunchedEffect(nick) {
             nickName = nick
         }
 
@@ -225,8 +244,9 @@ fun EditProfileContent(
 
         WalkiePositiveButton(
             text = "변경",
+            isEnabled = isChangeEnabled,
             onClicked = {
-                // 프로필 변경 api 연결
+                viewModel.changeMyInfo(walkieId, nickName, profileImg)
             }
         )
 
