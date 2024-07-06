@@ -17,6 +17,7 @@ class AccountRepositoryImpl(
     override val uId: Flow<Long?> = accountDataStore.uId
     override val userName: Flow<String?> = accountDataStore.userName
     override val nickName: Flow<String?> = accountDataStore.nickName
+    override val profileUrl: Flow<String?> = accountDataStore.profileUrl
 
     override suspend fun getUID(): Long {
         return requireNotNull(uId.first())

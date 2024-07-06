@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WalkiePositiveButton(
+    modifier: Modifier = Modifier,
     text: String,
     onClicked: () -> Unit = {}
 ) {
     Button(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
             .clip(shape = RoundedCornerShape(15.dp)),

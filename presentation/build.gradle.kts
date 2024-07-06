@@ -15,7 +15,7 @@ val naverMapClientId: String = properties.getProperty("naver.map.client.id")
 @Suppress("UnstableApiUsage")
 android {
     namespace = "com.whyranoid.presentation"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26
