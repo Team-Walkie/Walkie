@@ -202,6 +202,8 @@ fun EditProfileContent(
             nickName = nick
         }
 
+        val nickNameRegex = Regex("[a-zA-Z0-9_.]{0,29}")
+
         WalkieTextField(
             modifier = Modifier,
             focusRequester = focusRequester,
@@ -235,7 +237,13 @@ fun EditProfileContent(
                 }
 
             },
-            onValueChange = { nickName = it }
+            onValueChange = {
+                if (it.matches(nickNameRegex)) {
+                    nickName = it
+                } else {
+                    Toast.makeText(context, "닉네임은 30자 이내로 영문,숫자,마침표,_만 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(40.dp))
