@@ -1,8 +1,12 @@
 package com.whyranoid.presentation.screens.mypage.editprofile
 
+import android.Manifest
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
@@ -14,11 +18,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,48 +48,140 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.component.button.CircularIconButton
+import com.whyranoid.presentation.component.button.WalkieBottomSheetButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieTextField
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.util.createImageFile
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.util.Objects
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val viewModel = koinViewModel<EditProfileViewModel>()
     val walkieId = viewModel.walkieId.collectAsStateWithLifecycle(initialValue = 0L)
     val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
     val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
-    val profileImg = viewModel.profileImg.collectAsStateWithLifecycle(initialValue = String.EMPTY)
+    var capturedUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
+    val context = LocalContext.current
 
-    EditProfileContent(
-        walkieId = walkieId.value ?: 0L,
-        name = name.value.orEmpty(),
-        nick = nick.value.orEmpty(),
-        profileImg = profileImg.value.orEmpty(),
-        viewModel = viewModel,
-    ) {
-        navController.popBackStack()
+    LaunchedEffect(viewModel.profileImg) {
+        viewModel.profileImg.collectLatest {
+            it?.let { url -> viewModel.setProfileUrl(url) }
+        }
     }
+
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        context.packageName + ".provider", file
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) {
+        capturedUri = uri
+        viewModel.setProfileUrl(uri.toString())
+    }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            cameraLauncher.launch(uri)
+        } else {
+            // 권한 거부시
+        }
+    }
+
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+
+    BackHandler(enabled = bottomSheetState.isVisible) {
+        coroutineScope.launch {
+            bottomSheetState.hide()
+        }
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
+        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 26.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "프로필 사진 변경",
+                    style = WalkieTypography.SubTitle
+                )
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                WalkieBottomSheetButton(
+                    buttonText = "새 프로필 사진 찍기",
+                    onClick = {
+                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                WalkieBottomSheetButton(
+                    buttonText = "앨범에서 프로필 사진 가져오기",
+                    onClick = {
+                        // 앨범 실행
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                WalkieBottomSheetButton(
+                    buttonText = "현재 프로필 사진 삭제",
+                    onClick = { }
+                )
+            }
+        }
+    ) {
+        EditProfileContent(
+            walkieId = walkieId.value ?: 0L,
+            name = name.value.orEmpty(),
+            nick = nick.value.orEmpty(),
+            bottomSheetState = bottomSheetState,
+            viewModel = viewModel,
+        ) {
+            navController.popBackStack()
+        }
+    }
+
+
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileContent(
     walkieId: Long,
     name: String,
     nick: String,
-    profileImg: String,
+    bottomSheetState: ModalBottomSheetState,
     viewModel: EditProfileViewModel,
     popBackStack: () -> Unit
 ) {
@@ -86,9 +189,27 @@ fun EditProfileContent(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
     val isDuplicateNickName by viewModel.isDuplicateNickName.collectAsStateWithLifecycle()
+    val currentProfileImg by viewModel.currentProfileUrl.collectAsStateWithLifecycle()
     var isChangeEnabled by remember { mutableStateOf(false) }
+
+    var initialProfileImg by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(viewModel.profileImg) {
+        viewModel.profileImg.collectLatest {
+            initialProfileImg = it
+        }
+    }
+
+    if (currentProfileImg != null) {
+        LaunchedEffect(currentProfileImg) {
+            if (currentProfileImg != initialProfileImg) {
+                isChangeEnabled = true
+            }
+        }
+    }
+
 
     LaunchedEffect(viewModel.isMyInfoChanged) {
         viewModel.isMyInfoChanged.collectLatest {
@@ -141,7 +262,7 @@ fun EditProfileContent(
                 .size(90.dp),
         ) {
             AsyncImage(
-                model = profileImg,
+                model = currentProfileImg,
                 contentDescription = "프로필 이미지",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -151,7 +272,11 @@ fun EditProfileContent(
 
             CircularIconButton(
                 modifier = Modifier.align(Alignment.BottomEnd),
-                onClick = { /* 버튼 클릭 시 동작 */ },
+                onClick = {
+                    coroutineScope.launch {
+                        bottomSheetState.show()
+                    }
+                },
                 contentDescription = "프로필 편집",
                 icon = ImageVector.vectorResource(id = R.drawable.ic_edit_icon),
                 tint = Color(0xFF999999),
@@ -229,9 +354,9 @@ fun EditProfileContent(
                         ),
                         modifier = Modifier
                             .clickable {
-                                // 닉네임 중복 api 연결
                                 viewModel.checkDuplicateNickName(nickName)
                                 // 성공 시 editMode 해제
+                                focusManager.clearFocus()
                             }
                     )
                 }
@@ -254,38 +379,10 @@ fun EditProfileContent(
             text = "변경",
             isEnabled = isChangeEnabled,
             onClicked = {
-                viewModel.changeMyInfo(walkieId, nickName, profileImg)
+                viewModel.changeMyInfo(walkieId, nickName, currentProfileImg)
             }
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-    }
-}
-
-@Composable
-fun CircularIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-    icon: ImageVector,
-    tint: Color = Color.White,
-    backgroundColor: Color = Color.Gray,
-    iconSize: Dp = 24.dp,
-    buttonSize: Dp = 48.dp,
-) {
-    Box(
-        modifier = modifier
-            .size(buttonSize)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = tint,
-            modifier = Modifier.size(iconSize),
-        )
     }
 }

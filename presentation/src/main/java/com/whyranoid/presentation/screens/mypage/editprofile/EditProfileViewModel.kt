@@ -21,6 +21,9 @@ class EditProfileViewModel(
     private val _isMyInfoChanged = MutableSharedFlow<Boolean>()
     val isMyInfoChanged = _isMyInfoChanged.asSharedFlow()
 
+    private val _currentProfileUrl = MutableStateFlow<String?>(null)
+    val currentProfileUrl = _currentProfileUrl.asStateFlow()
+
     val name = accountRepository.userName
     val nick = accountRepository.nickName
     val profileImg = accountRepository.profileUrl
@@ -37,5 +40,9 @@ class EditProfileViewModel(
     fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?) = viewModelScope.launch(Dispatchers.IO) {
         accountRepository.changeMyInfo(walkieId, nickName, profileUrl)
             .onSuccess { _isMyInfoChanged.emit(true) }
+    }
+
+    fun setProfileUrl(url: String) {
+        _currentProfileUrl.update { url }
     }
 }
