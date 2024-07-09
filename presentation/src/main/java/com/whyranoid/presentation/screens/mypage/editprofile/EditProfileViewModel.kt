@@ -42,7 +42,7 @@ class EditProfileViewModel(
             .onSuccess { _isMyInfoChanged.emit(true) }
     }
 
-    fun setProfileUrl(url: String) {
+    fun setProfileUrl(url: String?) {
         _currentProfileUrl.update { url }
     }
 }

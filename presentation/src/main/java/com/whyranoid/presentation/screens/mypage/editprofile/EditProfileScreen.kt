@@ -1,7 +1,6 @@
 package com.whyranoid.presentation.screens.mypage.editprofile
 
 import android.Manifest
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -77,7 +76,6 @@ fun EditProfileScreen(navController: NavController) {
     val walkieId = viewModel.walkieId.collectAsStateWithLifecycle(initialValue = 0L)
     val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
     val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
-    var capturedUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
     val context = LocalContext.current
 
     LaunchedEffect(viewModel.profileImg) {
@@ -93,7 +91,6 @@ fun EditProfileScreen(navController: NavController) {
     )
 
     val cameraLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) {
-        capturedUri = uri
         viewModel.setProfileUrl(uri.toString())
     }
 
@@ -105,6 +102,12 @@ fun EditProfileScreen(navController: NavController) {
         } else {
             // 권한 거부시
         }
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) {
+        it?.let { uri -> viewModel.setProfileUrl(uri.toString()) }
     }
 
     val bottomSheetState = rememberModalBottomSheetState(
@@ -148,7 +151,7 @@ fun EditProfileScreen(navController: NavController) {
                 WalkieBottomSheetButton(
                     buttonText = "앨범에서 프로필 사진 가져오기",
                     onClick = {
-                        // 앨범 실행
+                        galleryLauncher.launch("image/*")
                     }
                 )
 
@@ -156,7 +159,9 @@ fun EditProfileScreen(navController: NavController) {
 
                 WalkieBottomSheetButton(
                     buttonText = "현재 프로필 사진 삭제",
-                    onClick = { }
+                    onClick = {
+                        viewModel.setProfileUrl(null)
+                    }
                 )
             }
         }
@@ -202,14 +207,11 @@ fun EditProfileContent(
         }
     }
 
-    if (currentProfileImg != null) {
-        LaunchedEffect(currentProfileImg) {
-            if (currentProfileImg != initialProfileImg) {
-                isChangeEnabled = true
-            }
+    LaunchedEffect(currentProfileImg) {
+        if (currentProfileImg != initialProfileImg) {
+            isChangeEnabled = true
         }
     }
-
 
     LaunchedEffect(viewModel.isMyInfoChanged) {
         viewModel.isMyInfoChanged.collectLatest {
