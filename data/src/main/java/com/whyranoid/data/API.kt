@@ -45,6 +45,8 @@ object API {
 
     const val CHALLENGE_START = "api/challenge/challenge-detail/start"
 
+    const val CHALLENGE_CHANGE_STATUS = "api/challenge/challenge-detail/update-status"
+
     object WalkingControl {
         const val RUNNING_START = "api/walk/start"
 
