@@ -49,6 +49,7 @@ import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.RunningHistoryRepository
 import com.whyranoid.domain.repository.RunningRepository
 import com.whyranoid.domain.repository.UserRepository
+import com.whyranoid.domain.usecase.ChangeChallengeStatusUseCase
 import com.whyranoid.domain.usecase.GetChallengeDetailUseCase
 import com.whyranoid.domain.usecase.GetChallengePreviewsByTypeUseCase
 import com.whyranoid.domain.usecase.GetChallengingPreviewsUseCase
@@ -114,7 +115,7 @@ val viewModelModule =
     module {
         single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
         single { ChallengeDetailViewModel(get(), get()) }
-        single { ChallengeExitViewModel(get()) }
+        single { ChallengeExitViewModel(get(), get()) }
         factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
         factory { RunningEditViewModel() }
@@ -193,6 +194,7 @@ val useCaseModule =
         single { GetMyFollowingUseCase(get(), get()) }
         single { SendCommentUseCase(get(), get()) }
         single { GetUserUseCase(get()) }
+        single { ChangeChallengeStatusUseCase(get(), get())}
     }
 
 val databaseModule =
