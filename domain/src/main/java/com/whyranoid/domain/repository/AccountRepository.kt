@@ -9,6 +9,7 @@ interface AccountRepository {
     val uId: Flow<Long?>
     val userName: Flow<String?>
     val nickName: Flow<String?>
+    val profileUrl: Flow<String?>
 
     suspend fun signUp(
         authId: String,
@@ -30,4 +31,6 @@ interface AccountRepository {
 
     suspend fun singOut(): Result<Boolean>
     suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>>
+
+    suspend fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?): Result<Boolean>
 }

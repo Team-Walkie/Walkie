@@ -21,7 +21,7 @@ class GetRunningFollowerUseCase(
         }
         return callbackFlow {
             while (true) {
-                delay(1000)
+                delay(100000)
                 val followingsResponse = followRepository.getFollowings(id).getOrDefault(listOf())
                 val runningFollowingsResponse =
                     followRepository.getWalkingFollowings(id).getOrDefault(listOf())

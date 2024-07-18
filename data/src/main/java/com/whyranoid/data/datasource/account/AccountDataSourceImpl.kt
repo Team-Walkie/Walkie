@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.account
 
 import com.whyranoid.data.getResult
+import com.whyranoid.data.model.account.ChangeMyInfoRequest
 import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.data.model.account.toLoginData
 import com.whyranoid.domain.datasource.AccountDataSource
@@ -47,6 +48,23 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
             val response = accountService.login(authorId)
             response.getResult {
                 it.toLoginData()
+            }
+        }
+    }
+
+    override suspend fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?): Result<Boolean> {
+        return kotlin.runCatching {
+            val response = accountService.changeMyInfo(
+                walkieId,
+                ChangeMyInfoRequest(
+                    profileImg = profileUrl ?: "",
+                    nickname = nickName
+                )
+            )
+            if (response.isSuccessful) {
+                return Result.success(true)
+            } else {
+                return Result.failure(Exception(response.message()))
             }
         }
     }

@@ -16,16 +16,19 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WalkiePositiveButton(
+    modifier: Modifier = Modifier,
     text: String,
+    isEnabled: Boolean = true,
     onClicked: () -> Unit = {}
 ) {
     Button(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
             .clip(shape = RoundedCornerShape(15.dp)),
+        enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xFFFB8947),
+            backgroundColor = if (isEnabled) Color(0xFFFB8947) else Color(0xFFBDBDBD),
             contentColor = Color.White
         ),
         onClick = { onClicked() }) {

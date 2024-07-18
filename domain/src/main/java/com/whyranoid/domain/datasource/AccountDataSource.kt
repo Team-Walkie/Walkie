@@ -14,4 +14,6 @@ interface AccountDataSource {
     suspend fun nickCheck(nickName: String): Result<Pair<Boolean, String>>
 
     suspend fun signIn(authorId: String): Result<LoginData>
+
+    suspend fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?): Result<Boolean>
 }
