@@ -34,6 +34,7 @@ fun PostItem(
 
         PostProfileItem(
             post.author,
+            post.address,
             onProfileClicked,
         )
 
