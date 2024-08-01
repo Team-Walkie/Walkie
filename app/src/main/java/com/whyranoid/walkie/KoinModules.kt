@@ -167,7 +167,7 @@ val useCaseModule =
         single { GetTopRankChallengePreviewsUseCase(get()) }
         single { StartChallengeUseCase(get(), get()) }
         single { GetPostUseCase(get()) }
-        single { GetUserPostPreviewsUseCase(get(), get()) }
+        single { GetUserPostPreviewsUseCase(get()) }
         single { GetUserBadgesUseCase(get()) }
         single { GetUserDetailUseCase(get(), get()) }
         single { GetRunningFollowerUseCase(get(), get()) }

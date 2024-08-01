@@ -8,15 +8,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whyranoid.domain.model.post.Post
-import com.whyranoid.presentation.icons.buttoniconpack.CommentButtonIcon
-import com.whyranoid.presentation.icons.buttoniconpack.HeartButtonIcon
+import com.whyranoid.presentation.R
+import com.whyranoid.presentation.component.text.ExpandableText
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
 
@@ -39,7 +45,7 @@ fun PostContentItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "좋아요 ${post.likeCount}",
+                text = post.author.nickname,
                 style = WalkieTypography.Body1
             )
 
@@ -47,34 +53,57 @@ fun PostContentItem(
 
                 Icon(
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(28.dp)
+                        .clip(CircleShape)
                         .clickable {
                             onLikeClicked(post.id)
-                        },
-                    imageVector = HeartButtonIcon,
+                        }
+                        .padding(2.dp),
+                    imageVector = Icons.Outlined.FavoriteBorder,
                     contentDescription = "좋아요 버튼",
                     tint = if (post.isLiked) WalkieColor.Primary else WalkieColor.GrayBorder
                 )
 
-                Spacer(modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.size(2.dp))
+
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = post.likeCount.toString(),
+                    style = WalkieTypography.Body1_Normal,
+                    color = WalkieColor.GrayBorder
+                )
+
+
+                Spacer(modifier = Modifier.size(4.dp))
 
                 Icon(
                     modifier = Modifier
-                        .size(20.dp)
+                        .graphicsLayer(scaleX = -1f)
+                        .size(28.dp)
+                        .clip(CircleShape)
                         .clickable {
                             onCommentClicked(post)
-                        },
-                    imageVector = CommentButtonIcon,
+                        }
+                        .padding(3.dp),
+                    painter = painterResource(id = R.drawable.ic_comment_outlined_button),
                     contentDescription = "댓글 버튼",
+                    tint = WalkieColor.GrayBorder
+                )
+
+                Spacer(modifier = Modifier.size(2.dp))
+
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "?", // todo replace real count
+                    style = WalkieTypography.Body1_Normal,
+                    color = WalkieColor.GrayBorder
                 )
             }
         }
 
         Spacer(modifier = Modifier.size(13.dp))
 
-        Text(
-            text = post.contents,
-            style = WalkieTypography.Body1_Normal
-        )
+        ExpandableText(text = post.contents, style = WalkieTypography.Body1_Normal)
     }
 }
+

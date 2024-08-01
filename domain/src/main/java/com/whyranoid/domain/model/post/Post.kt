@@ -11,6 +11,13 @@ data class Post(
     val contents: String,
     val author: User,
     val date: Long = 0L,
+
+    val likers: List<User> = listOf(),
+    val textVisibleState: TextVisibleState = TextVisibleState.HIDE,
+    val distanceText: String = "",
+    val timeText: String = "",
+    val paceText: String = "",
+    val address: String = "",
 ) : Serializable {
     companion object {
         val DUMMY =
@@ -23,4 +30,20 @@ data class Post(
                 isLiked = false,
             )
     }
+}
+
+fun Post.toPostPreview(): PostPreview {
+    return PostPreview(
+        this.author,
+        this.id,
+        this.isLiked,
+        this.likers,
+        this.imageUrl,
+        this.date,
+        this.textVisibleState,
+        this.distanceText,
+        this.timeText,
+        this.paceText,
+        this.address,
+    )
 }

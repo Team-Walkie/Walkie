@@ -25,6 +25,7 @@ import com.whyranoid.presentation.theme.WalkieTypography
 @Composable
 fun PostProfileItem(
     user: User,
+    address: String,
     onProfileClicked: (User) -> Unit = {},
 ) {
     Row(
@@ -57,7 +58,7 @@ fun PostProfileItem(
                 style = WalkieTypography.Body1,
             )
             Text(
-                "Seoul, park",
+                address,
                 style = WalkieTypography.Body2,
             )
         }
