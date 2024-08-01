@@ -24,7 +24,8 @@ import com.whyranoid.presentation.theme.WalkieTypography
 fun ChallengePage(
     challengePreviews: List<ChallengePreview>,
     onChallengePreviewClicked: (challengeId: Long) -> Unit,
-    onGotoChallengeClicked: () -> Unit
+    onGotoChallengeClicked: () -> Unit,
+    isMyPage: Boolean,
 ) {
 
     Column(
@@ -44,9 +45,11 @@ fun ChallengePage(
                 )
             }
 
-            Box(modifier = Modifier.padding(20.dp)) {
-                WalkiePositiveButton(text = "도전하러 가기") {
-                    onGotoChallengeClicked()
+            if (isMyPage) {
+                Box(modifier = Modifier.padding(20.dp)) {
+                    WalkiePositiveButton(text = "도전하러 가기") {
+                        onGotoChallengeClicked()
+                    }
                 }
             }
         } else {
