@@ -37,6 +37,7 @@ data class PostResponse(
     }
 
     fun toPost(myUid: Long): Post {
+        val destructedHistoryContent = historyContent.split('_')
         return Post(
             id = this.postId,
             imageUrl = this.photo,
@@ -45,6 +46,12 @@ data class PostResponse(
             author = this.poster.toUser(),
             isLiked = this.likers.firstOrNull { it.uid == myUid } != null,
             date = dateFormatter.parse(this.date.replace("T", " ")).time,
+            likers = this.likers.map { it.toUser() },
+            textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
+            distanceText = destructedHistoryContent[2],
+            timeText = destructedHistoryContent[3],
+            paceText = destructedHistoryContent[4],
+            address = destructedHistoryContent[1],
         )
     }
 
