@@ -44,6 +44,7 @@ import com.whyranoid.presentation.screens.setting.SettingsScreen
 import com.whyranoid.presentation.screens.signin.SignInScreen
 import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -97,9 +98,9 @@ fun AppScreenContent(
                             },
                             label = {
                                 Text(
-                                    stringResource(requireNotNull(screen.resourceId)),
-                                    modifier = Modifier.height(15.dp),
-                                    color = Color.Black,
+                                    style = WalkieTypography.Caption,
+                                    text = stringResource(requireNotNull(screen.resourceId)),
+                                    color = WalkieColor.GrayBorder,
                                 )
                             },
                             selected = selected,
