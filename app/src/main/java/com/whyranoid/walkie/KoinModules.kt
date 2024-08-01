@@ -113,9 +113,9 @@ import java.util.concurrent.TimeUnit
 
 val viewModelModule =
     module {
-        single { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
-        single { ChallengeDetailViewModel(get(), get()) }
-        single { ChallengeExitViewModel(get(), get()) }
+        factory { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
+        factory { ChallengeDetailViewModel(get(), get()) }
+        factory { ChallengeExitViewModel(get(), get()) }
         factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
         factory { RunningEditViewModel() }
