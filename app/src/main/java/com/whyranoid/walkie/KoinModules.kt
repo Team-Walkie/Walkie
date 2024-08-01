@@ -106,6 +106,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -113,22 +114,22 @@ import java.util.concurrent.TimeUnit
 
 val viewModelModule =
     module {
-        factory { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
-        factory { ChallengeDetailViewModel(get(), get()) }
-        factory { ChallengeExitViewModel(get(), get()) }
-        factory { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-        factory { RunningViewModel(get(), get(), get(), get(), get(), get()) }
-        factory { RunningEditViewModel() }
-        factory { SplashViewModel(get()) }
-        factory { SignInViewModel(get()) }
-        factory { SelectHistoryViewModel(get()) }
-        factory { EditProfileViewModel(get()) }
-        factory { AddPostViewModel(get()) }
-        factory { SearchFriendViewModel(get(), get(), get()) }
-        factory { DialogViewModel(get(), get(), get(), get(), get(), get()) }
-        factory { CommunityScreenViewModel(get(), get(), get()) }
-        factory { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
-        factory { SettingViewModel(get(), get()) }
+        viewModel { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
+        viewModel { ChallengeDetailViewModel(get(), get()) }
+        viewModel { ChallengeExitViewModel(get(), get()) }
+        viewModel { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { RunningViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel { RunningEditViewModel() }
+        viewModel { SplashViewModel(get()) }
+        viewModel { SignInViewModel(get()) }
+        viewModel { SelectHistoryViewModel(get()) }
+        viewModel { EditProfileViewModel(get()) }
+        viewModel { AddPostViewModel(get()) }
+        viewModel { SearchFriendViewModel(get(), get(), get()) }
+        viewModel { DialogViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel { CommunityScreenViewModel(get(), get(), get()) }
+        viewModel { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel { SettingViewModel(get(), get()) }
     }
 
 val repositoryModule =
