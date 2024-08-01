@@ -20,4 +20,6 @@ interface ChallengeDataSource {
     suspend fun getUserBadges(uid: Long): Result<List<Badge>>
 
     suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit>
+
+    suspend fun changeChallengeStatus(challengeId: Int, status: String, walkieId: Int): Result<Unit>
 }

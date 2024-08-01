@@ -5,6 +5,7 @@ import com.whyranoid.data.model.StatusWithMessage
 import com.whyranoid.data.model.challenge.BadgeResponse
 import com.whyranoid.data.model.challenge.ChallengeDetailResponse
 import com.whyranoid.data.model.challenge.ChallengePreviewResponse
+import com.whyranoid.data.model.challenge.request.ChallengeChangeStatusRequest
 import com.whyranoid.data.model.challenge.request.ChallengeStartRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -46,4 +47,9 @@ interface ChallengeService {
     suspend fun getBadgeList(
         @Query("walkieId") uid: Long
     ): Response<List<BadgeResponse>>
+
+    @POST(API.CHALLENGE_CHANGE_STATUS)
+    suspend fun changeChallengeStatus(
+        @Body changeChallengeStatusRequest: ChallengeChangeStatusRequest
+    ) : Response<StatusWithMessage>
 }
