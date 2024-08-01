@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +41,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.whyranoid.domain.usecase.RequestLoginUseCase
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
 import kotlinx.coroutines.launch
@@ -55,6 +56,7 @@ fun SignInInitialScreen(
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
 
     val requestLoginUseCase = get<RequestLoginUseCase>()
 
@@ -79,18 +81,14 @@ fun SignInInitialScreen(
                                 account = account,
                                 goToAgreeState = goToAgreeState,
                             ) { errorMsg ->
-                                scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(errorMsg)
-                                }
+                                SingleToast.show(context, errorMsg)
                             }
                         }
                     }
 
                 }
             } else {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar("계정 연결에 실패했습니다.")
-                }
+                SingleToast.show(context, "계정 연결에 실패했습니다.")
             }
         }
 
@@ -111,7 +109,6 @@ fun SignInInitialScreen(
                     .padding(bottom = 232.dp),
             )
 
-            val context = LocalContext.current
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -151,12 +148,12 @@ fun SignInInitialScreen(
 private fun handleSignInResult(
     account: GoogleSignInAccount,
     goToAgreeState: (authId: String, name: String, url: String?) -> Unit,
-    showErrorSnackBar: (msg: String) -> Unit,
+    showErrorToast: (String) -> Unit
 ) {
     runCatching {
-        val uid = requireNotNull(account.id) { showErrorSnackBar("authId is null") }
-        val name = requireNotNull(account.displayName) { showErrorSnackBar("name is null") }
-        val url = account.photoUrl?.let { it.toString() }
+        val uid = requireNotNull(account.id) { showErrorToast("authId is null") }
+        val name = requireNotNull(account.displayName) { showErrorToast("name is null") }
+        val url = account.photoUrl?.toString()
         goToAgreeState(uid, name, url)
     }
 }
