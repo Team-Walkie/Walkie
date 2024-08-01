@@ -12,7 +12,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.Post
+import com.whyranoid.domain.model.post.toPostPreview
 import com.whyranoid.domain.model.user.User
+import com.whyranoid.presentation.screens.mypage.tabs.PostImagePreview
 
 @Composable
 fun PostItem(
@@ -35,18 +37,16 @@ fun PostItem(
             onProfileClicked,
         )
 
-        AsyncImage(
-            model = post.imageUrl,
-            contentDescription = "게시글 사진",
+        PostImagePreview(
+            postPreview = post.toPostPreview(),
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f),
-            contentScale = ContentScale.Crop,
+                .aspectRatio(1f)
         )
 
         PostContentItem(
             post = post,
-            onLikeClicked =  { onLikeClicked(it) },
+            onLikeClicked = { onLikeClicked(it) },
             onCommentClicked = onCommentClicked
         )
     }
