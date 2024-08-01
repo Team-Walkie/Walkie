@@ -18,13 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -32,6 +29,7 @@ import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -149,7 +147,7 @@ fun MyPageScreen(
 /**
  * User page content
  *
- * @param nickname 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
+ * @param nickname 상대방 페이지인 경우에 존재, 마이페이지일 경우 nicknam = null
  */
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
@@ -404,11 +402,21 @@ fun UserPageContent(
                         }
                     }
 
-                    2 -> ChallengePage(
-                        state.challengingPreviewsState.getDataOrNull() ?: emptyList(),
-                        onChallengePreviewClicked,
-                        goChallengeMainScreen
-                    )
+                    2 -> {
+                        val itemList = state.challengingPreviewsState.getDataOrNull()
+                        if (itemList != null) {
+                            ChallengePage(
+                                itemList,
+                                onChallengePreviewClicked,
+                                goChallengeMainScreen,
+                                nickname == null
+                            )
+                        } else {
+                            Box(Modifier.fillMaxSize()) {
+                                CircularProgressIndicator(Modifier.align(Alignment.Center))
+                            }
+                        }
+                    }
                 }
             }
         }
