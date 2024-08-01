@@ -1,6 +1,8 @@
 package com.whyranoid.data.datasource.account
 
 import com.whyranoid.data.API
+import com.whyranoid.data.model.account.ChangeMyInfoRequest
+import com.whyranoid.data.model.account.ChangeMyInfoResponse
 import com.whyranoid.data.model.account.LoginDataResponse
 import com.whyranoid.data.model.account.NickCheckResponse
 import com.whyranoid.data.model.account.SignUpRequest
@@ -26,4 +28,10 @@ interface AccountService {
     suspend fun login(
         @Query("uid") uid: String,
     ): Response<LoginDataResponse>
+
+    @POST(API.WalkingControl.MY)
+    suspend fun changeMyInfo(
+        @Query("walkieId") id: Long,
+        @Body myInfoRequest: ChangeMyInfoRequest
+    ): Response<ChangeMyInfoResponse>
 }

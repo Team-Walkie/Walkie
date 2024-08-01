@@ -37,4 +37,8 @@ class ChallengeRepositoryImpl(
     override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {
         return challengeDataSource.startChallenge(uid, challengeId)
     }
+
+    override suspend fun changeChallengeStatus(challengeId: Int, status: String, walkieId: Int): Result<Unit> {
+        return challengeDataSource.changeChallengeStatus(challengeId, status, walkieId)
+    }
 }

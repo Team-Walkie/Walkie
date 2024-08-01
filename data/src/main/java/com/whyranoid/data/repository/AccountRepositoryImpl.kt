@@ -17,6 +17,7 @@ class AccountRepositoryImpl(
     override val uId: Flow<Long?> = accountDataStore.uId
     override val userName: Flow<String?> = accountDataStore.userName
     override val nickName: Flow<String?> = accountDataStore.nickName
+    override val profileUrl: Flow<String?> = accountDataStore.profileUrl
 
     override suspend fun getUID(): Long {
         return requireNotNull(uId.first())
@@ -80,6 +81,25 @@ class AccountRepositoryImpl(
                 Log.d("checkNickName", it.message.toString())
             }
             return Result.failure(Exception("중복 검사 실패"))
+        }
+    }
+
+    override suspend fun changeMyInfo(
+        walkieId: Long,
+        nickName: String,
+        profileUrl: String?
+    ): Result<Boolean> {
+        return kotlin.runCatching {
+            accountDataSource.changeMyInfo(
+                walkieId,
+                nickName,
+                profileUrl
+            ).onSuccess {
+                accountDataStore.updateProfileUrl(profileUrl ?: "")
+                accountDataStore.updateNickName(nickName)
+                return@runCatching it
+            }
+            return Result.failure(Exception("마이페이지 정보 수정 실패"))
         }
     }
 }

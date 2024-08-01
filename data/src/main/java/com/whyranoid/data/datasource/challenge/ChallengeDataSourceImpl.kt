@@ -1,7 +1,7 @@
 package com.whyranoid.data.datasource.challenge
 
-import android.util.Log
 import com.whyranoid.data.getResult
+import com.whyranoid.data.model.challenge.request.ChallengeChangeStatusRequest
 import com.whyranoid.data.model.challenge.request.ChallengeStartRequest
 import com.whyranoid.domain.datasource.ChallengeDataSource
 import com.whyranoid.domain.model.challenge.Badge
@@ -69,6 +69,12 @@ class ChallengeDataSourceImpl(
     override suspend fun startChallenge(uid: Int, challengeId: Int): Result<Unit> {
         return runCatching {
             challengeService.startChallenge(ChallengeStartRequest(uid, challengeId))
+        }
+    }
+
+    override suspend fun changeChallengeStatus(challengeId: Int, status: String, walkieId: Int): Result<Unit> {
+        return runCatching {
+            challengeService.changeChallengeStatus(ChallengeChangeStatusRequest(challengeId, status, walkieId))
         }
     }
 }

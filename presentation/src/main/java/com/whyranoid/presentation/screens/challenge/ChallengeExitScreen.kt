@@ -29,10 +29,12 @@ import com.whyranoid.presentation.component.button.WalkieNegativeButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitSideEffect
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitState
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ChallengeExitScreen(
@@ -40,6 +42,7 @@ fun ChallengeExitScreen(
     challengeId: Long,
 ) {
 
+    val context = LocalContext.current
     val viewModel = koinViewModel<ChallengeExitViewModel>()
 
     LaunchedEffect(true) {
@@ -48,10 +51,23 @@ fun ChallengeExitScreen(
 
     val state by viewModel.collectAsState()
 
+    viewModel.collectSideEffect {
+        when (it) {
+            ChallengeExitSideEffect.StopChallengeSuccess -> {
+                Toast.makeText(context, "챌린지를 성공적으로 중단하였습니다.", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
+
+            ChallengeExitSideEffect.StopChallengeFailure -> {
+                Toast.makeText(context, "챌린지 중단에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     ChallengeExitContent(
         state,
         onPositiveButtonClicked = {
-            // TODO
+            viewModel.stopChallenge()
         },
         onNegativeButtonClicked = {
             navController.popBackStack()
@@ -135,7 +151,6 @@ fun ChallengeExitContent(
                 ) {
                     WalkiePositiveButton(text = "확인") {
                         onPositiveButtonClicked()
-                        Toast.makeText(context, "확인", Toast.LENGTH_SHORT).show()
                     }
                 }
 

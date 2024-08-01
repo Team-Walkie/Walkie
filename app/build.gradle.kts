@@ -125,4 +125,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
+
+    // orbit
+    // TODO: change To Core For Compose Multiplatform
+    val orbitVersion = "4.6.1"
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbitVersion")
+    implementation("org.orbit-mvi:orbit-compose:$orbitVersion")
+    // Tests
+    testImplementation("org.orbit-mvi:orbit-test:$orbitVersion")
 }
