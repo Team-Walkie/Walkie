@@ -1,7 +1,6 @@
 package com.whyranoid.presentation.screens.mypage.editprofile
 
 import android.Manifest
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,6 +60,7 @@ import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.button.CircularIconButton
 import com.whyranoid.presentation.component.button.WalkieBottomSheetButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.reusable.WalkieTextField
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.createImageFile
@@ -215,7 +215,7 @@ fun EditProfileContent(
 
     LaunchedEffect(viewModel.isMyInfoChanged) {
         viewModel.isMyInfoChanged.collectLatest {
-            Toast.makeText(context, "정보가 수정되었습니다.", Toast.LENGTH_SHORT).show()
+            SingleToast.show(context, "정보가 수정되었습니다.")
             popBackStack()
         }
     }
@@ -368,7 +368,7 @@ fun EditProfileContent(
                 if (it.matches(nickNameRegex)) {
                     nickName = it
                 } else {
-                    Toast.makeText(context, "닉네임은 30자 이내로 영문,숫자,마침표,_만 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    SingleToast.show(context, "닉네임은 30자 이내로 영문,숫자,마침표,_만 입력해주세요.")
                 }
             }
         )
