@@ -20,8 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -377,17 +379,25 @@ fun UserPageContent(
                 verticalAlignment = Alignment.Top,
             ) { pagerNum ->
                 when (pagerNum) {
-                    0 -> state.userPostPreviewsState.getDataOrNull()?.let { postPreviews ->
-                        PostPage(
-                            nickname == null,
-                            postPreviews,
-                            onPostPreviewClicked,
-                            onPostCreateClicked,
-                        )
+                    0 -> {
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
+                            state.userPostPreviewsState.getDataOrNull()?.let { postPreviews ->
+                                PostPage(
+                                    nickname == null,
+                                    postPreviews,
+                                    onPostPreviewClicked,
+                                    onPostCreateClicked,
+                                )
+                            }
+                        }
                     }
 
                     1 -> {
-                        Column {
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
                             HistoryPage(onDayClicked = onDateClicked)
                             state.calendarPreviewsState.getDataOrNull()
                                 ?.let { postPreviews ->
@@ -407,12 +417,16 @@ fun UserPageContent(
                     2 -> {
                         val itemList = state.challengingPreviewsState.getDataOrNull()
                         if (itemList != null) {
-                            ChallengePage(
-                                itemList,
-                                onChallengePreviewClicked,
-                                goChallengeMainScreen,
-                                nickname == null
-                            )
+                            Column(
+                                modifier = Modifier.verticalScroll(rememberScrollState())
+                            ) {
+                                ChallengePage(
+                                    itemList,
+                                    onChallengePreviewClicked,
+                                    goChallengeMainScreen,
+                                    nickname == null
+                                )
+                            }
                         } else {
                             Box(Modifier.fillMaxSize()) {
                                 CircularProgressIndicator(Modifier.align(Alignment.Center))

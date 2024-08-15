@@ -78,14 +78,13 @@ fun PostContentItem(
 
                 Icon(
                     modifier = Modifier
-                        .graphicsLayer(scaleX = -1f)
                         .size(28.dp)
                         .clip(CircleShape)
                         .clickable {
                             onCommentClicked(post)
                         }
                         .padding(3.dp),
-                    painter = painterResource(id = R.drawable.ic_comment_outlined_button),
+                    painter = painterResource(id = R.drawable.ic_comment_button),
                     contentDescription = "댓글 버튼",
                     tint = WalkieColor.GrayBorder
                 )
@@ -94,7 +93,7 @@ fun PostContentItem(
 
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "?", // todo replace real count
+                    text = post.commentCount.toString(),
                     style = WalkieTypography.Body1_Normal,
                     color = WalkieColor.GrayBorder
                 )
