@@ -4,6 +4,7 @@ import android.util.Log
 import com.whyranoid.data.AccountDataStore
 import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.model.account.Sex
+import com.whyranoid.domain.model.account.UserInfo
 import com.whyranoid.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -14,13 +15,13 @@ class AccountRepositoryImpl(
 ) : AccountRepository {
 
     override val authId: Flow<String?> = accountDataStore.authId
-    override val uId: Flow<Long?> = accountDataStore.uId
+    override val walkieId: Flow<Long?> = accountDataStore.uId
     override val userName: Flow<String?> = accountDataStore.userName
     override val nickName: Flow<String?> = accountDataStore.nickName
     override val profileUrl: Flow<String?> = accountDataStore.profileUrl
 
     override suspend fun getUID(): Long {
-        return requireNotNull(uId.first())
+        return requireNotNull(walkieId.first())
     }
 
     override suspend fun signUp(
@@ -101,5 +102,9 @@ class AccountRepositoryImpl(
             }
             return Result.failure(Exception("마이페이지 정보 수정 실패"))
         }
+    }
+
+    override suspend fun getUserInfo(walkieId: Long): Result<UserInfo> {
+        return accountDataSource.getUserInfo(walkieId)
     }
 }

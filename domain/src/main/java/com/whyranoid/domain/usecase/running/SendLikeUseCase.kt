@@ -10,7 +10,7 @@ class SendLikeUseCase(
 ) {
     suspend operator fun invoke(receiverId: Long): Result<Unit> {
         return kotlin.runCatching {
-            val uid = requireNotNull(accountRepository.uId.first())
+            val uid = requireNotNull(accountRepository.walkieId.first())
             runningRepository.sendLike(uid, receiverId).onSuccess {
                 return Result.success(Unit)
             }.onFailure {

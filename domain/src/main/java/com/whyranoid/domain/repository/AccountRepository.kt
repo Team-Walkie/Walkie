@@ -1,12 +1,13 @@
 package com.whyranoid.domain.repository
 
 import com.whyranoid.domain.model.account.Sex
+import com.whyranoid.domain.model.account.UserInfo
 import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
 
     val authId: Flow<String?>
-    val uId: Flow<Long?>
+    val walkieId: Flow<Long?>
     val userName: Flow<String?>
     val nickName: Flow<String?>
     val profileUrl: Flow<String?>
@@ -33,4 +34,6 @@ interface AccountRepository {
     suspend fun checkNickName(nickName: String): Result<Pair<Boolean, String>>
 
     suspend fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?): Result<Boolean>
+
+    suspend fun getUserInfo(walkieId: Long): Result<UserInfo>
 }

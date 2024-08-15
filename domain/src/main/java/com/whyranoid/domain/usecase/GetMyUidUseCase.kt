@@ -7,6 +7,6 @@ class GetMyUidUseCase(
     private val accountRepository: AccountRepository,
 ) {
     suspend operator fun invoke(): Result<Long> {
-        return runCatching { requireNotNull(accountRepository.uId.firstOrNull()) }
+        return runCatching { requireNotNull(accountRepository.walkieId.firstOrNull()) }
     }
 }
