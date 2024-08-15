@@ -10,7 +10,7 @@ class LikePostUseCase(
 ) {
 
     suspend operator fun invoke(postId: Long): Result<Long> {
-        val uid = requireNotNull(accountRepository.uId.first())
+        val uid = requireNotNull(accountRepository.walkieId.first())
         return communityRepository.likePost(postId, uid)
     }
 }

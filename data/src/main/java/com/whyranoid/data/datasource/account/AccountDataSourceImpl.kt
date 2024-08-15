@@ -1,11 +1,16 @@
 package com.whyranoid.data.datasource.account
 
 import com.whyranoid.data.getResult
-import com.whyranoid.data.model.account.ChangeMyInfoRequest
 import com.whyranoid.data.model.account.SignUpRequest
 import com.whyranoid.data.model.account.toLoginData
+import com.whyranoid.data.model.account.toUserInfo
 import com.whyranoid.domain.datasource.AccountDataSource
 import com.whyranoid.domain.model.account.LoginData
+import com.whyranoid.domain.model.account.UserInfo
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
     override suspend fun signUp(
@@ -54,18 +59,30 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
 
     override suspend fun changeMyInfo(walkieId: Long, nickName: String, profileUrl: String?): Result<Boolean> {
         return kotlin.runCatching {
+            var imagePart: MultipartBody.Part? = null
+
+            if (profileUrl != null) {
+                val file = File(profileUrl)
+                val fileBody = RequestBody.create(MediaType.parse("image/*"), file)
+                imagePart = MultipartBody.Part.createFormData("profileImg", file.name, fileBody)
+            }
+
             val response = accountService.changeMyInfo(
                 walkieId,
-                ChangeMyInfoRequest(
-                    profileImg = profileUrl ?: "",
-                    nickname = nickName
-                )
+                imagePart,
+                nickName
             )
             if (response.isSuccessful) {
                 return Result.success(true)
             } else {
                 return Result.failure(Exception(response.message()))
             }
+        }
+    }
+
+    override suspend fun getUserInfo(walkieId: Long): Result<UserInfo> {
+        return kotlin.runCatching {
+            accountService.getMyInfo(walkieId).getResult { it.toUserInfo() }
         }
     }
 }

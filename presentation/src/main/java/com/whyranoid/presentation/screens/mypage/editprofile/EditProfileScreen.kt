@@ -1,6 +1,9 @@
 package com.whyranoid.presentation.screens.mypage.editprofile
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,7 +58,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.whyranoid.domain.util.EMPTY
+import coil.request.ImageRequest
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.button.CircularIconButton
 import com.whyranoid.presentation.component.button.WalkieBottomSheetButton
@@ -67,54 +70,55 @@ import com.whyranoid.presentation.util.createImageFile
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.util.Objects
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val viewModel = koinViewModel<EditProfileViewModel>()
     val walkieId = viewModel.walkieId.collectAsStateWithLifecycle(initialValue = 0L)
-    val name = viewModel.name.collectAsStateWithLifecycle(initialValue = String.EMPTY)
-    val nick = viewModel.nick.collectAsStateWithLifecycle(initialValue = String.EMPTY)
-    val context = LocalContext.current
 
-    LaunchedEffect(viewModel.profileImg) {
-        viewModel.profileImg.collectLatest {
-            it?.let { url -> viewModel.setProfileUrl(url) }
-        }
-    }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
-        Objects.requireNonNull(context),
-        context.packageName + ".provider", file
+        context,
+        "com.whyranoid.walkie.provider",
+        file
     )
 
-    val cameraLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) {
-        viewModel.setProfileUrl(uri.toString())
-    }
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                viewModel.setProfileUrl(uri.toString())
+                viewModel.isChangeButtonEnabled.value = true
+            }
+        }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
         if (it) {
-            cameraLauncher.launch(uri)
+            uri?.let { uri ->
+                cameraLauncher.launch(uri)
+            }
         } else {
             // 권한 거부시
         }
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) {
-        it?.let { uri -> viewModel.setProfileUrl(uri.toString()) }
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModel.setProfileUrl(result.data?.data.toString())
+            viewModel.isChangeButtonEnabled.value = true
+        }
     }
 
     val bottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
     )
-
-    val coroutineScope = rememberCoroutineScope()
 
     BackHandler(enabled = bottomSheetState.isVisible) {
         coroutineScope.launch {
@@ -143,6 +147,9 @@ fun EditProfileScreen(navController: NavController) {
                     buttonText = "새 프로필 사진 찍기",
                     onClick = {
                         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                        }
                     }
                 )
 
@@ -151,7 +158,14 @@ fun EditProfileScreen(navController: NavController) {
                 WalkieBottomSheetButton(
                     buttonText = "앨범에서 프로필 사진 가져오기",
                     onClick = {
-                        galleryLauncher.launch("image/*")
+                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "image/*"
+                        }
+                        galleryLauncher.launch(intent)
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                        }
                     }
                 )
 
@@ -161,6 +175,9 @@ fun EditProfileScreen(navController: NavController) {
                     buttonText = "현재 프로필 사진 삭제",
                     onClick = {
                         viewModel.setProfileUrl(null)
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                        }
                     }
                 )
             }
@@ -168,8 +185,6 @@ fun EditProfileScreen(navController: NavController) {
     ) {
         EditProfileContent(
             walkieId = walkieId.value ?: 0L,
-            name = name.value.orEmpty(),
-            nick = nick.value.orEmpty(),
             bottomSheetState = bottomSheetState,
             viewModel = viewModel,
         ) {
@@ -184,8 +199,6 @@ fun EditProfileScreen(navController: NavController) {
 @Composable
 fun EditProfileContent(
     walkieId: Long,
-    name: String,
-    nick: String,
     bottomSheetState: ModalBottomSheetState,
     viewModel: EditProfileViewModel,
     popBackStack: () -> Unit
@@ -197,20 +210,10 @@ fun EditProfileContent(
     val focusManager = LocalFocusManager.current
     val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
     val isDuplicateNickName by viewModel.isDuplicateNickName.collectAsStateWithLifecycle()
-    val currentProfileImg by viewModel.currentProfileUrl.collectAsStateWithLifecycle()
-    var isChangeEnabled by remember { mutableStateOf(false) }
+    val userInfoUiState by viewModel.userInfoUiState.collectAsStateWithLifecycle()
 
-    var initialProfileImg by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(viewModel.profileImg) {
-        viewModel.profileImg.collectLatest {
-            initialProfileImg = it
-        }
-    }
-
-    LaunchedEffect(currentProfileImg) {
-        if (currentProfileImg != initialProfileImg) {
-            isChangeEnabled = true
-        }
+    LaunchedEffect(Unit) {
+        viewModel.getUserInfo()
     }
 
     LaunchedEffect(viewModel.isMyInfoChanged) {
@@ -221,7 +224,7 @@ fun EditProfileContent(
     }
 
     LaunchedEffect(isDuplicateNickName) {
-        if (isDuplicateNickName == false) isChangeEnabled = true
+        if (isDuplicateNickName == false) viewModel.isChangeButtonEnabled.value = true
     }
 
     LaunchedEffect(keyboardHeight) {
@@ -230,161 +233,169 @@ fun EditProfileContent(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-            .verticalScroll(scrollState)
-    ) {
-        Box(
-            Modifier.fillMaxSize()
-        ) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "프로필 편집",
-                style = WalkieTypography.Title
-            )
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = "close button",
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterStart)
-                    .clickable {
-                        popBackStack()
-                    },
-            )
-        }
+    if (userInfoUiState != null) {
+        val name by remember { mutableStateOf(userInfoUiState?.name) }
+        var nickname by remember { mutableStateOf(userInfoUiState?.nickname) }
+        val profileImg = userInfoUiState?.profileUrl
 
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Box(
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(90.dp),
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .verticalScroll(scrollState)
         ) {
-            AsyncImage(
-                model = currentProfileImg,
-                contentDescription = "프로필 이미지",
-                contentScale = ContentScale.Crop,
+            Box(
+                Modifier.fillMaxSize()
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "프로필 편집",
+                    style = WalkieTypography.Title
+                )
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "close button",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterStart)
+                        .clickable {
+                            popBackStack()
+                        },
+                )
+            }
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Box(
                 modifier = Modifier
-                    .matchParentSize()
-                    .clip(shape = CircleShape)
+                    .align(Alignment.CenterHorizontally)
+                    .size(90.dp),
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(profileImg)
+                        .fallback(R.drawable.ic_default_profile)
+                        .error(R.drawable.ic_default_profile)
+                        .build(),
+                    onError = {
+                        Log.d("sm.shin", "error: ${it.result.throwable.message}")
+                    },
+                    contentDescription = "프로필 이미지",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(shape = CircleShape)
+                )
+
+                CircularIconButton(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    onClick = {
+                        coroutineScope.launch {
+                            bottomSheetState.show()
+                        }
+                    },
+                    contentDescription = "프로필 편집",
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_edit_icon),
+                    tint = Color(0xFF999999),
+                    backgroundColor = Color(0xFFEEEEEE),
+                    iconSize = 24.dp,
+                    buttonSize = 30.dp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(22.dp))
+
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = "프로필 사진 변경",
+                style = WalkieTypography.Body1_SemiBold
             )
 
-            CircularIconButton(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                onClick = {
-                    coroutineScope.launch {
-                        bottomSheetState.show()
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Text(
+                modifier = Modifier.align(Alignment.Start),
+                text = "이름",
+                style = WalkieTypography.Body1
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            WalkieTextField(
+                text = name.orEmpty(),
+                readOnly = true,
+                focusRequester = focusRequester,
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                modifier = Modifier.align(Alignment.Start),
+                text = "워키닉네임",
+                style = WalkieTypography.Body1
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            var isEditMode by remember { mutableStateOf(false) }
+
+            val nickNameRegex = Regex("[a-zA-Z0-9_.]{0,29}")
+
+            WalkieTextField(
+                modifier = Modifier,
+                focusRequester = focusRequester,
+                text = nickname.orEmpty(),
+                isEnabled = isEditMode,
+                isValidValue = isDuplicateNickName?.not(),
+                trailings = {
+                    if (isEditMode.not()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_edit_icon),
+                            contentDescription = "edit icon",
+                            modifier = Modifier
+                                .clickable {
+                                    focusRequester.requestFocus()
+                                    isEditMode = true
+                                }
+                        )
+                    } else {
+                        Text(
+                            text = "확인",
+                            style = WalkieTypography.Caption.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            modifier = Modifier
+                                .clickable {
+                                    viewModel.checkDuplicateNickName(nickname.orEmpty())
+                                    // 성공 시 editMode 해제
+                                    focusManager.clearFocus()
+                                }
+                        )
                     }
+
                 },
-                contentDescription = "프로필 편집",
-                icon = ImageVector.vectorResource(id = R.drawable.ic_edit_icon),
-                tint = Color(0xFF999999),
-                backgroundColor = Color(0xFFEEEEEE),
-                iconSize = 24.dp,
-                buttonSize = 30.dp,
+                onValueChange = {
+                    if (it.matches(nickNameRegex)) {
+                        nickname = it
+                    } else {
+                        SingleToast.show(context, "닉네임은 30자 이내로 영문,숫자,마침표,_만 입력해주세요.")
+                    }
+                }
             )
-        }
 
-        Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = "프로필 사진 변경",
-            style = WalkieTypography.Body1_SemiBold
-        )
+            Spacer(modifier = Modifier.weight(1f))
 
-        Spacer(modifier = Modifier.height(25.dp))
-
-        Text(
-            modifier = Modifier.align(Alignment.Start),
-            text = "이름",
-            style = WalkieTypography.Body1
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        WalkieTextField(
-            text = name,
-            readOnly = true,
-            focusRequester = focusRequester,
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            modifier = Modifier.align(Alignment.Start),
-            text = "워키닉네임",
-            style = WalkieTypography.Body1
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        var nickName by remember { mutableStateOf(nick) }
-        var isEditMode by remember { mutableStateOf(false) }
-
-        LaunchedEffect(nick) {
-            nickName = nick
-        }
-
-        val nickNameRegex = Regex("[a-zA-Z0-9_.]{0,29}")
-
-        WalkieTextField(
-            modifier = Modifier,
-            focusRequester = focusRequester,
-            text = nickName,
-            isEnabled = isEditMode,
-            isValidValue = isDuplicateNickName?.not(),
-            trailings = {
-                if (isEditMode.not()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_edit_icon),
-                        contentDescription = "edit icon",
-                        modifier = Modifier
-                            .clickable {
-                                focusRequester.requestFocus()
-                                isEditMode = true
-                            }
-                    )
-                } else {
-                    Text(
-                        text = "확인",
-                        style = WalkieTypography.Caption.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        modifier = Modifier
-                            .clickable {
-                                viewModel.checkDuplicateNickName(nickName)
-                                // 성공 시 editMode 해제
-                                focusManager.clearFocus()
-                            }
-                    )
+            WalkiePositiveButton(
+                text = "변경",
+                isEnabled = viewModel.isChangeButtonEnabled.value,
+                onClicked = {
+                    viewModel.changeMyInfo(walkieId, nickname.orEmpty(), profileImg)
                 }
+            )
 
-            },
-            onValueChange = {
-                if (it.matches(nickNameRegex)) {
-                    nickName = it
-                } else {
-                    SingleToast.show(context, "닉네임은 30자 이내로 영문,숫자,마침표,_만 입력해주세요.")
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        WalkiePositiveButton(
-            text = "변경",
-            isEnabled = isChangeEnabled,
-            onClicked = {
-                viewModel.changeMyInfo(walkieId, nickName, currentProfileImg)
-            }
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import java.io.File
@@ -80,11 +81,11 @@ fun Activity.openStatusBar() {
 
 fun Context.createImageFile(): File {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
-    val image = File.createTempFile(
+    val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFileName = "JPEG_${timeStamp}_"
+    return File.createTempFile(
         imageFileName,
         ".jpg",
-        externalCacheDir
+        storageDir
     )
-    return image
 }

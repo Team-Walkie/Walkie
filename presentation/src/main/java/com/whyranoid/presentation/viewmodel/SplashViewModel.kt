@@ -24,7 +24,7 @@ class SplashViewModel(private val accountRepository: AccountRepository) : ViewMo
             _splashState.value =
                 if (isSignedIn()) SplashState.SignedInState else SplashState.SignInState
 
-            accountRepository.uId.collect {
+            accountRepository.walkieId.collect {
                 if (it == null) {
                     _splashState.value = SplashState.SignInState
                 }
@@ -37,7 +37,7 @@ class SplashViewModel(private val accountRepository: AccountRepository) : ViewMo
     }
 
     private suspend fun isSignedIn(): Boolean {
-        return accountRepository.uId.first() != null
+        return accountRepository.walkieId.first() != null
     }
 }
 

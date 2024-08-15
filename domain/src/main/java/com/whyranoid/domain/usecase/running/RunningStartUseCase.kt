@@ -9,7 +9,7 @@ class RunningStartUseCase(
     private val runningRepository: RunningRepository,
 ) {
     suspend operator fun invoke(): Result<Long> {
-        accountRepository.uId.first()?.let { id ->
+        accountRepository.walkieId.first()?.let { id ->
             return runningRepository.startRunning(id)
         }
         return Result.failure(Exception("ID 정보 없음"))
