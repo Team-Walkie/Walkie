@@ -61,6 +61,7 @@ fun CommunityScreen(navController: NavController) {
                             modifier =
                                 Modifier
                                     .clickable {
+                                        navController.navigate(Screen.AddPostScreen.route)
                                     },
                             imageVector = Icons.Filled.Add,
                             contentDescription = "추가 버튼",
