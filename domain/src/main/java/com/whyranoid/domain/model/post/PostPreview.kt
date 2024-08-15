@@ -14,6 +14,7 @@ data class PostPreview(
     val timeText: String = "",
     val paceText: String = "",
     val address: String = "",
+    val commentCount: Long = 0,
 ) {
     companion object {
         val DUMMY_LIST = listOf(

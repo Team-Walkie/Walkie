@@ -18,6 +18,7 @@ data class Post(
     val timeText: String = "",
     val paceText: String = "",
     val address: String = "",
+    val commentCount: Long = 0,
 ) : Serializable {
     companion object {
         val DUMMY =

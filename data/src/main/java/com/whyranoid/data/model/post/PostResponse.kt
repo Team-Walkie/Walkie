@@ -18,6 +18,7 @@ data class PostResponse(
     @SerializedName("date") val date: String,
     @SerializedName("colorMode") val colorMode: Long,
     @SerializedName("historyContent") val historyContent: String,
+    @SerializedName("commentCount") val commentCount: Long,
 ) {
     fun toPostPreview(): PostPreview {
         val destructedHistoryContent = historyContent.split('_')
@@ -33,6 +34,7 @@ data class PostResponse(
             timeText = destructedHistoryContent[3],
             paceText = destructedHistoryContent[4],
             address = destructedHistoryContent[1],
+            commentCount = commentCount,
         )
     }
 
@@ -52,6 +54,7 @@ data class PostResponse(
             timeText = destructedHistoryContent[3],
             paceText = destructedHistoryContent[4],
             address = destructedHistoryContent[1],
+            commentCount = commentCount,
         )
     }
 
