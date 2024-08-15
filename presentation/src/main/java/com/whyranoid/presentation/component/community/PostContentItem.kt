@@ -94,7 +94,7 @@ fun PostContentItem(
 
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "?", // todo replace real count
+                    text = post.commentCount.toString(),
                     style = WalkieTypography.Body1_Normal,
                     color = WalkieColor.GrayBorder
                 )
