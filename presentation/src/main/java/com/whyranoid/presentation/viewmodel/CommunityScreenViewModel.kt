@@ -43,6 +43,9 @@ class CommunityScreenViewModel(
     }
 
     fun getPosts() = intent {
+        reduce {
+            state.copy(posts =  UiState.Loading)
+        }
         val result = getFollowingsPostsUseCase()
         result.onSuccess { posts ->
             reduce {
