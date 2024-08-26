@@ -1,7 +1,7 @@
 package com.whyranoid.data
 
 object API {
-    const val BASE_URL = "https://walkie-tsvdh.run.goorm.site/"
+    const val BASE_URL = "http://3.35.102.89:8080/"
 
     const val CHECK_NICKNAME = "api/walkies/signup/check"
 
