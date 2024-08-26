@@ -1,7 +1,6 @@
 package com.whyranoid.presentation.screens.community
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,11 +18,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
@@ -56,6 +55,7 @@ import com.whyranoid.domain.repository.UserRepository
 import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.community.SendCommentUseCase
 import com.whyranoid.presentation.component.bar.WalkieTopBar
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -128,7 +128,7 @@ fun CommentScreen(
                             isProgress = false
                         }.onFailure {
                             isProgress = false
-                            Toast.makeText(context, "댓글 작성에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                            SingleToast.show(context, "댓글 작성에 실패했습니다.")
                         }
                     }
                 },

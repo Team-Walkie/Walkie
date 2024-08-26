@@ -10,7 +10,7 @@ class FollowUseCase(
 ) {
     suspend operator fun invoke(otherUId: Long): Result<Long> {
         return runCatching {
-            val uid = requireNotNull(accountRepository.uId.first())
+            val uid = requireNotNull(accountRepository.walkieId.first())
             followRepository.follow(uid, otherUId).getOrThrow()
         }
     }

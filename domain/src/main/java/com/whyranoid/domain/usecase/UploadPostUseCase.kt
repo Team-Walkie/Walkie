@@ -15,7 +15,7 @@ class UploadPostUseCase @Inject constructor(
         history: String,
         imagePath: String,
     ): Result<String> {
-        return accountRepository.uId.first()?.let { uid ->
+        return accountRepository.walkieId.first()?.let { uid ->
             postRepository.uploadPost(uid, content, colorMode, history, imagePath)
         } ?: kotlin.run {
             Result.failure(Exception("Account Error"))

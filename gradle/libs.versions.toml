@@ -5,7 +5,7 @@ androidx-core = "1.13.1"
 androidx-appcompat = "1.6.1"
 androidx-constraintlayout = "2.1.4"
 naver-maps-android-sdk = "3.16.2"
-hilt = "2.44"
+hilt = "2.48.1"
 javax-inject = "1"
 
 android-material = "1.8.0"

@@ -1,6 +1,5 @@
 package com.whyranoid.presentation.screens.challenge
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +26,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.whyranoid.presentation.component.button.WalkieNegativeButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitSideEffect
@@ -54,12 +54,12 @@ fun ChallengeExitScreen(
     viewModel.collectSideEffect {
         when (it) {
             ChallengeExitSideEffect.StopChallengeSuccess -> {
-                Toast.makeText(context, "챌린지를 성공적으로 중단하였습니다.", Toast.LENGTH_SHORT).show()
+                SingleToast.show(context, "챌린지를 성공적으로 중단하였습니다.")
                 navController.popBackStack()
             }
 
             ChallengeExitSideEffect.StopChallengeFailure -> {
-                Toast.makeText(context, "챌린지 중단에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                SingleToast.show(context, "챌린지 중단에 실패하였습니다.")
             }
         }
     }

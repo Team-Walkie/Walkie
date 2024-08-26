@@ -1,6 +1,5 @@
 package com.whyranoid.presentation.screens.challenge
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +44,7 @@ import com.whyranoid.presentation.component.ChallengeGoalContent
 import com.whyranoid.presentation.component.UserIcon
 import com.whyranoid.presentation.component.bottomsheet.ChallengeExitModalBottomSheetContainer
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.reusable.WalkieCircularProgressIndicator
 import com.whyranoid.presentation.theme.SystemColor
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -75,12 +75,12 @@ fun ChallengeDetailScreen(
     viewModel.collectSideEffect {
         when (it) {
             ChallengeDetailSideEffect.StartChallengeSuccess -> {
-                Toast.makeText(context, "챌린지를 성공적으로 시작하였습니다.", Toast.LENGTH_SHORT).show()
+                SingleToast.show(context, "챌린지를 성공적으로 시작하였습니다.")
                 navController.popBackStack()
             }
 
             ChallengeDetailSideEffect.StartChallengeFailure -> {
-                Toast.makeText(context, "챌린지를 시작할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                SingleToast.show(context, "챌린지를 시작할 수 없습니다.")
             }
         }
     }

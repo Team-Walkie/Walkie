@@ -17,7 +17,7 @@ class GetRunningFollowerUseCase(
         var followings = listOf<User>()
         var runningFollowings = listOf<User>()
         kotlin.runCatching {
-            id = requireNotNull(accountRepository.uId.first())
+            id = requireNotNull(accountRepository.walkieId.first())
         }
         return callbackFlow {
             while (true) {

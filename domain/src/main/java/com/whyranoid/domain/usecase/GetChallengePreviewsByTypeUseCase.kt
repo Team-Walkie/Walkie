@@ -12,7 +12,7 @@ class GetChallengePreviewsByTypeUseCase(
 ) {
     suspend operator fun invoke(type: ChallengeType): List<ChallengePreview> {
         return challengeRepository.getChallengePreviewsByType(
-            accountRepository.uId.first()?.toInt() ?: -1, type
+            accountRepository.walkieId.first()?.toInt() ?: -1, type
         )
     }
 }

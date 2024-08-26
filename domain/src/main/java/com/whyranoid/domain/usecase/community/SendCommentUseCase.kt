@@ -13,7 +13,7 @@ class SendCommentUseCase(
         postId: Long,
         content: String,
     ): Result<Unit> {
-        val commenterId = accountRepository.uId.first() ?: return Result.failure(Exception("uid is null"))
+        val commenterId = accountRepository.walkieId.first() ?: return Result.failure(Exception("uid is null"))
         return postRepository.sendComment(
             postId,
             commenterId,

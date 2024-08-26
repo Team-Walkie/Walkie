@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,7 +85,7 @@ fun MyPageScreen(
     var uid by rememberSaveable { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
-        val myUid = requireNotNull(viewModel.accountRepository.uId.first())
+        val myUid = requireNotNull(viewModel.accountRepository.walkieId.first())
         uid = myUid
         viewModel.getUserDetail(myUid, null)
         viewModel.getUserBadges(myUid)
@@ -198,9 +199,10 @@ fun UserPageContent(
                     AsyncImage(
                         model = userDetail.user.imageUrl,
                         contentDescription = "유저 프로필 이미지",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .clip(shape = CircleShape)
-                            .size(70.dp),
+                            .size(64.dp),
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
