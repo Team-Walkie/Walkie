@@ -53,6 +53,10 @@ class PostRepositoryImpl(
         return postDataSource.getMyFollowingsPost(uid)
     }
 
+    override suspend fun getEveryPost(uid: Long): Result<List<Post>> {
+        return postDataSource.getMyFollowingsPost(uid)
+    }
+
     override suspend fun getComments(postId: Long): Result<List<Comment>> {
         return postDataSource.getComments(postId)
     }

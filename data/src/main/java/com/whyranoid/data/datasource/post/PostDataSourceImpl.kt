@@ -101,6 +101,13 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         }
     }
 
+    override suspend fun getEveryPost(uid: Long): Result<List<Post>> {
+        return kotlin.runCatching {
+            val posts = requireNotNull(postService.getPosts(uid).body())
+            posts.map { it.toPost(uid) }
+        }
+    }
+
     override suspend fun getComments(postId: Long): Result<List<Comment>> {
         return kotlin.runCatching {
             val comments = requireNotNull(postService.getComments(postId).body())

@@ -37,6 +37,11 @@ interface PostService {
         @Query("walkieId") uid: Long,
     ): Response<List<PostResponse>>
 
+    @GET(API.LIST_UP_EVERY_POST)
+    suspend fun getEveryPosts(
+        @Query("walkieId") uid: Long,
+    ): Response<List<PostResponse>>
+
     @GET(API.LIST_UP_COMMENT)
     suspend fun getComments(
         @Query("postId") postId: Long,
