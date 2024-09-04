@@ -17,6 +17,7 @@ sealed interface CommunityScreenSideEffect
 data class CommunityScreenState(
     val posts: UiState<List<Post>> = UiState.Idle,
     val following: UiState<List<User>> = UiState.Idle,
+    val isEveryPost: UiState<Boolean> = UiState.Success(true),
 )
 
 class CommunityScreenViewModel(
@@ -42,11 +43,19 @@ class CommunityScreenViewModel(
         getPosts()
     }
 
+    fun switchPostType() = intent {
+        reduce {
+            state.copy(isEveryPost = UiState.Success(state.isEveryPost.getDataOrNull()!!.not()))
+        }
+        getPosts()
+    }
+
     fun getPosts() = intent {
         reduce {
             state.copy(posts =  UiState.Loading)
         }
-        val result = getFollowingsPostsUseCase()
+        val isEveryPost = state.isEveryPost.getDataOrNull() ?: true
+        val result = getFollowingsPostsUseCase(isEveryPost)
         result.onSuccess { posts ->
             reduce {
                 state.copy(

@@ -9,7 +9,7 @@ class GetFollowingsPostsUseCase(
     private val accountRepository: AccountRepository,
     private val postRepository: PostRepository,
 ) {
-    suspend operator fun invoke(): Result<List<Post>> {
+    suspend operator fun invoke(isEveryPost: Boolean): Result<List<Post>> {
         val myUid = requireNotNull(accountRepository.walkieId.first())
         return postRepository.getMyFollowingsPost(myUid)
     }
