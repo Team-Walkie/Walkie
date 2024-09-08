@@ -14,6 +14,7 @@ import java.io.File
 
 class AccountDataSourceImpl(private val accountService: AccountService) : AccountDataSource {
     override suspend fun signUp(
+        name: String,
         nickName: String,
         profileUrl: String?,
         authId: String,
@@ -23,6 +24,7 @@ class AccountDataSourceImpl(private val accountService: AccountService) : Accoun
         return kotlin.runCatching {
             val request = SignUpRequest(
                 userName = nickName,
+                name = name,
                 profileImg = profileUrl ?: "",
                 authId = authId,
                 agreeGps = agreeGps,

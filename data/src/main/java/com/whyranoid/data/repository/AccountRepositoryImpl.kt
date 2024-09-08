@@ -38,7 +38,7 @@ class AccountRepositoryImpl(
         agreeSubscription: Boolean,
     ): Result<Long> {
         return kotlin.runCatching {
-            accountDataSource.signUp(nickName, profileUrl, authId, agreeGps, agreeSubscription)
+            accountDataSource.signUp(userName, nickName, profileUrl, authId, agreeGps, agreeSubscription)
                 .onSuccess { uid ->
                     accountDataStore.updateUId(uid)
                     accountDataStore.updateAuthId(authId)

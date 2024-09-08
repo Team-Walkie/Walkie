@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="running">런닝</string>
     <string name="community">커뮤니티</string>
     <string name="challenge_main">챌린지</string>
     <string name="my_page">마이페이지</string>
+    <string name="total_badge_title">전체 뱃지</string>
+    <string name="setting_main_badge_title">대표 뱃지 설정</string>
+    <string name="setting_main_badge_description">뱃지를 꾹 누르면 대표 뱃지를 편집할 수 있어요.</string>
+    <string name="current_badge_count">%d</string>
+    <string name="total_badge_count">개 획득</string>
 
 </resources>
