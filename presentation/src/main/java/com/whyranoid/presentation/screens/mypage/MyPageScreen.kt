@@ -101,6 +101,9 @@ fun MyPageScreen(
         onTotalBadgePageClicked = {
             navController.navigate(Screen.TotalBadgeScreen.route)
         },
+        onPostPreviewClicked = { uid, postId: Long ->
+            navController.navigate(Screen.UserPostsScreen.route(uid, postId))
+        },
         onPostCreateClicked = {
             navController.navigate(Screen.AddPostScreen.route)
         },
@@ -162,7 +165,7 @@ fun UserPageContent(
     nickname: String? = null, // 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
     state: UserPageState,
     onTotalBadgePageClicked: () -> Unit = {},
-    onPostPreviewClicked: (id: Long) -> Unit = {},
+    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ ->},
     onPostCreateClicked: () -> Unit = {},
     onProfileEditClicked: () -> Unit = {},
     onSettingsClicked: () -> Unit = {},
@@ -225,7 +228,7 @@ fun UserPageContent(
                         ) {
                             TextWithCountSpaceBetween(
                                 text = "게시물",
-                                count = userDetail.postCount,
+                                count = userDetail.postCount ?: 0,
                                 textStyle = WalkieTypography.Body1_Normal,
                                 countTextStyle = WalkieTypography.SubTitle,
                             )

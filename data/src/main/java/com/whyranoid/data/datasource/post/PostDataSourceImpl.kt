@@ -44,6 +44,12 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         return Result.success(response.body()?.map { it.toPostPreview() }!!)
     }
 
+    override suspend fun getMyPosts(uid: Long, myUid: Long): Result<List<Post>> {
+        val response = postService.myPosts(uid)
+        response.body() ?: return Result.failure(Throwable(response.message().toString()))
+        return Result.success(response.body()?.map { it.toPost(myUid) }!!)
+    }
+
     override suspend fun getMyPostPreviews(
         uid: Long,
         year: Int,
@@ -95,6 +101,13 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
     }
 
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
+        return kotlin.runCatching {
+            val posts = requireNotNull(postService.getPosts(uid).body())
+            posts.map { it.toPost(uid) }
+        }
+    }
+
+    override suspend fun getEveryPost(uid: Long): Result<List<Post>> {
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getPosts(uid).body())
             posts.map { it.toPost(uid) }

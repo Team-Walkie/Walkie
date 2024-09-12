@@ -35,6 +35,10 @@ class PostRepositoryImpl(
         return postDataSource.getMyPostPreviews(uid, year, month, day)
     }
 
+    override suspend fun getMyPosts(uid: Long, myUid: Long): Result<List<Post>> {
+        return postDataSource.getMyPosts(uid, myUid)
+    }
+
     override suspend fun getPost(postId: Long): Result<Post> {
         return postDataSource.getPost(postId)
     }
@@ -50,6 +54,10 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
+        return postDataSource.getMyFollowingsPost(uid)
+    }
+
+    override suspend fun getEveryPost(uid: Long): Result<List<Post>> {
         return postDataSource.getMyFollowingsPost(uid)
     }
 

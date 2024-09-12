@@ -48,7 +48,7 @@ import java.util.*
 fun PostPage(
     isMyPage: Boolean = true,
     postPreviews: List<PostPreview>,
-    onPostPreviewClicked: (id: Long) -> Unit,
+    onPostPreviewClicked: (userId: Long, postId: Long) -> Unit,
     onPostCreateClicked: () -> Unit,
 ) {
     Box(
@@ -118,7 +118,7 @@ fun PostPage(
 fun PostImagePreview(
     modifier: Modifier = Modifier,
     postPreview: PostPreview,
-    onPostPreviewClicked: (id: Long) -> Unit = {},
+    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ -> },
 ) {
     var dynamicFontSize by remember { mutableStateOf(0.sp) }
     var dynamicPaddingSize by remember { mutableStateOf(0.dp) }
@@ -139,7 +139,7 @@ fun PostImagePreview(
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(4.dp))
                 .clickable {
-                    onPostPreviewClicked(postPreview.id)
+                    onPostPreviewClicked(postPreview.author.uid, postPreview.id)
                 },
             contentScale = ContentScale.Crop,
         )

@@ -34,6 +34,7 @@ import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.community.CommentScreen
 import com.whyranoid.presentation.screens.community.SearchFriendScreen
+import com.whyranoid.presentation.screens.community.UserPostScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
 import com.whyranoid.presentation.screens.mypage.TotalBadgeScreen
 import com.whyranoid.presentation.screens.mypage.UserPageScreen
@@ -144,10 +145,6 @@ fun AppScreenContent(
                 MyPageScreen(navController)
             }
 
-            composable(Screen.MyPage.route) {
-                MyPageScreen(navController)
-            }
-
             composable(Screen.TotalBadgeScreen.route) {
                 TotalBadgeScreen(navController)
             }
@@ -169,6 +166,7 @@ fun AppScreenContent(
                 val isChallenging = arguments.getBoolean("isChallenging")
                 ChallengeDetailScreen(navController, challengeId, isChallenging)
             }
+
             composable(
                 Screen.ChallengeExitScreen.route,
                 Screen.ChallengeExitScreen.arguments,
@@ -213,6 +211,12 @@ fun AppScreenContent(
                 post?.let {
                     CommentScreen(
                         post = it,
+                        onProfileClicked = { uid, nickname ->
+                            navController.navigate("userpage/${uid}/${nickname}/false")
+                        },
+                        onMyProfileClicked = {
+                            navController.navigate(Screen.MyPage.route)
+                        },
                         onBackClicked = { navController.popBackStack() },
                     )
                 }
@@ -220,6 +224,29 @@ fun AppScreenContent(
 
             composable(Screen.SettingScreen.route) {
                 SettingsScreen(navHostController = navController)
+            }
+
+            composable(
+                Screen.UserPostsScreen.route,
+                Screen.UserPostsScreen.arguments,
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val uid = arguments.getLong(Screen.UID_ARGUMENT)
+                val postId = arguments.getLong(Screen.POST_ID)
+                UserPostScreen(
+                    uid,
+                    postId,
+                    onProfileClicked = { user ->
+                        navController.navigate("userPage/${user.uid}/${user.nickname}/false")
+                    },
+                    onCommentClicked = { post ->
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            "post",
+                            post
+                        )
+                        navController.navigate(Screen.CommentScreen.route)
+                    }
+                )
             }
         }
     }

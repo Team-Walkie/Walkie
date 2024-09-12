@@ -3,14 +3,12 @@ package com.whyranoid.domain.usecase
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.PostRepository
-import kotlinx.coroutines.flow.first
 
-class GetFollowingsPostsUseCase(
+class GetUserPostsUseCase(
     private val accountRepository: AccountRepository,
     private val postRepository: PostRepository,
 ) {
-    suspend operator fun invoke(isEveryPost: Boolean): Result<List<Post>> {
-        val myUid = requireNotNull(accountRepository.walkieId.first())
-        return postRepository.getMyFollowingsPost(myUid)
+    suspend operator fun invoke(uid: Long): Result<List<Post>> {
+        return postRepository.getMyPosts(uid, accountRepository.getUID())
     }
 }

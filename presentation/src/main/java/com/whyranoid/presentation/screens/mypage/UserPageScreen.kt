@@ -32,6 +32,9 @@ fun UserPageScreen(
         nickname,
         state,
         onDateClicked = viewModel::selectDate,
+        onPostPreviewClicked = { uid: Long, postId: Long ->
+            navController.navigate(Screen.UserPostsScreen.route(uid, postId))
+        },
         onFollowButtonClicked = {
             viewModel.follow(uid)
         },
