@@ -97,6 +97,7 @@ import com.whyranoid.presentation.viewmodel.SearchFriendViewModel
 import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
 import com.whyranoid.presentation.viewmodel.SignInViewModel
 import com.whyranoid.presentation.viewmodel.SplashViewModel
+import com.whyranoid.presentation.viewmodel.TotalBadgeViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
 import com.whyranoid.presentation.viewmodel.UserPostsViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
@@ -132,6 +133,7 @@ val viewModelModule =
         viewModel { CommunityScreenViewModel(get(), get(), get()) }
         viewModel { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { SettingViewModel(get(), get()) }
+        viewModel { TotalBadgeViewModel(get(), get()) }
         viewModel { UserPostsViewModel(get(), get()) }
     }
 

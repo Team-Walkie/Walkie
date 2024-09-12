@@ -58,7 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
-import com.whyranoid.presentation.component.badge.PlaceholderBadge
+import com.whyranoid.presentation.component.badge.BadgePlaceHolder
 import com.whyranoid.presentation.component.bar.WalkieTopBar
 import com.whyranoid.presentation.reusable.TextWithCountSpaceBetween
 import com.whyranoid.presentation.screens.Screen
@@ -97,7 +97,10 @@ fun MyPageScreen(
 
     UserPageContent(
         nickname = null,
-        state,
+        state = state,
+        onTotalBadgePageClicked = {
+            navController.navigate(Screen.TotalBadgeScreen.route)
+        },
         onPostPreviewClicked = { uid, postId: Long ->
             navController.navigate(Screen.UserPostsScreen.route(uid, postId))
         },
@@ -161,6 +164,7 @@ fun MyPageScreen(
 fun UserPageContent(
     nickname: String? = null, // 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
     state: UserPageState,
+    onTotalBadgePageClicked: () -> Unit = {},
     onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ ->},
     onPostCreateClicked: () -> Unit = {},
     onProfileEditClicked: () -> Unit = {},
@@ -207,6 +211,7 @@ fun UserPageContent(
                             .clip(shape = CircleShape)
                             .size(64.dp),
                     )
+
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Column(
@@ -310,7 +315,7 @@ fun UserPageContent(
                             .size(56.dp),
                     )
                 }
-                repeat(5 - badgeList.size) { PlaceholderBadge() }
+                repeat(5 - badgeList.size) { BadgePlaceHolder() }
             }
 
             // 마이페이지인 경우
@@ -322,8 +327,8 @@ fun UserPageContent(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .clickable(enabled = badgeList.size >= 5) {
-                            // TODO 전체 뱃지 페이지로 이동
+                        .clickable(enabled = true) {
+                            onTotalBadgePageClicked()
                         }
                         .background(WalkieColor.GrayBackground)
                         .padding(vertical = 8.dp),

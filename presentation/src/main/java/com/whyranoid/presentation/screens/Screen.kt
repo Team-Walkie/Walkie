@@ -47,6 +47,10 @@ sealed class Screen(
         R.drawable.ic_mypage_screen_selected,
     )
 
+    object TotalBadgeScreen: Screen(
+        route = "totalBadgeScreen"
+    )
+
     object AddPostScreen : Screen(
         route = "addPostScreen",
     )

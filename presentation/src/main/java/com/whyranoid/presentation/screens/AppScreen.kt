@@ -36,6 +36,7 @@ import com.whyranoid.presentation.screens.community.CommentScreen
 import com.whyranoid.presentation.screens.community.SearchFriendScreen
 import com.whyranoid.presentation.screens.community.UserPostScreen
 import com.whyranoid.presentation.screens.mypage.MyPageScreen
+import com.whyranoid.presentation.screens.mypage.TotalBadgeScreen
 import com.whyranoid.presentation.screens.mypage.UserPageScreen
 import com.whyranoid.presentation.screens.mypage.addpost.AddPostScreen
 import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileScreen
@@ -142,6 +143,10 @@ fun AppScreenContent(
             // TODO: repo, viewModel로 하여금 uid를 받아오도록 변경 or MyPageScreen 내부적으로 uid 보관하도록 변경
             composable(Screen.MyPage.route) {
                 MyPageScreen(navController)
+            }
+
+            composable(Screen.TotalBadgeScreen.route) {
+                TotalBadgeScreen(navController)
             }
 
             composable(Screen.AddPostScreen.route) {
