@@ -51,6 +51,7 @@ class UserPageViewModel(
 
     override val container = container<UserPageState, UserPageSideEffect>(UserPageState())
 
+    // todo isFollowing 포함, 데이터 가져올 떄 까지 loading 처리
     fun getUserDetail(uid: Long, isFollowing: Boolean?) = intent {
         reduce {
             state.copy(userDetailState = UiState.Loading)
@@ -58,7 +59,12 @@ class UserPageViewModel(
         getUserDetailUseCase(uid).onSuccess { userDetail ->
             reduce {
                 state.copy(
-                    userDetailState = UiState.Success(userDetail.copy(isFollowing = isFollowing)),
+                    userDetailState = UiState.Success(
+                        userDetail.copy(
+                            isFollowing = isFollowing,
+                            postCount = state.userDetailState.getDataOrNull()?.postCount
+                        )
+                    ),
                 )
             }
         }.onFailure {
@@ -91,6 +97,7 @@ class UserPageViewModel(
             state.copy(userPostPreviewsState = UiState.Loading)
         }
         getUserPostPreviewsUseCase(uid).onSuccess { userPostPreviews ->
+            Log.d("ju0828", userPostPreviews.map { it.id }.toString())
             reduce {
                 state.copy(
                     userPostPreviewsState = UiState.Success(userPostPreviews),
