@@ -19,16 +19,18 @@ import androidx.compose.ui.platform.LocalDensity
 import com.whyranoid.presentation.theme.WalkieColor
 
 @Composable
-fun PlaceholderBadge() {
+fun BadgePlaceHolder(
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(48.dp)
             .clip(CircleShape)
             .background(WalkieColor.GrayDisable)
     ) {
         val pxValue = LocalDensity.current.run { 2.dp.toPx() }
-        Canvas(modifier = Modifier.size(48.dp)) {
+        Canvas(modifier = modifier.size(48.dp)) {
             drawCircle(
                 color = Color.Gray.copy(alpha = 0.3f),
                 style = Stroke(
@@ -44,6 +46,6 @@ fun PlaceholderBadge() {
 @Preview
 fun PlaceholderBadgePreview() {
     WalkieTheme {
-        PlaceholderBadge()
+        BadgePlaceHolder()
     }
 }

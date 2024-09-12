@@ -5,6 +5,7 @@ import com.whyranoid.domain.model.account.UserInfo
 
 interface AccountDataSource {
     suspend fun signUp(
+        name: String,
         nickName: String,
         profileUrl: String?,
         authId: String,

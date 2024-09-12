@@ -28,6 +28,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = WalkieColor.Secondary,
     tertiary = WalkieColor.Tertiary,
     surface = Color.White,
+    surfaceTint = Color.White
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
