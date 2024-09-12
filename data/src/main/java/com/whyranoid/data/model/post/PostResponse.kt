@@ -24,7 +24,7 @@ data class PostResponse(
         val destructedHistoryContent = historyContent.split('_')
         return PostPreview(
             author = poster.toUser(),
-            id = this.poster.uid,
+            id = this.postId,
             isLiked = this.liked,
             likers = this.likers.map { it.toUser() },
             imageUrl = this.photo,
