@@ -126,7 +126,6 @@ fun RunningScreen(
         viewModel::takeSnapShot,
         viewModel::sendLike,
         onClickProfile = { user ->
-            Log.d("t", "ju0828 - c")
             navController.navigate("userPage/${user.uid}/${user.nickname}/${true}")
         },
     )
