@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,10 +17,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -32,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -71,7 +67,7 @@ fun CommunityScreen(navController: NavController) {
                                 .height(24.dp)
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(if (isEveryPost) WalkieColor.GrayBackground else WalkieColor.PrimarySurface)
-                                .clickable{ viewModel.switchPostType() },
+                                .clickable { viewModel.switchPostType() },
                             contentAlignment = Alignment.Center
                         ){
                             Text(
@@ -157,6 +153,9 @@ fun CommunityScreen(navController: NavController) {
                                     )
                                     navController.navigate(Screen.CommentScreen.route)
                                 },
+                                onPostPreviewClicked = { uid: Long, postId: Long ->
+                                    navController.navigate(Screen.UserPostsScreen.route(uid, postId))
+                                }
                             )
                         }
                     }

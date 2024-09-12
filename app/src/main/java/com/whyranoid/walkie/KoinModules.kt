@@ -64,6 +64,7 @@ import com.whyranoid.domain.usecase.GetTopRankChallengePreviewsUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostPreviewsUseCase
+import com.whyranoid.domain.usecase.GetUserPostsUseCase
 import com.whyranoid.domain.usecase.GetUserUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.RequestLoginUseCase
@@ -97,6 +98,7 @@ import com.whyranoid.presentation.viewmodel.SelectHistoryViewModel
 import com.whyranoid.presentation.viewmodel.SignInViewModel
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import com.whyranoid.presentation.viewmodel.UserPageViewModel
+import com.whyranoid.presentation.viewmodel.UserPostsViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
@@ -130,6 +132,7 @@ val viewModelModule =
         viewModel { CommunityScreenViewModel(get(), get(), get()) }
         viewModel { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { SettingViewModel(get(), get()) }
+        viewModel { UserPostsViewModel(get(), get()) }
     }
 
 val repositoryModule =
@@ -196,6 +199,7 @@ val useCaseModule =
         single { SendCommentUseCase(get(), get()) }
         single { GetUserUseCase(get()) }
         single { ChangeChallengeStatusUseCase(get(), get())}
+        single { GetUserPostsUseCase(get(), get()) }
     }
 
 val databaseModule =

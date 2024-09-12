@@ -1,6 +1,5 @@
 package com.whyranoid.presentation.screens.community
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +49,7 @@ import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.Comment
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.user.User
+import com.whyranoid.domain.repository.AccountRepository
 import com.whyranoid.domain.repository.PostRepository
 import com.whyranoid.domain.repository.UserRepository
 import com.whyranoid.domain.usecase.GetMyUidUseCase
@@ -66,7 +66,8 @@ import org.koin.androidx.compose.get
 fun CommentScreen(
     modifier: Modifier = Modifier,
     post: Post,
-    onProfileClicked: (uid: Long) -> Unit = { },
+    onProfileClicked: (uid: Long, nickname: String) -> Unit = { _, _ -> },
+    onMyProfileClicked: () -> Unit = { },
     onBackClicked: () -> Unit = { },
     postRepo: PostRepository = get(),
     userRepo: UserRepository = get(),
@@ -82,7 +83,6 @@ fun CommentScreen(
     LaunchedEffect(post.id, isProgress) {
         postRepo.getComments(post.id).onSuccess {
             comments = it.reversed()
-            Log.d("ju0828", it.toString())
         }
 
         myUid().onSuccess { uid ->
@@ -102,9 +102,9 @@ fun CommentScreen(
                     ) {
                         Icon(
                             modifier =
-                                Modifier
-                                    .align(Alignment.CenterStart)
-                                    .clickable { onBackClicked() },
+                            Modifier
+                                .align(Alignment.CenterStart)
+                                .clickable { onBackClicked() },
                             imageVector = Icons.Filled.KeyboardArrowLeft,
                             contentDescription = "Left Arrow",
                         )
@@ -137,33 +137,34 @@ fun CommentScreen(
     ) { paddingValues ->
         LazyColumn(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-                    .padding(paddingValues),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp)
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
                 PostComment(
                     modifier =
-                        Modifier
-                            .padding(horizontal = 20.dp),
+                    Modifier
+                        .padding(horizontal = 20.dp),
                     post.author.uid,
                     post.author.imageUrl,
                     post.author.nickname,
                     post.contents,
                     onProfileClicked,
+                    onMyProfileClicked,
                 )
 
                 Spacer(
                     modifier =
-                        Modifier
-                            .padding(top = 16.dp)
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(WalkieColor.GrayDisable),
+                    Modifier
+                        .padding(top = 16.dp)
+                        .height(1.dp)
+                        .fillMaxWidth()
+                        .background(WalkieColor.GrayDisable),
                 )
             }
 
@@ -171,14 +172,15 @@ fun CommentScreen(
                 items(list.size) { index ->
                     PostComment(
                         modifier =
-                            Modifier
-                                .padding(horizontal = 20.dp)
-                                .padding(top = 8.dp),
+                        Modifier
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 8.dp),
                         list[index].commenterId,
                         list[index].commenter.imageUrl,
                         list[index].commenter.nickname,
                         list[index].content,
                         onProfileClicked,
+                        onMyProfileClicked,
                     )
                 }
             }
@@ -186,7 +188,9 @@ fun CommentScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().imePadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         contentAlignment = Alignment.Center,
     ) {
         if (isProgress) CircularProgressIndicator()
@@ -200,8 +204,11 @@ fun PostComment(
     imageUrl: String,
     nickname: String,
     content: String,
-    onProfileClicked: (uid: Long) -> Unit = { },
+    onProfileClicked: (uid: Long, nickname: String) -> Unit = { _, _ -> },
+    onMyProfileClicked: () -> Unit,
+    accountRepository: AccountRepository = get(),
 ) {
+    val scope = rememberCoroutineScope()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -210,10 +217,15 @@ fun PostComment(
             model = imageUrl.ifBlank { User.DUMMY.imageUrl },
             contentDescription = "user image",
             modifier =
-                Modifier
-                    .size(34.dp)
-                    .clip(RoundedCornerShape(50.dp))
-                    .clickable { onProfileClicked(uid) },
+            Modifier
+                .size(34.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .clickable {
+                    scope.launch {
+                        if (uid != accountRepository.getUID()) onProfileClicked(uid, nickname)
+                        else onMyProfileClicked()
+                    }
+                },
             contentScale = ContentScale.Crop,
         )
 
@@ -228,7 +240,14 @@ fun PostComment(
             }
 
         Text(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .clickable {
+                    scope.launch {
+                        if (uid != accountRepository.getUID()) onProfileClicked(uid, nickname)
+                        else onMyProfileClicked()
+                    }
+                },
             text = text,
             style = WalkieTypography.Body2,
         )
@@ -244,9 +263,16 @@ fun BottomTextField(
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(modifier) {
-        Spacer(modifier = Modifier.background(WalkieColor.GrayDisable).fillMaxWidth().height(1.dp))
+        Spacer(
+            modifier = Modifier
+                .background(WalkieColor.GrayDisable)
+                .fillMaxWidth()
+                .height(1.dp)
+        )
         Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -262,25 +288,32 @@ fun BottomTextField(
             ).forEach {
                 Text(
                     modifier =
-                        Modifier.clip(RoundedCornerShape(6.dp))
-                            .clickable {
-                                val newCursorPosition = textFieldValue.text.length + 2
-                                textFieldValue =
-                                    TextFieldValue(textFieldValue.text + it).copy(
-                                        selection = TextRange(newCursorPosition),
-                                    )
-                            }.padding(6.dp),
+                    Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .clickable {
+                            val newCursorPosition = textFieldValue.text.length + 2
+                            textFieldValue =
+                                TextFieldValue(textFieldValue.text + it).copy(
+                                    selection = TextRange(newCursorPosition),
+                                )
+                        }
+                        .padding(6.dp),
                     fontSize = 20.sp,
                     text = it,
                 )
             }
         }
-        Spacer(modifier = Modifier.background(WalkieColor.GrayDisable).fillMaxWidth().height(1.dp))
+        Spacer(
+            modifier = Modifier
+                .background(WalkieColor.GrayDisable)
+                .fillMaxWidth()
+                .height(1.dp)
+        )
         Box(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             contentAlignment = Alignment.CenterStart,
         ) {
             if (textFieldValue.text.isEmpty()) {
@@ -288,10 +321,10 @@ fun BottomTextField(
                     modifier = Modifier.padding(start = 60.dp),
                     text = "댓글 달기",
                     style =
-                        LocalTextStyle.current.copy(
-                            fontSize = 16.sp,
-                            color = WalkieColor.GrayDefault,
-                        ),
+                    LocalTextStyle.current.copy(
+                        fontSize = 16.sp,
+                        color = WalkieColor.GrayDefault,
+                    ),
                 )
             }
 
@@ -299,29 +332,31 @@ fun BottomTextField(
                 model = imageUrl.ifBlank { User.DUMMY.imageUrl },
                 contentDescription = "user image",
                 modifier =
-                    Modifier
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                        .align(Alignment.TopStart)
-                        .size(34.dp)
-                        .clip(RoundedCornerShape(50.dp)),
+                Modifier
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .align(Alignment.TopStart)
+                    .size(34.dp)
+                    .clip(RoundedCornerShape(50.dp)),
                 contentScale = ContentScale.Crop,
             )
 
             Text(
                 modifier =
-                    Modifier.clickable {
+                Modifier
+                    .clickable {
                         if (textFieldValue.text.isNotBlank()) {
                             onSendClicked(textFieldValue.text)
                             textFieldValue = TextFieldValue("")
                         }
-                    }.padding(12.dp)
-                        .align(Alignment.TopEnd),
+                    }
+                    .padding(12.dp)
+                    .align(Alignment.TopEnd),
                 text = "게시",
                 style =
-                    LocalTextStyle.current.copy(
-                        fontSize = 16.sp,
-                        color = if (textFieldValue.text.isNotBlank()) WalkieColor.Primary else WalkieColor.GrayDisable,
-                    ),
+                LocalTextStyle.current.copy(
+                    fontSize = 16.sp,
+                    color = if (textFieldValue.text.isNotBlank()) WalkieColor.Primary else WalkieColor.GrayDisable,
+                ),
             )
 
             BasicTextField(
@@ -329,7 +364,7 @@ fun BottomTextField(
                 value = textFieldValue,
                 onValueChange = { textFieldValue = it },
                 textStyle =
-                    LocalTextStyle.current.copy(fontSize = 16.sp),
+                LocalTextStyle.current.copy(fontSize = 16.sp),
                 decorationBox = { innerTextField ->
                     Column {
                         Row(

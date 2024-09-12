@@ -5,9 +5,30 @@ import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
 
 interface PostDataSource {
+
+    /**
+     *  사용자의 팔로잉들의 글을 가져온다
+     *
+     * @param uid
+     * @return
+     */
     suspend fun getPostPreviews(uid: Long): Result<List<PostPreview>>
 
+    /**
+     * 해당 사용자가 작성한 글들을 가져온다
+     *
+     * @param uid
+     * @return
+     */
     suspend fun getMyPostPreviews(uid: Long): Result<List<PostPreview>>
+
+    /**
+     * 해당 사용자가 작성한 글들을 가져온다
+     *
+     * @param uid
+     * @return
+     */
+    suspend fun getMyPosts(uid: Long, myUid: Long): Result<List<Post>>
 
     suspend fun getPostPreviews(
         uid: Long,

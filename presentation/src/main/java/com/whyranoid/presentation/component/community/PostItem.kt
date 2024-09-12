@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.toPostPreview
 import com.whyranoid.domain.model.user.User
@@ -22,6 +20,7 @@ fun PostItem(
     onLikeClicked: (Long) -> Unit = {},
     onProfileClicked: (User) -> Unit = {},
     onCommentClicked: (Post) -> Unit = {},
+    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ -> }
 ) {
     Column(
         Modifier.fillMaxHeight(),
@@ -42,7 +41,8 @@ fun PostItem(
             postPreview = post.toPostPreview(),
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
+                .aspectRatio(1f),
+            onPostPreviewClicked = onPostPreviewClicked
         )
 
         PostContentItem(

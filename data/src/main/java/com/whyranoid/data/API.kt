@@ -19,8 +19,10 @@ object API {
 
     const val UPLOAD_POST = "api/community/upload-post"
 
+    // 사용자가 작성한 게시글을 가져온다
     const val LIST_UP_MY_POST = "api/walkies/listup-my-post"
 
+    // 사용자의 팔로잉들의 게시글을 가져온다
     const val LIST_UP_POST = "api/community/listup-post"
 
     const val LIST_UP_EVERY_POST = "api/community/listup-every-post"

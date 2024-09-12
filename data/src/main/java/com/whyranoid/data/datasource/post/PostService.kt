@@ -27,11 +27,13 @@ interface PostService {
         @Part image: MultipartBody.Part,
     ): Response<UploadPostResponse>
 
+    // 사용자가 작성한 글을 가져온다
     @GET(API.LIST_UP_MY_POST)
     suspend fun myPosts(
         @Query("walkieId") uid: Long,
     ): Response<List<PostResponse>>
 
+    // 사용자의 팔로잉의 글을 가져온다
     @GET(API.LIST_UP_POST)
     suspend fun getPosts(
         @Query("walkieId") uid: Long,

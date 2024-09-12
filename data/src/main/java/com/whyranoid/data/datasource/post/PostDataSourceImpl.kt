@@ -44,6 +44,12 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         return Result.success(response.body()?.map { it.toPostPreview() }!!)
     }
 
+    override suspend fun getMyPosts(uid: Long, myUid: Long): Result<List<Post>> {
+        val response = postService.myPosts(uid)
+        response.body() ?: return Result.failure(Throwable(response.message().toString()))
+        return Result.success(response.body()?.map { it.toPost(myUid) }!!)
+    }
+
     override suspend fun getMyPostPreviews(
         uid: Long,
         year: Int,

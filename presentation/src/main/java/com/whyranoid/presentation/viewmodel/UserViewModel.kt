@@ -97,7 +97,6 @@ class UserPageViewModel(
             state.copy(userPostPreviewsState = UiState.Loading)
         }
         getUserPostPreviewsUseCase(uid).onSuccess { userPostPreviews ->
-            Log.d("ju0828", userPostPreviews.map { it.id }.toString())
             reduce {
                 state.copy(
                     userPostPreviewsState = UiState.Success(userPostPreviews),

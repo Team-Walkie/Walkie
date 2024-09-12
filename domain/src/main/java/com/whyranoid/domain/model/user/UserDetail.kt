@@ -4,7 +4,7 @@ import com.whyranoid.domain.model.post.PostPreview
 
 data class UserDetail(
     val user: User,
-    val postCount: Int,
+    val postCount: Int?,
     val followerCount: Int,
     val followingCount: Int,
     val isFollowing: Boolean? = null,

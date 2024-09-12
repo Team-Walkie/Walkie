@@ -128,6 +128,17 @@ sealed class Screen(
         "settingScreen",
     )
 
+    object UserPostsScreen : Screen(
+        route = "userPostsScreen/{$UID_ARGUMENT}/{$POST_ID}",
+        arguments =
+        listOf(
+            navArgument(UID_ARGUMENT) { type = NavType.LongType },
+            navArgument(POST_ID) { type = NavType.LongType },
+        )
+    ) {
+        fun route(uid: Long, postId: Long) = "userPostsScreen/$uid/$postId"
+    }
+
     companion object {
         val bottomNavigationItems = listOf(Running, Community, ChallengeMainScreen, MyPage)
 
