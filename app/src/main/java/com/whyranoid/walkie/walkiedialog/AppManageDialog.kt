@@ -59,8 +59,16 @@ fun AppManageDialog() {
         viewModel.setPermission(Manifest.permission.READ_EXTERNAL_STORAGE, isGranted)
     }
 
+    val readImagePermissionState = rememberPermissionState(
+        Manifest.permission.READ_MEDIA_IMAGES,
+    ) { isGranted ->
+        viewModel.setPermission(Manifest.permission.READ_MEDIA_IMAGES, isGranted)
+    }
+
     val locationDialogState = viewModel.locationPermissionDialogState.collectAsStateWithLifecycle()
     val storageDialogState = viewModel.storagePermissionDialogState.collectAsStateWithLifecycle()
+    val readImageDialogState = viewModel.readImagePermissionDialogState.collectAsStateWithLifecycle()
+
     val gpsDialogState =
         viewModel.gpsDialogState.collectAsStateWithLifecycle(initialValue = DialogState.Initialized)
     val networkDialogState =
@@ -69,6 +77,7 @@ fun AppManageDialog() {
     LaunchedEffect(
         locationDialogState.value,
         storageDialogState.value,
+        readImageDialogState.value,
         gpsDialogState.value,
         networkDialogState.value,
     ) {
@@ -76,6 +85,8 @@ fun AppManageDialog() {
             locationPermissionState.launchPermissionRequest()
         } else if (storagePermissionState.status.isGranted.not() && storagePermissionState.status.shouldShowRationale.not()) {
             storagePermissionState.launchPermissionRequest()
+        } else if (readImagePermissionState.status.isGranted.not() && readImagePermissionState.status.shouldShowRationale.not()) {
+            readImagePermissionState.launchPermissionRequest()
         }
     }
 
@@ -88,6 +99,12 @@ fun AppManageDialog() {
     } else if (storagePermissionState.status.isGranted.not() && storagePermissionState.status.shouldShowRationale) {
         PermissionDialog(
             dialog = DialogContentProvider.StoragePermission,
+            onAction = { activity.openSettings() },
+            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+        )
+    } else if (readImagePermissionState.status.isGranted.not() && readImagePermissionState.status.shouldShowRationale) {
+        PermissionDialog(
+            dialog = DialogContentProvider.ReadImagePermission,
             onAction = { activity.openSettings() },
             modifier = Modifier.clip(RoundedCornerShape(20.dp)),
         )

@@ -1,5 +1,8 @@
 package com.whyranoid.walkie.walkiedialog
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+
 sealed class DialogContentProvider(
     val title: String,
     val description: String,
@@ -28,4 +31,12 @@ sealed class DialogContentProvider(
         "네트워크 상태 확인 요망",
         "러닝 기능을 사용하려면 네트워트가 연결되어야해요.",
     )
+
+    object ReadImagePermission : DialogContentProvider(
+        "미디어 접근 동의",
+        "러닝 정보를 기록하려면 미디어 접근 권한 동의가 반드시 필요해요.",
+    ) {
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        const val PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
+    }
 }

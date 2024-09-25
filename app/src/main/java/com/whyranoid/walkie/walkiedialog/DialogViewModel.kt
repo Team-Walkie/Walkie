@@ -27,9 +27,12 @@ class DialogViewModel(
         MutableStateFlow<DialogState>(DialogState.Initialized)
     private val _storagePermissionDialogState =
         MutableStateFlow<DialogState>(DialogState.Initialized)
+    private val _readImagePermissionDialogState =
+        MutableStateFlow<DialogState>(DialogState.Initialized)
 
     val locationPermissionDialogState get() = _locationPermissionDialogState.asStateFlow()
     val storagePermissionDialogState get() = _storagePermissionDialogState.asStateFlow()
+    val readImagePermissionDialogState get() = _readImagePermissionDialogState.asStateFlow()
 
     val gpsDialogState = getGpsState().map {
         if (it) DialogState.Valid else DialogState.InValid(DialogContentProvider.GPS)
@@ -45,6 +48,9 @@ class DialogViewModel(
         } else if (permission == DialogContentProvider.StoragePermission.PERMISSION) {
             _storagePermissionDialogState.value =
                 if (showDialog) DialogState.Valid else DialogState.InValid(DialogContentProvider.StoragePermission)
+        } else if (permission == DialogContentProvider.ReadImagePermission.PERMISSION) {
+            _readImagePermissionDialogState.value =
+                if (showDialog) DialogState.Valid else DialogState.InValid(DialogContentProvider.ReadImagePermission)
         }
     }
 
