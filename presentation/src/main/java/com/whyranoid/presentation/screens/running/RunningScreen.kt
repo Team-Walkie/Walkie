@@ -166,6 +166,7 @@ fun RunningContent(
             modifier = Modifier.height(280.dp),
             state = state,
             onSelectImage = selectImage,
+            onPermissionDismiss = onEditClose,
         )
     }
     RunningBottomButton(
@@ -516,7 +517,7 @@ fun RunningInfoScreen(
     state: RunningScreenState,
     modifier: Modifier = Modifier,
     onSelectImage: (Uri) -> Unit,
-    scope: CoroutineScope = rememberCoroutineScope(),
+    onPermissionDismiss: () -> Unit,
 ) {
     if (state.editState.getDataOrNull() == true) {
         Column {
@@ -532,7 +533,9 @@ fun RunningInfoScreen(
                 column = 3,
                 modifier = modifier
                     .background(Color.White),
-            ) { uri -> onSelectImage(uri) }
+                onImageSelected = { uri -> onSelectImage(uri) },
+                onPermissionDismiss = onPermissionDismiss
+            )
         }
         return
     }
@@ -868,9 +871,7 @@ fun DrawBitmap(bitmap: Bitmap, ll: LatLngBounds) {
             Log.d(
                 "imageRatio",
                 "$imageRatio ,${
-                    (
-                        bounds.northLatitude - bounds.southLatitude
-                        ) / (bounds.eastLongitude - bounds.westLongitude)
+                    (bounds.northLatitude - bounds.southLatitude) / (bounds.eastLongitude - bounds.westLongitude)
                 }",
             )
         } else {

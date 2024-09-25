@@ -189,9 +189,15 @@ fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
         val focusManager = LocalFocusManager.current
 
         if (photoEditState) {
-            GalleryGrid(column = 3) { uri ->
-                runningHistoryState = runningHistoryState.copy(bitmap = uri.toString())
-            }
+            GalleryGrid(
+                column = 3,
+                onImageSelected = { uri ->
+                    runningHistoryState = runningHistoryState.copy(bitmap = uri.toString())
+                },
+                onPermissionDismiss = {
+                    photoEditState = false
+                }
+            )
         } else {
             BasicTextField(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -243,9 +249,11 @@ fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
             // TODO
             finish()
         }
+
         PostUploadingState.Error -> {
             // TODO
         }
+
         else -> Unit
     }
 }
