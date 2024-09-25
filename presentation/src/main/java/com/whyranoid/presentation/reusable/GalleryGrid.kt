@@ -58,7 +58,10 @@ fun GalleryGrid(
 
     if (hasPermission.not()) {
         PermissionDialog(
-            onAccept = { (context as Activity).openSettings() },
+            onAccept = {
+                (context as Activity).openSettings()
+                onPermissionDismiss()
+            },
             onDismiss = onPermissionDismiss,
             modifier = Modifier.clip(RoundedCornerShape(20.dp)),
         )

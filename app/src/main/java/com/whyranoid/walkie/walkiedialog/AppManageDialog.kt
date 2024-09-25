@@ -96,18 +96,6 @@ fun AppManageDialog() {
             onAction = { activity.openSettings() },
             modifier = Modifier.clip(RoundedCornerShape(20.dp)),
         )
-    } else if (storagePermissionState.status.isGranted.not() && storagePermissionState.status.shouldShowRationale) {
-        PermissionDialog(
-            dialog = DialogContentProvider.StoragePermission,
-            onAction = { activity.openSettings() },
-            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-        )
-    } else if (readImagePermissionState.status.isGranted.not() && readImagePermissionState.status.shouldShowRationale) {
-        PermissionDialog(
-            dialog = DialogContentProvider.ReadImagePermission,
-            onAction = { activity.openSettings() },
-            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-        )
     } else if (gpsDialogState.value is DialogState.InValid) {
         PermissionDialog(
             dialog = DialogContentProvider.GPS,
