@@ -1,5 +1,6 @@
 package com.whyranoid.presentation.screens.mypage.tabs
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,12 +40,17 @@ import java.time.format.TextStyle
 import java.util.*
 
 @Composable
-fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit) {
+fun HistoryPage(
+    modifier: Modifier = Modifier,
+    runningHistories: List<LocalDate>?,
+    onDayClicked: (LocalDate) -> Unit
+) {
     val calendarState = rememberSelectableCalendarState(
         initialMonth = YearMonth.now(),
         initialSelection = listOf(LocalDate.now()),
         initialSelectionMode = SelectionMode.Single,
     )
+    val curDay = LocalDate.now()
     onDayClicked(calendarState.selectionState.selection[0])
 
     Column(
@@ -131,12 +137,12 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .padding(2.dp)
+                        .padding(4.dp)
                         .fillMaxWidth()
                         .aspectRatio(1.2f)
                         .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = true)
                         .clip(CircleShape)
-                        .background(if (isSelected) WalkieColor.Primary else Color.Transparent)
+                        .background(if (isSelected) WalkieColor.Primary else if (curDay.dayOfYear == dateState.date.dayOfYear) WalkieColor.GrayDefault else Color.Transparent)
                         .clickable {
                             onDayClicked(dateState.date)
                             calendarState.selectionState.selection = listOf(dateState.date)
@@ -148,6 +154,20 @@ fun HistoryPage(modifier: Modifier = Modifier, onDayClicked: (LocalDate) -> Unit
                         style = WalkieTypography.Body1,
                         color = color,
                     )
+                    val hasHistory = runningHistories?.any { localDate ->
+                        localDate.year == dateState.date.year && localDate.dayOfYear == dateState.date.dayOfYear
+                    } ?: false
+
+                    if (isSelected.not() && hasHistory) {
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 2.dp)
+                                .align(Alignment.BottomCenter)
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(WalkieColor.GrayDefault)
+                        )
+                    }
                 }
             },
             monthContainer = { container ->
