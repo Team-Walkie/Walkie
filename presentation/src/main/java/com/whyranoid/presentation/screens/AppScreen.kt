@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -27,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whyranoid.domain.model.post.Post
+import com.whyranoid.presentation.reusable.CircleProgressWithText
 import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
@@ -47,6 +50,8 @@ import com.whyranoid.presentation.screens.signin.SignInScreen
 import com.whyranoid.presentation.screens.splash.SplashScreen
 import com.whyranoid.presentation.theme.WalkieColor
 import com.whyranoid.presentation.theme.WalkieTypography
+import com.whyranoid.presentation.util.CustomDialog
+import com.whyranoid.presentation.util.ApiResponseDialog
 import com.whyranoid.presentation.viewmodel.SplashState
 import com.whyranoid.presentation.viewmodel.SplashViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -248,6 +253,19 @@ fun AppScreenContent(
                     }
                 )
             }
+        }
+
+        val isLoading = ApiResponseDialog.isLoading.collectAsStateWithLifecycle()
+        val isError = ApiResponseDialog.isShowError.collectAsStateWithLifecycle()
+        if (isLoading.value) {
+            CircleProgressWithText(text = "")
+        } else if (isError.value) {
+            CustomDialog(
+                title = "네트워크 연결 실패",
+                description = "네트워크 연결이 끊겼거나 속도가 느립니다.\n다시 시도해주세요.",
+                onAction = { ApiResponseDialog.closeErrorDialog() },
+                Modifier.clip(RoundedCornerShape(20.dp))
+            )
         }
     }
 }

@@ -90,6 +90,7 @@ import com.whyranoid.presentation.screens.mypage.editprofile.EditProfileViewMode
 import com.whyranoid.presentation.screens.mypage.following.FollowingViewModel
 import com.whyranoid.presentation.screens.setting.SettingViewModel
 import com.whyranoid.presentation.viewmodel.AddPostViewModel
+import com.whyranoid.presentation.util.ApiResponseDialog
 import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
 import com.whyranoid.presentation.viewmodel.RunningEditViewModel
 import com.whyranoid.presentation.viewmodel.RunningViewModel
@@ -104,6 +105,7 @@ import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import com.whyranoid.walkie.walkiedialog.DialogViewModel
+import com.whyranoid.walkie.walkiedialog.NetworkInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -120,7 +122,19 @@ val viewModelModule =
         viewModel { ChallengeMainViewModel(get(), get(), get(), get(), get()) }
         viewModel { ChallengeDetailViewModel(get(), get()) }
         viewModel { ChallengeExitViewModel(get(), get()) }
-        viewModel { UserPageViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+        viewModel {
+            UserPageViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
         viewModel { RunningViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { RunningEditViewModel() }
         viewModel { SplashViewModel(get()) }
@@ -200,7 +214,7 @@ val useCaseModule =
         single { GetMyFollowingUseCase(get(), get()) }
         single { SendCommentUseCase(get(), get()) }
         single { GetUserUseCase(get()) }
-        single { ChangeChallengeStatusUseCase(get(), get())}
+        single { ChangeChallengeStatusUseCase(get(), get()) }
         single { GetUserPostsUseCase(get(), get()) }
     }
 
@@ -242,6 +256,17 @@ val networkModule =
                     HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY
                     },
+                ).addInterceptor(
+                    NetworkInterceptor(
+                        onRequest = { ApiResponseDialog.startLoading() },
+                        onResponse = { ApiResponseDialog.finishLoad(it) },
+                        excludedUrls = listOf(
+                            Regex("/api/follow/(\\d+)/following"), // polling 방식 업데이트
+                            Regex("/api/follow/(\\d+)/walking-followings"), // polling 방식 업데이트
+                            Regex("/api/community/listup-post"), // 커뮤니티 탭, 자체 로딩바 있음
+                            Regex("/api/community/upload-post") // 게시글 업로드, 자체 로딩바 있음
+                        )
+                    )
                 )
                 .build()
         }
