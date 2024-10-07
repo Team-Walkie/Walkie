@@ -1,0 +1,41 @@
+package com.whyranoid.walkie.walkiedialog
+
+import android.util.Log
+import okhttp3.Interceptor
+import okhttp3.Response
+
+class NetworkInterceptor(
+    private val onRequest: () -> Unit,
+    private val onResponse: (isSuccessFul: Boolean) -> Unit,
+    private val excludedUrls: List<Regex>,
+) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        Log.d("ju0828", request.url.toString())
+
+        Log.d("ju0828", "${request.url} validate = ${excludedUrls.all { request.url.toString().contains(it).not() }}")
+
+        // 요청 URL이 제외할 URL과 같지 않으면 콜백 호출
+        if (excludedUrls.all { request.url.toString().contains(it).not() }) {
+            onRequest() // 요청 전 콜백 호출
+            Log.d("ju0828", "${request.url} request called")
+
+        }
+
+        return try {
+            val response = chain.proceed(request)
+
+            // 응답 후 콜백 호출
+            if (excludedUrls.all { request.url.toString().contains(it).not() }) {
+                onResponse(response.isSuccessful) // 응답 후 콜백 호출
+            }
+            response
+        } catch (e: Exception) {
+            // 예외가 발생한 경우 (타임아웃 포함)
+            if (e is java.net.SocketTimeoutException) {
+                onResponse(false)
+            }
+            throw e // 예외를 다시 던져서 호출자에게 알림
+        }
+    }
+}
