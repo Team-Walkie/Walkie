@@ -75,7 +75,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 @Composable
 fun MyPageScreen(
@@ -165,7 +167,7 @@ fun UserPageContent(
     nickname: String? = null, // 상대방 페이지인 경우에 존재, 마이페이지일 경우 null
     state: UserPageState,
     onTotalBadgePageClicked: () -> Unit = {},
-    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ ->},
+    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ -> },
     onPostCreateClicked: () -> Unit = {},
     onProfileEditClicked: () -> Unit = {},
     onSettingsClicked: () -> Unit = {},
@@ -406,7 +408,13 @@ fun UserPageContent(
                         Column(
                             modifier = Modifier.verticalScroll(rememberScrollState())
                         ) {
-                            HistoryPage(onDayClicked = onDateClicked)
+                            HistoryPage(
+                                runningHistories = state.userPostPreviewsState.getDataOrNull()
+                                    ?.map {
+                                        Instant.ofEpochMilli(it.date).atZone(ZoneId.systemDefault())
+                                            .toLocalDate()
+                                    }, onDayClicked = onDateClicked
+                            )
                             state.calendarPreviewsState.getDataOrNull()
                                 ?.let { postPreviews ->
                                     postPreviews.forEach { postPreview ->
