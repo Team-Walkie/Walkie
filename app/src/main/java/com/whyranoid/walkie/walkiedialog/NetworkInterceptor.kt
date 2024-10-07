@@ -31,11 +31,8 @@ class NetworkInterceptor(
             }
             response
         } catch (e: Exception) {
-            // 예외가 발생한 경우 (타임아웃 포함)
-            if (e is java.net.SocketTimeoutException) {
-                onResponse(false)
-            }
-            throw e // 예외를 다시 던져서 호출자에게 알림
+            onResponse(false)
+            throw e
         }
     }
 }
