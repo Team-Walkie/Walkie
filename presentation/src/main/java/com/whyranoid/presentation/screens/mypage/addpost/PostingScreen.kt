@@ -11,7 +11,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -44,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -98,124 +101,132 @@ fun PostingScreen(runningHistory: RunningHistory, finish: () -> Unit) {
     val viewModel = koinViewModel<AddPostViewModel>()
     val isUploading = viewModel.uploadingState.collectAsStateWithLifecycle()
 
-    Column(
+    val listState = rememberLazyListState()
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 80.dp)
             .wrapContentHeight(),
+        state = listState,
         verticalArrangement = Arrangement.Top,
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 20.dp),
-        ) {
-            Text(
-                style = WalkieTypography.Title,
-                text = "새 게시물",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(bottom = 24.dp),
-            )
-        }
-
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            SimpleDateFormat("yyyy/MM/dd HH:mm").format(Date(runningHistory.finishedAt)).split(' ')
-                .forEach {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
-                            .weight(1f)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(WalkieColor.GrayDefault),
-                    ) {
-                        Text(text = it, style = WalkieTypography.SubTitle)
-                    }
-                }
-        }
-
-        var runningHistoryState by remember { mutableStateOf(runningHistory) }
-
-        Map(runningHistoryState, textVisibleState, isUploading.value, text)
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .align(Alignment.End)
-                .wrapContentSize(),
-        ) {
-            if (photoEditState) {
-                Text("앨범", style = WalkieTypography.SubTitle)
-                Spacer(Modifier.weight(1f))
+        item {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 20.dp),
+            ) {
+                Text(
+                    style = WalkieTypography.Title,
+                    text = "새 게시물",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(bottom = 24.dp),
+                )
             }
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        textVisibleState = when (textVisibleState) {
-                            TextVisibleState.WHITE -> TextVisibleState.BLACK
-                            TextVisibleState.BLACK -> TextVisibleState.HIDE
-                            TextVisibleState.HIDE -> TextVisibleState.WHITE
+
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                SimpleDateFormat("yyyy/MM/dd HH:mm").format(Date(runningHistory.finishedAt))
+                    .split(' ')
+                    .forEach {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .padding(bottom = 12.dp)
+                                .weight(1f)
+                                .height(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(WalkieColor.GrayDefault),
+                        ) {
+                            Text(text = it, style = WalkieTypography.SubTitle)
                         }
                     }
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .padding(12.dp),
-                painter = painterResource(id = R.drawable.ic_timer),
-                contentDescription = "textVisible",
-                tint = WalkieColor.GrayDefault,
-            )
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        photoEditState = photoEditState.not()
-                    }
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .padding(12.dp),
-                painter = painterResource(id = R.drawable.ic_gallery),
-                contentDescription = "gallery",
-                tint = WalkieColor.GrayDefault,
-            )
-        }
+            }
 
-        val focusManager = LocalFocusManager.current
+            var runningHistoryState by remember { mutableStateOf(runningHistory) }
 
-        if (photoEditState) {
-            GalleryGrid(
-                column = 3,
-                onImageSelected = { uri ->
-                    runningHistoryState = runningHistoryState.copy(bitmap = uri.toString())
-                },
-                onPermissionDismiss = {
-                    photoEditState = false
-                }
-            )
-        } else {
-            BasicTextField(
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            Map(runningHistoryState, textVisibleState, isUploading.value, text)
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .fillMaxWidth()
-                    .height(92.dp)
-                    .background(Color.White)
-                    .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp))
-                    .padding(8.dp),
-                value = text,
-                onValueChange = {
-                    text = it
-                },
-                singleLine = false,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-            )
+                    .wrapContentWidth(Alignment.End)
+                    .wrapContentHeight(),
+            ) {
+                if (photoEditState) {
+                    Text("앨범", style = WalkieTypography.SubTitle)
+                    Spacer(Modifier.weight(1f))
+                }
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            textVisibleState = when (textVisibleState) {
+                                TextVisibleState.WHITE -> TextVisibleState.BLACK
+                                TextVisibleState.BLACK -> TextVisibleState.HIDE
+                                TextVisibleState.HIDE -> TextVisibleState.WHITE
+                            }
+                        }
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .padding(12.dp),
+                    painter = painterResource(id = R.drawable.ic_timer),
+                    contentDescription = "textVisible",
+                    tint = WalkieColor.GrayDefault,
+                )
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            photoEditState = photoEditState.not()
+                        }
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .padding(12.dp),
+                    painter = painterResource(id = R.drawable.ic_gallery),
+                    contentDescription = "gallery",
+                    tint = WalkieColor.GrayDefault,
+                )
+            }
+
+            val focusManager = LocalFocusManager.current
+
+            if (photoEditState) {
+                GalleryGrid(
+                    column = 3,
+                    onImageSelected = { uri ->
+                        runningHistoryState = runningHistoryState.copy(bitmap = uri.toString())
+                    },
+                    onPermissionDismiss = {
+                        photoEditState = false
+                    }
+                )
+            } else {
+                BasicTextField(
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth()
+                        .height(92.dp)
+                        .background(Color.White)
+                        .border(1.dp, WalkieColor.GrayDefault, RoundedCornerShape(12.dp))
+                        .padding(8.dp),
+                    value = text,
+                    onValueChange = {
+                        text = it
+                    },
+                    singleLine = false,
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                )
+            }
         }
     }
 
