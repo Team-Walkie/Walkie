@@ -1,8 +1,10 @@
 package com.whyranoid.presentation.screens.challenge
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,31 +12,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.whyranoid.domain.model.challenge.ChallengePreview
 import com.whyranoid.domain.model.challenge.ChallengeType
+import com.whyranoid.presentation.R
 import com.whyranoid.presentation.component.ChallengeItem
 import com.whyranoid.presentation.component.ChallengingItem
 import com.whyranoid.presentation.component.bar.WalkieTopBar
@@ -84,7 +84,7 @@ fun ChallengeMainContent(
                 leftContent = {
                     Text(
                         text = "챌린지",
-                        style = WalkieTypography.Title.copy(fontWeight = FontWeight(600)),
+                        style = WalkieTypography.Title,
                     )
                 },
                 rightContent = {
@@ -94,17 +94,8 @@ fun ChallengeMainContent(
                                 .clickable {
 
                                 },
-                            imageVector = Icons.Filled.Search, contentDescription = "검색 버튼"
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Icon(
-                            modifier = Modifier
-                                .clickable {
-
-                                },
-                            imageVector = Icons.Filled.Menu, contentDescription = "메뉴 버튼"
+                            painter = painterResource(id = R.drawable.ic_menu),
+                            contentDescription = "메뉴 버튼"
                         )
                     }
 
@@ -123,68 +114,29 @@ fun ChallengeMainContent(
         ) {
 
             item {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = "신규",
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight(700)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-
-            item {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(13.dp),
-                    contentPadding = PaddingValues(20.dp)
-                ) {
-
-                    state.newChallengePreviewsState.getDataOrNull()?.let { newChallengePreviews ->
-                        newChallengePreviews.forEach {
-                            item {
-                                ChallengeItem(
-                                    Modifier.fillParentMaxWidth(0.9f),
-                                    it.type.getColor(),
-                                    text = it.title
-                                ) {
-                                    onChallengeItemClicked(it, false)
-                                }
-                            }
-                        }
-                    } ?: run {
-                        item {
-                            WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
-                        }
-                    }
-
-                }
-                Spacer(modifier = Modifier.height(44.dp))
-            }
-
-            item {
                 Text(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     text = "도전중인 챌린지",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
             }
 
             item {
                 Column(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
                     state.challengingPreviewsState.getDataOrNull()?.let { challengingPreviews ->
 
                         if (challengingPreviews.isNotEmpty()) {
-                            challengingPreviews.take(4).forEach {
+                            challengingPreviews.take(3).forEach {
                                 ChallengingItem(
                                     text = it.title,
                                     progress = it.progress!!,
@@ -195,18 +147,54 @@ fun ChallengeMainContent(
                                 Spacer(modifier = Modifier.height(10.dp))
                             }
 
-                            IconButton(
-                                onClick = { onExpandButtonClicked() }) {
-                                Icon(
-                                    imageVector = Icons.Rounded.ExpandMore,
-                                    modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
-                                    contentDescription = "도전중인 챌린지 더보기"
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .clip(shape = RoundedCornerShape(7.dp))
+                                    .background(Color(0xFFF7F7F7))
+                                    .clickable {
+
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "더보기",
+                                    style = WalkieTypography.Body2,
+                                    color = Color(0xFF808080),
+                                    fontWeight = FontWeight(700)
                                 )
                             }
-                        } else {
 
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(105.dp)
+                                    .clip(shape = RoundedCornerShape(20.dp))
+                                    .background(Color(0xFFF7F7F7)),
+                                contentAlignment = Alignment.Center
+                            ) {
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "아직 시작한 챌린지가 없어요.",
+                                        style = WalkieTypography.Body1,
+                                        color = Color(0xFF808080)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(
+                                        text = "아래 목록에서 도전할 챌린지를 찾아보세요!",
+                                        style = WalkieTypography.Body2,
+                                        color = Color(0xFF808080)
+                                    )
+                                }
+                            }
                         }
 
 
@@ -214,30 +202,42 @@ fun ChallengeMainContent(
                         WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
 
             item {
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = "다른 챌린지도 도전해보세요!",
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight(700)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .background(Color(0xFFF7F7F7))
                 )
-                Spacer(modifier = Modifier.height(14.dp))
+
+                Spacer(modifier = Modifier.height(30.dp))
             }
 
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    text = "인기 챌린지",
+                    text = "챌린지에 도전해보세요!",
+                    fontSize = 18.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight(700)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    text = "많이 도전하는 챌린지",
                     fontSize = 16.sp,
                     color = Color.Black,
                     fontWeight = FontWeight(700)
                 )
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(11.dp))
             }
 
             item {
@@ -245,34 +245,76 @@ fun ChallengeMainContent(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(13.dp),
-                    contentPadding = PaddingValues(20.dp)
+                    contentPadding = PaddingValues(start = 20.dp)
                 ) {
-                    state.topRankChallengePreviewState.getDataOrNull()?.let { newChallengePreviews ->
-                        newChallengePreviews.chunkedList(3).forEach { list ->
-                            item {
-                                Column() {
-                                    list.forEach {
-                                        ChallengeItem(
-                                            Modifier.fillParentMaxWidth(0.9f),
-                                            it.type.getColor(),
-                                            text = it.title
-                                        ) {
-                                            onChallengeItemClicked(it, false)
+                    state.topRankChallengePreviewState.getDataOrNull()
+                        ?.let { newChallengePreviews ->
+                            newChallengePreviews.chunkedList(3).forEach { list ->
+                                item {
+                                    Column() {
+                                        list.forEach {
+                                            ChallengeItem(
+                                                Modifier.fillParentMaxWidth(0.9f),
+                                                it.type.getColor(),
+                                                text = it.title
+                                            ) {
+                                                onChallengeItemClicked(it, false)
+                                            }
+                                            Spacer(modifier = Modifier.height(10.dp))
                                         }
-                                        Spacer(modifier = Modifier.height(10.dp))
                                     }
                                 }
                             }
-                        }
 
-                    } ?: run {
+                        } ?: run {
                         item {
                             WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth())
                         }
                     }
 
                 }
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    text = "새로 나온 챌린지",
+                    fontSize = 16.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight(700)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    state.newChallengePreviewsState.getDataOrNull()
+                        ?.let { challengingPreviews ->
+
+                            if (challengingPreviews.isNotEmpty()) {
+                                challengingPreviews.take(3).forEach {
+                                    ChallengingItem(
+                                        text = it.title,
+                                        progress = it.progress!!,
+                                        challengeColor = it.type.getColor(),
+                                    ) {
+                                        onChallengeItemClicked(it, true)
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                }
+
+                            } else {
+
+                            }
+
+                        }
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
             }
 
             item {
@@ -332,7 +374,8 @@ fun ChallengeMainContent(
                                     Spacer(modifier = Modifier.height(10.dp))
                                 }
                             }
-                        } ?: run { WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth()) }
+                        }
+                        ?: run { WalkieCircularProgressIndicator(Modifier.fillParentMaxWidth()) }
 
                 }
             }
