@@ -36,10 +36,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whyranoid.domain.model.challenge.Challenge
+import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.theme.ChallengeColor.getColor
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ChallengeGoalContent(
     challenge: Challenge
@@ -153,10 +153,26 @@ fun ChallengeGoalContent(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ChallengeGoalItem(
-                modifier = Modifier.weight(1f),
-                goal = "기간", limit = "${challenge.period}일"
-            )
+            when (challenge.challengeType) {
+                ChallengeType.LIFE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        goal = "06~12시 사이", limit = "20:00"
+                    )
+                }
+                ChallengeType.CALORIE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        goal = "기간", limit = "-"
+                    )
+                }
+                ChallengeType.DISTANCE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        goal = "거리", limit = "0/5km"
+                    )
+                }
+            }
 
             Divider(
                 color = challengeColor.progressBarColor,
@@ -168,7 +184,7 @@ fun ChallengeGoalContent(
             // TODO: challenge type
             ChallengeGoalItem(
                 modifier = Modifier.weight(1f),
-                goal = "칼로리", limit = "1110kcal"
+                goal = "칼로리", limit = if (challenge.challengeType == ChallengeType.CALORIE) "1110kcal" else "0kcal"
             )
 
         }
