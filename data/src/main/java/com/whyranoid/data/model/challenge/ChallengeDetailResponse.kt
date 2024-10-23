@@ -10,6 +10,7 @@ data class ChallengeDetailResponse(
         val participants = walkies.map { it.toUser() }
         return com.whyranoid.domain.model.challenge.Challenge(
             badge = challenge.badge.toBadge(),
+            calorie = challenge.calorie,
             challengeType = ChallengeType.getChallengeTypeByString(challenge.category),
             id = challenge.challengeId.toLong(),
             contents = challenge.content,
@@ -18,6 +19,11 @@ data class ChallengeDetailResponse(
             process = challenge.progress,
             participants = participants,
             participantCount = participants.size,
+            period = challenge.period,
+            distance = challenge.distance,
+            endTime = challenge.endTime,
+            startTime = challenge.startTime,
+            status = challenge.status
         )
     }
 }

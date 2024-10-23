@@ -157,19 +157,23 @@ fun ChallengeGoalContent(
                 ChallengeType.LIFE -> {
                     ChallengeGoalItem(
                         modifier = Modifier.weight(1f),
-                        goal = "06~12시 사이", limit = "20:00"
+                        // TODO : limit에 적합한 값 필요(새로운 필드)
+                        // TODO : time 포멧 변경
+                        goal = "${challenge.startTime}~${challenge.endTime}시 사이", limit = challenge.period.toString()
                     )
                 }
                 ChallengeType.CALORIE -> {
                     ChallengeGoalItem(
                         modifier = Modifier.weight(1f),
-                        goal = "기간", limit = "-"
+                        // TODO: 정확한 형식 필요, ex) 20일
+                        goal = "기간", limit = challenge.period.toString()
                     )
                 }
                 ChallengeType.DISTANCE -> {
                     ChallengeGoalItem(
                         modifier = Modifier.weight(1f),
-                        goal = "거리", limit = "0/5km"
+                        // TODO: 텍스트 꾸미기 적용 필요
+                        goal = "거리", limit = "0/${challenge.distance}km"
                     )
                 }
             }
@@ -181,10 +185,9 @@ fun ChallengeGoalContent(
                     .width(1.dp)
             )
 
-            // TODO: challenge type
             ChallengeGoalItem(
                 modifier = Modifier.weight(1f),
-                goal = "칼로리", limit = if (challenge.challengeType == ChallengeType.CALORIE) "1110kcal" else "0kcal"
+                goal = "칼로리", limit = if (challenge.challengeType == ChallengeType.CALORIE) "${challenge.calorie}kcal" else "0kcal"
             )
 
         }
