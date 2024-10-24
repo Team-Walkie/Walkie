@@ -133,8 +133,8 @@ fun ChallengeDetailContent(
                         .verticalScroll(scrollState),
                 ) {
                     // TODO: Async Image
-                    Image(
-                        painter = painterResource(id = R.drawable.dummy_challenge_banner),
+                    AsyncImage(
+                        model = challenge.imageUrl,
                         contentDescription = null,
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
@@ -208,7 +208,6 @@ fun ChallengeDetailContent(
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clip(CircleShape),
-                                contentScale = ContentScale.Crop
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))

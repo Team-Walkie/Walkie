@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.whyranoid.presentation.theme.ChallengeColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.bouncingClickable
 
 @Composable
@@ -49,6 +50,7 @@ fun ChallengeItem(
                 textAlign = TextAlign.Start,
                 text = text,
                 overflow = TextOverflow.Ellipsis,
+                style = WalkieTypography.Body1,
                 maxLines = 2
             )
         }

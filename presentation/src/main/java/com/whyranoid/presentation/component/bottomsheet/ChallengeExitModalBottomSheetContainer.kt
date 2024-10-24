@@ -64,30 +64,28 @@ fun ChallengeExitModalBottomSheetContainer(
                     style = WalkieTypography.Title
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = "${challenge.badge.name} 뱃지가 코 앞이에요.",
                     style = WalkieTypography.Body2.copy(color = SystemColor.Negative)
                 )
 
-                Spacer(modifier = Modifier.height(22.dp))
-
-                Text(
-                    text = challenge.title,
-                    style = WalkieTypography.SubTitle.copy(color = SystemColor.Negative)
-                )
-
-                Spacer(modifier = Modifier.height(22.dp))
+                Spacer(modifier = Modifier.height(31.dp))
 
                 AsyncImage(
                     model = challenge.badge.imageUrl, contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(CircleShape)
                         .padding(bottom = 10.dp),
-                    contentScale = ContentScale.Crop
                 )
+
+                Text(
+                    text = "${challenge.badge.name} 뱃지",
+                    style = WalkieTypography.Body2
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = "진행률 ${challenge.process}%",
@@ -97,9 +95,9 @@ fun ChallengeExitModalBottomSheetContainer(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(37.dp))
+                Spacer(modifier = Modifier.height(50.dp))
 
-                WalkiePositiveButton(text = "계속하기") {
+                WalkiePositiveButton(text = "도전하기") {
                     coroutineScope.launch {
                         modalSheetState.hide()
                         onPositiveButtonClicked(challenge)

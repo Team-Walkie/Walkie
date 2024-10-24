@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -36,10 +35,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whyranoid.domain.model.challenge.Challenge
+import com.whyranoid.domain.model.challenge.ChallengeType
 import com.whyranoid.presentation.R
 import com.whyranoid.presentation.theme.ChallengeColor.getColor
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ChallengeGoalContent(
     challenge: Challenge
@@ -153,10 +152,30 @@ fun ChallengeGoalContent(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ChallengeGoalItem(
-                modifier = Modifier.weight(1f),
-                goal = "기간", limit = "${challenge.period}일"
-            )
+            when (challenge.challengeType) {
+                ChallengeType.LIFE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        // TODO : limit에 적합한 값 필요(새로운 필드)
+                        // TODO : time 포멧 변경
+                        goal = "${challenge.startTime}~${challenge.endTime}시 사이", limit = challenge.period.toString()
+                    )
+                }
+                ChallengeType.CALORIE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        // TODO: 정확한 형식 필요, ex) 20일
+                        goal = "기간", limit = challenge.period.toString()
+                    )
+                }
+                ChallengeType.DISTANCE -> {
+                    ChallengeGoalItem(
+                        modifier = Modifier.weight(1f),
+                        // TODO: 텍스트 꾸미기 적용 필요
+                        goal = "거리", limit = "0/${challenge.distance}km"
+                    )
+                }
+            }
 
             Divider(
                 color = challengeColor.progressBarColor,
@@ -165,10 +184,9 @@ fun ChallengeGoalContent(
                     .width(1.dp)
             )
 
-            // TODO: challenge type
             ChallengeGoalItem(
                 modifier = Modifier.weight(1f),
-                goal = "칼로리", limit = "1110kcal"
+                goal = "칼로리", limit = if (challenge.challengeType == ChallengeType.CALORIE) "${challenge.calorie}kcal" else "0kcal"
             )
 
         }

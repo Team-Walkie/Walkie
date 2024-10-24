@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.whyranoid.presentation.theme.ChallengeColor
+import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.util.bouncingClickable
 
 // TODO: set Color System
@@ -33,8 +34,7 @@ fun ChallengingItem(
             .fillMaxWidth()
             .height(105.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .background(color = challengeColor.backgroundColor)
-            ,
+            .background(color = challengeColor.backgroundColor),
     ) {
 
         Box(
@@ -43,7 +43,10 @@ fun ChallengingItem(
                 .padding(start = 26.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            Text(text)
+            Text(
+                text = text,
+                style = WalkieTypography.Body1
+            )
         }
 
 
