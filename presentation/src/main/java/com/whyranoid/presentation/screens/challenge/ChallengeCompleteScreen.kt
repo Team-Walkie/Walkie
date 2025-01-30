@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.component.button.WalkieNegativeButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
+import com.whyranoid.presentation.screens.Screen
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeCompleteViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -126,7 +127,12 @@ fun ChallengeCompleteScreen(
 
                 Box(modifier = Modifier.weight(.5f)) {
                     WalkiePositiveButton(text = "네 좋아요") {
-
+                        navController.navigate(
+                            Screen.ChallengeImageSaveScreen.route.replace(
+                                "{challengeId}",
+                                challengeId.toString()
+                            )
+                        )
                     }
                 }
             }

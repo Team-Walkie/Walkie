@@ -105,6 +105,7 @@ import com.whyranoid.presentation.viewmodel.UserPostsViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeCompleteViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeDetailViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeExitViewModel
+import com.whyranoid.presentation.viewmodel.challenge.ChallengeImageSaveViewModel
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeMainViewModel
 import com.whyranoid.walkie.walkiedialog.DialogViewModel
 import com.whyranoid.walkie.walkiedialog.NetworkInterceptor
@@ -125,6 +126,7 @@ val viewModelModule =
         viewModel { ChallengeDetailViewModel(get(), get(), get()) }
         viewModel { ChallengeExitViewModel(get(), get()) }
         viewModel { ChallengeCompleteViewModel(get()) }
+        viewModel { ChallengeImageSaveViewModel(get()) }
         viewModel {
             UserPageViewModel(
                 get(),
@@ -174,7 +176,7 @@ val dataSourceModule =
         single<ChallengeDataSource> { ChallengeDataSourceImpl(get()) }
         single<PostDataSource> { PostDataSourceImpl(get()) }
         single<UserDataSource> { UserDataSourceImpl(get()) }
-        single<AccountDataSource> { AccountDataSourceImpl(get(),get()) }
+        single<AccountDataSource> { AccountDataSourceImpl(get(), get()) }
         single<FollowDataSource> { FollowDataSourceImpl(get()) }
         single<RunningControlDataSource> { RunningControlDataSourceImpl(get()) }
         single<CommunityDataSource> { CommunityDataSourceImpl(get()) }
@@ -185,7 +187,7 @@ val useCaseModule =
         single { GetNewChallengePreviewsUseCase(get()) }
         single { GetChallengingPreviewsUseCase(get()) }
         single { GetChallengeDetailUseCase(get(), get()) }
-        single { CompleteChallengeUseCase(get(), get())}
+        single { CompleteChallengeUseCase(get(), get()) }
         single { GetChallengePreviewsByTypeUseCase(get(), get()) }
         single { GetTopRankChallengePreviewsUseCase(get()) }
         single { StartChallengeUseCase(get(), get()) }

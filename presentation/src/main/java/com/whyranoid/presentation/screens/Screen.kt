@@ -96,6 +96,14 @@ sealed class Screen(
         ),
     )
 
+    object ChallengeImageSaveScreen : Screen(
+        route = "ChallengeImageSave/{challengeId}",
+        arguments =
+        listOf(
+            navArgument("challengeId") { type = NavType.LongType },
+        ),
+    )
+
     object UserPageScreen : Screen(
         route = "userPage/{$UID_ARGUMENT}/{$NICKNAME_ARGUMENT}/{$IS_FOLLOWING_ARGUMENT}",
         arguments =
