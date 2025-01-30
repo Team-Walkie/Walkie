@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.domain.util.getToday
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.component.bar.BasicBackButtonTopBar
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.challenge.ChallengeImageSaveViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -43,17 +44,8 @@ fun ChallengeImageSaveScreen(
     }
     Scaffold(
         topBar = {
-            Row {
-                IconButton(
-                    modifier = Modifier
-                        .padding(vertical = 19.dp)
-                        .padding(start = 16.dp),
-                    onClick = { navController.popBackStack() }) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_back_arrow),
-                        contentDescription = "back arrow"
-                    )
-                }
+            BasicBackButtonTopBar {
+                navController.popBackStack()
             }
         }
     ) { paddingValues ->

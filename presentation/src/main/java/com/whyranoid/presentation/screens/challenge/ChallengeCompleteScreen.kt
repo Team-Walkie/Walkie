@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.whyranoid.domain.util.EMPTY
 import com.whyranoid.presentation.R
+import com.whyranoid.presentation.component.bar.BasicBackButtonTopBar
 import com.whyranoid.presentation.component.button.WalkieNegativeButton
 import com.whyranoid.presentation.component.button.WalkiePositiveButton
 import com.whyranoid.presentation.screens.Screen
@@ -50,17 +51,8 @@ fun ChallengeCompleteScreen(
 
     Scaffold(
         topBar = {
-            Row {
-                IconButton(
-                    modifier = Modifier
-                        .padding(vertical = 19.dp)
-                        .padding(start = 16.dp),
-                    onClick = { navController.popBackStack() }) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_back_arrow),
-                        contentDescription = "back arrow"
-                    )
-                }
+            BasicBackButtonTopBar {
+                navController.popBackStack()
             }
         }
     ) { paddingValues ->
