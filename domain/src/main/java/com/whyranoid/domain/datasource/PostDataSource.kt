@@ -54,6 +54,11 @@ interface PostDataSource {
         imagePath: String,
     ): Result<String>
 
+    suspend fun deletePost(
+        uid: Long,
+        postId: Long,
+    ): Result<Boolean>
+
     suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>>
 
     suspend fun getEveryPost(uid: Long): Result<List<Post>>

@@ -2,6 +2,7 @@ package com.whyranoid.data.datasource.post
 
 import com.whyranoid.data.API
 import com.whyranoid.data.model.post.CommentResponse
+import com.whyranoid.data.model.post.DeletePostResponse
 import com.whyranoid.data.model.post.PostResponse
 import com.whyranoid.data.model.post.SendCommentRequest
 import com.whyranoid.data.model.post.UploadPostResponse
@@ -10,6 +11,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -26,6 +28,12 @@ interface PostService {
         @Part("historyContent") historyContent: RequestBody,
         @Part image: MultipartBody.Part,
     ): Response<UploadPostResponse>
+
+    @DELETE
+    suspend fun deletePost(
+        @Query("walkieId") id: Long,
+        @Query("postId") postId: Long,
+    ): Response<DeletePostResponse>
 
     // 사용자가 작성한 글을 가져온다
     @GET(API.LIST_UP_MY_POST)

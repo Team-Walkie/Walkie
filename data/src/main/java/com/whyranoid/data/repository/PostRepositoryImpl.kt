@@ -53,6 +53,10 @@ class PostRepositoryImpl(
         return postDataSource.uploadPost(uid, content, colorMode, history, imagePath)
     }
 
+    override suspend fun deletePost(uid: Long, postId: Long): Result<Boolean> {
+        return postDataSource.deletePost(uid, postId)
+    }
+
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
         return postDataSource.getMyFollowingsPost(uid)
     }

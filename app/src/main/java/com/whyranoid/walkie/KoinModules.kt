@@ -78,6 +78,7 @@ import com.whyranoid.domain.usecase.broadcast.GetGpsState
 import com.whyranoid.domain.usecase.broadcast.GetNetworkState
 import com.whyranoid.domain.usecase.broadcast.RemoveGpsListener
 import com.whyranoid.domain.usecase.broadcast.RemoveNetworkListener
+import com.whyranoid.domain.usecase.community.DeletePostUseCase
 import com.whyranoid.domain.usecase.community.FollowUseCase
 import com.whyranoid.domain.usecase.community.GetSearchedUserUseCase
 import com.whyranoid.domain.usecase.community.RemoveFollowerUseCase
@@ -190,6 +191,7 @@ val useCaseModule =
         single { GetTopRankChallengePreviewsUseCase(get()) }
         single { StartChallengeUseCase(get(), get()) }
         single { GetPostUseCase(get()) }
+        single { DeletePostUseCase(get(), get()) }
         single { GetUserPostPreviewsUseCase(get()) }
         single { GetUserBadgesUseCase(get()) }
         single { GetUserDetailUseCase(get(), get()) }
