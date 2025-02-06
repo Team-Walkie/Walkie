@@ -35,6 +35,7 @@ import com.whyranoid.presentation.screens.Screen.Companion.bottomNavigationItems
 import com.whyranoid.presentation.screens.challenge.ChallengeCompleteScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeDetailScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeExitScreen
+import com.whyranoid.presentation.screens.challenge.ChallengeImageSaveScreen
 import com.whyranoid.presentation.screens.challenge.ChallengeMainScreen
 import com.whyranoid.presentation.screens.community.CommentScreen
 import com.whyranoid.presentation.screens.community.SearchFriendScreen
@@ -189,6 +190,15 @@ fun AppScreenContent(
                 val arguments = requireNotNull(backStackEntry.arguments)
                 val challengeId = arguments.getLong("challengeId")
                 ChallengeCompleteScreen(navController, challengeId)
+            }
+
+            composable(
+                Screen.ChallengeImageSaveScreen.route,
+                Screen.ChallengeImageSaveScreen.arguments,
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                val challengeId = arguments.getLong("challengeId")
+                ChallengeImageSaveScreen(navController, challengeId)
             }
 
             composable(
