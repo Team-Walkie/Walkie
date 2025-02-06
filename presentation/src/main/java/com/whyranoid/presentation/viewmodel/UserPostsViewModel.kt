@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.user.User
+import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetUserDetailUseCase
 import com.whyranoid.domain.usecase.GetUserPostsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

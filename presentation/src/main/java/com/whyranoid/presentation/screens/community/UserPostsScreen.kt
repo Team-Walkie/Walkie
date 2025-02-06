@@ -16,6 +16,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,12 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.user.User
+import com.whyranoid.domain.usecase.GetMyUidUseCase
+import com.whyranoid.presentation.component.bottomsheet.DeletePostBottomSheetDialog
 import com.whyranoid.presentation.component.community.PostItem
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
 import com.whyranoid.presentation.viewmodel.CommunityScreenViewModel
 import com.whyranoid.presentation.viewmodel.UserPostUiState
 import com.whyranoid.presentation.viewmodel.UserPostsViewModel
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -38,13 +46,16 @@ fun UserPostScreen(
     onProfileClicked: (user: User) -> Unit,
     onCommentClicked: (post: Post) -> Unit,
     onBackPressed: () -> Unit = {},
+    getMyUidUseCase: GetMyUidUseCase = get(),
 ) {
 
     val viewModel = koinViewModel<UserPostsViewModel>()
     val communityViewModel = koinViewModel<CommunityScreenViewModel>()
     val userPostUiState = viewModel.userPostUiState.collectAsStateWithLifecycle()
+    var myUid: Long? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = uid) {
+        myUid = getMyUidUseCase().getOrNull()
         viewModel.getUiData(uid)
     }
 
@@ -68,7 +79,9 @@ fun UserPostScreen(
                 communityViewModel::likePost,
                 onProfileClicked,
                 onCommentClicked,
-                onBackPressed
+                onBackPressed,
+                myUid,
+                refreshScreen = { viewModel.getUiData(uid) },
             )
         }
     }
@@ -83,8 +96,13 @@ fun UserPostUi(
     onClickLikePost: (postId: Long) -> Unit,
     onProfileClicked: (user: User) -> Unit,
     onCommentClicked: (post: Post) -> Unit,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    myUid: Long? = null,
+    refreshScreen: () -> Unit = {},
 ) {
+
+    var deletePostId: Long? by remember { mutableStateOf(null) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,6 +149,7 @@ fun UserPostUi(
 
 
             val scrollState = rememberLazyListState()
+
             LaunchedEffect(key1 = postId) {
                 scrollState.scrollToItem(
                     maxOf(0, posts.indexOfFirst { it.id == postId }),
@@ -156,11 +175,23 @@ fun UserPostUi(
                             onCommentClicked = { post ->
                                 onCommentClicked(post)
                             },
+                            isMyPost = user.uid == myUid,
+                            onClickMore = {
+                                deletePostId = post.id
+                            }
                         )
                     }
                 }
             }
         }
+    }
+
+    deletePostId?.let {
+        DeletePostBottomSheetDialog(
+            postId = it,
+            dismiss = { deletePostId = null },
+            refreshScreen = refreshScreen,
+        )
     }
 }
 

@@ -26,6 +26,9 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.whyranoid.presentation.component.bar.WalkieTopBar
+import com.whyranoid.presentation.component.bottomsheet.DeletePostBottomSheetDialog
 import com.whyranoid.presentation.component.community.PostItem
 import com.whyranoid.presentation.component.community.RunningFollowerItem
 import com.whyranoid.presentation.component.running.RunningFollowerItemWithLikable
@@ -76,7 +80,7 @@ fun CommunityScreen(navController: NavController) {
                                 .background(if (isEveryPost) WalkieColor.GrayBackground else WalkieColor.PrimarySurface)
                                 .clickable { viewModel.switchPostType() },
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                             Text(
                                 text = "팔로잉",
                                 fontSize = 14.sp,
@@ -160,6 +164,8 @@ fun CommunityScreen(navController: NavController) {
                 }
             )
 
+            var deletePostId: Long? by remember { mutableStateOf(null) }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -167,6 +173,7 @@ fun CommunityScreen(navController: NavController) {
             ) {
                 LazyColumn {
                     state.posts.getDataOrNull()?.forEach { post ->
+                        val myUid = state.myThumbnailState.getDataOrNull()?.uid
                         item {
                             PostItem(
                                 post = post,
@@ -187,7 +194,16 @@ fun CommunityScreen(navController: NavController) {
                                     navController.navigate(Screen.CommentScreen.route)
                                 },
                                 onPostPreviewClicked = { uid: Long, postId: Long ->
-                                    navController.navigate(Screen.UserPostsScreen.route(uid, postId))
+                                    navController.navigate(
+                                        Screen.UserPostsScreen.route(
+                                            uid,
+                                            postId
+                                        )
+                                    )
+                                },
+                                isMyPost = myUid == post.author.uid,
+                                onClickMore = {
+                                    deletePostId = post.id
                                 }
                             )
                         }
@@ -199,6 +215,14 @@ fun CommunityScreen(navController: NavController) {
                     state = pullRefreshState,
                     modifier = Modifier.align(androidx.compose.ui.Alignment.TopCenter)
                 )
+
+                deletePostId?.let{
+                    DeletePostBottomSheetDialog(
+                        postId = it,
+                        dismiss = { deletePostId = null },
+                        refreshScreen = { viewModel.getPosts() }
+                    )
+                }
             }
         }
     }

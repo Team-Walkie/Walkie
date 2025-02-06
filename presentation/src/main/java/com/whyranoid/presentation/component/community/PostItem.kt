@@ -20,7 +20,9 @@ fun PostItem(
     onLikeClicked: (Long) -> Unit = {},
     onProfileClicked: (User) -> Unit = {},
     onCommentClicked: (Post) -> Unit = {},
-    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ -> }
+    onPostPreviewClicked: (uid: Long, postId: Long) -> Unit = { _, _ -> },
+    isMyPost: Boolean = false,
+    onClickMore: () -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxHeight(),
@@ -35,6 +37,8 @@ fun PostItem(
             post.author,
             post.address,
             onProfileClicked,
+            isMyPost,
+            onClickMore
         )
 
         PostImagePreview(
