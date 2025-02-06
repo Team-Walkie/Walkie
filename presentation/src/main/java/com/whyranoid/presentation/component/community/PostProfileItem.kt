@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +30,12 @@ fun PostProfileItem(
     user: User,
     address: String,
     onProfileClicked: (User) -> Unit = {},
+    isMyPost: Boolean = false,
+    onClickMore: () -> Unit = {},
 ) {
     Row(
-        Modifier.clickable { onProfileClicked(user) }
+        Modifier
+            .clickable { onProfileClicked(user) }
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -60,6 +66,19 @@ fun PostProfileItem(
             Text(
                 address,
                 style = WalkieTypography.Body2,
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+        if (isMyPost) {
+            Icon(
+                modifier =
+                Modifier.clip(CircleShape).clickable {
+                    onClickMore()
+                },
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = "더보기 버튼",
+                tint = WalkieColor.GrayDefault
             )
         }
     }

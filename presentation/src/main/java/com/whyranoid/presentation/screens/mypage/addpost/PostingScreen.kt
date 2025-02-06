@@ -346,6 +346,7 @@ fun Map(
         NaverMap(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .aspectRatio(1f),
             cameraPositionState = cameraPositionState,
             uiSettings = mapUiSettings,

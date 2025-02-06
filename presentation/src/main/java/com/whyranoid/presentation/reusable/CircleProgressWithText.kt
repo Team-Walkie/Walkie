@@ -33,7 +33,7 @@ fun CircleProgressWithText(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .alpha(0.5f)
+            .alpha(0.0f)
             .background(WalkieColor.GrayDefault)
             .pointerInput(Unit) { // 터치 이벤트 소비
                 detectTapGestures(onPress = {

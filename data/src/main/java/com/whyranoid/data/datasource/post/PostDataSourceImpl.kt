@@ -100,6 +100,13 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         }
     }
 
+    override suspend fun deletePost(uid: Long, postId: Long): Result<Boolean> {
+        return kotlin.runCatching {
+            val deleteResponse = requireNotNull(postService.deletePost(uid, postId).body())
+            deleteResponse.status == 200
+        }
+    }
+
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getPosts(uid).body())
