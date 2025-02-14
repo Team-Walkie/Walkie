@@ -38,7 +38,7 @@ fun ChallengeExitModalBottomSheetContainer(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     modalSheetState: ModalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     ),
     onPositiveButtonClicked: (Challenge) -> Unit = {},
