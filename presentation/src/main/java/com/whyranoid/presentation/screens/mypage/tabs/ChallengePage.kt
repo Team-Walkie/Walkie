@@ -62,6 +62,8 @@ fun ChallengePage(
                     ) {
                         onChallengePreviewClicked(it.id)
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }
