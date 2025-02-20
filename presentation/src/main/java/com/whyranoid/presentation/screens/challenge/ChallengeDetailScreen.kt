@@ -275,12 +275,6 @@ fun ChallengeDetailContent(
                                 )
                                 Spacer(modifier = Modifier.height(40.dp))
 
-
-                                // Todo: remove
-                                WalkiePositiveButton(text = "완료하기") {
-                                    onChallengeCompleteButtonClicked(challenge.id)
-                                }
-
                             }
                         } else {
                             Spacer(modifier = Modifier.height(28.dp))
