@@ -104,6 +104,8 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         return kotlin.runCatching {
             val deleteResponse = requireNotNull(postService.deletePost(uid, postId).body())
             deleteResponse.status == 200
+        }.onFailure {
+            it.printStackTrace()
         }
     }
 

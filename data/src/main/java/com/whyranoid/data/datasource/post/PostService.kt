@@ -29,7 +29,7 @@ interface PostService {
         @Part image: MultipartBody.Part,
     ): Response<UploadPostResponse>
 
-    @DELETE
+    @DELETE(API.DELETE_POST)
     suspend fun deletePost(
         @Query("walkieId") id: Long,
         @Query("postId") postId: Long,
