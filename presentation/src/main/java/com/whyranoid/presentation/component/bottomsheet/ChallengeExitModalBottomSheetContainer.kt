@@ -74,7 +74,7 @@ fun ChallengeExitModalBottomSheetContainer(
                 Spacer(modifier = Modifier.height(31.dp))
 
                 AsyncImage(
-                    model = challenge.badge.imageUrl, contentDescription = "",
+                    model = challenge.badge.failureImageUrl, contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
                         .padding(bottom = 10.dp),
