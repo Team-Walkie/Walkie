@@ -110,7 +110,7 @@ fun ChallengeExitContent(
                 Spacer(modifier = Modifier.height(57.dp))
 
                 AsyncImage(
-                    model = challenge.badge.imageUrl, contentDescription = "",
+                    model = challenge.badge.failureImageUrl, contentDescription = "",
                     modifier = Modifier
                         .size(208.dp)
                         .clip(CircleShape),

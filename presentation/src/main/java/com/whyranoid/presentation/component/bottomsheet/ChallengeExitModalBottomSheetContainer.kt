@@ -38,7 +38,7 @@ fun ChallengeExitModalBottomSheetContainer(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     modalSheetState: ModalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     ),
     onPositiveButtonClicked: (Challenge) -> Unit = {},
@@ -74,7 +74,7 @@ fun ChallengeExitModalBottomSheetContainer(
                 Spacer(modifier = Modifier.height(31.dp))
 
                 AsyncImage(
-                    model = challenge.badge.imageUrl, contentDescription = "",
+                    model = challenge.badge.failureImageUrl, contentDescription = "",
                     modifier = Modifier
                         .size(100.dp)
                         .padding(bottom = 10.dp),

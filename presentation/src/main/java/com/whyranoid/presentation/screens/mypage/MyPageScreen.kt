@@ -496,7 +496,7 @@ fun MyPageTopAppBar(
                 Icon(Icons.Default.Menu, "")
             }
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
     )
 }
 

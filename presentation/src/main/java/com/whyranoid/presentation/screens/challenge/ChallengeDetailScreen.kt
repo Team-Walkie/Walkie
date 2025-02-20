@@ -118,7 +118,7 @@ fun ChallengeDetailContent(
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
 
@@ -274,12 +274,6 @@ fun ChallengeDetailContent(
                                     textDecoration = TextDecoration.Underline
                                 )
                                 Spacer(modifier = Modifier.height(40.dp))
-
-
-                                // Todo: remove
-                                WalkiePositiveButton(text = "완료하기") {
-                                    onChallengeCompleteButtonClicked(challenge.id)
-                                }
 
                             }
                         } else {
