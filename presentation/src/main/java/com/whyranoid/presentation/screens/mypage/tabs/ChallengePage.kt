@@ -54,6 +54,9 @@ fun ChallengePage(
             }
         } else {
             Column(Modifier.fillMaxWidth()) {
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 challengePreviews.forEach {
                     ChallengeItem(
                         Modifier.padding(horizontal = 20.dp),
