@@ -29,9 +29,7 @@ class TotalBadgeViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getMyUidUseCase().onSuccess { uid ->
-                getBadges(uid)
-            }
+            getMyUidUseCase().onSuccess { uid -> getBadges(uid) }
         }
     }
 
