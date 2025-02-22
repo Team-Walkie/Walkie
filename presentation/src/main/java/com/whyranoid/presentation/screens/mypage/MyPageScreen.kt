@@ -295,7 +295,8 @@ fun UserPageContent(
                 Spacer(Modifier.height(12.dp))
             }
 
-            val badgeList = state.userBadgesState.getDataOrNull() ?: emptyList()
+            val badgeList =
+                state.userBadgesState.getDataOrNull()?.filter { it.isRepresentative } ?: emptyList()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
