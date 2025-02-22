@@ -5,8 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.domain.usecase.GetMyUidUseCase
 import com.whyranoid.domain.usecase.GetUserBadgesUseCase
+import com.whyranoid.domain.usecase.SetUserBadgesUseCase
 import com.whyranoid.presentation.model.UiState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -21,15 +26,25 @@ data class TotalBadgeState(
 
 class TotalBadgeViewModel(
     private val getUserBadgesUseCase: GetUserBadgesUseCase,
+    private val setUserBadgesUseCase: SetUserBadgesUseCase,
     private val getMyUidUseCase: GetMyUidUseCase
 ): ViewModel(), ContainerHost<TotalBadgeState, TotalBadgeSideEffect> {
 
     override val container =
         container<TotalBadgeState, TotalBadgeSideEffect>(TotalBadgeState())
 
+    private val _setBadgeSuccessEvent = MutableSharedFlow<Unit>()
+    val setBadgeSuccessEvent = _setBadgeSuccessEvent.asSharedFlow()
+
+    private val _uid = MutableStateFlow<Long?>(null)
+    val uid = _uid.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getMyUidUseCase().onSuccess { uid -> getBadges(uid) }
+            getMyUidUseCase().onSuccess {
+                uid -> getBadges(uid)
+                _uid.value = uid
+            }
         }
     }
 
@@ -41,6 +56,13 @@ class TotalBadgeViewModel(
                     badges = UiState.Success(badges),
                 )
             }
+        }
+    }
+
+    fun setBadges(badges: List<Badge>) = intent {
+        val uid = _uid.value ?: return@intent
+        setUserBadgesUseCase(uid, badges).onSuccess {
+            _setBadgeSuccessEvent.emit(Unit)
         }
     }
 }

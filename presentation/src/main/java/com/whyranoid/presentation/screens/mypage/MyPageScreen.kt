@@ -319,7 +319,9 @@ fun UserPageContent(
                             .size(56.dp),
                     )
                 }
-                repeat(5 - badgeList.size) { BadgePlaceHolder() }
+                repeat(5 - badgeList.size) {
+                    BadgePlaceHolder(modifier = Modifier.padding(vertical = 12.dp))
+                }
 
                 Spacer(modifier = Modifier.width(13.dp))
             }

@@ -22,7 +22,6 @@ fun MainBadgeItem(
     badgeInfo: Badge,
     currentState: DragTargetInfo
 ) {
-    Log.d("sm.shin", "mainbadgeInfo: $badgeInfo")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier

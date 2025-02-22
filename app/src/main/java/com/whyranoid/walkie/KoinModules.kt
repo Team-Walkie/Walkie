@@ -69,6 +69,7 @@ import com.whyranoid.domain.usecase.GetUserPostsUseCase
 import com.whyranoid.domain.usecase.GetUserUseCase
 import com.whyranoid.domain.usecase.LikePostUseCase
 import com.whyranoid.domain.usecase.RequestLoginUseCase
+import com.whyranoid.domain.usecase.SetUserBadgesUseCase
 import com.whyranoid.domain.usecase.SignOutUseCase
 import com.whyranoid.domain.usecase.StartChallengeUseCase
 import com.whyranoid.domain.usecase.UploadPostUseCase
@@ -153,7 +154,7 @@ val viewModelModule =
         viewModel { CommunityScreenViewModel(get(), get(), get(), get(), get(), get(), get()) }
         viewModel { FollowingViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { SettingViewModel(get(), get()) }
-        viewModel { TotalBadgeViewModel(get(), get()) }
+        viewModel { TotalBadgeViewModel(get(), get(), get()) }
         viewModel { UserPostsViewModel(get(), get()) }
     }
 
@@ -196,6 +197,7 @@ val useCaseModule =
         single { DeletePostUseCase(get(), get()) }
         single { GetUserPostPreviewsUseCase(get()) }
         single { GetUserBadgesUseCase(get()) }
+        single { SetUserBadgesUseCase(get()) }
         single { GetUserDetailUseCase(get(), get()) }
         single { GetRunningFollowerUseCase(get(), get()) }
         single { RunningFinishUseCase(get(), get()) }

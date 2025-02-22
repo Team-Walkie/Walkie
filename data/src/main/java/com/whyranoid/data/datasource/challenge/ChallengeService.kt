@@ -2,6 +2,7 @@ package com.whyranoid.data.datasource.challenge
 
 import com.whyranoid.data.API
 import com.whyranoid.data.model.StatusWithMessage
+import com.whyranoid.data.model.challenge.BadgeRequest
 import com.whyranoid.data.model.challenge.BadgeResponse
 import com.whyranoid.data.model.challenge.ChallengeDetailResponse
 import com.whyranoid.data.model.challenge.ChallengeResponse
@@ -47,6 +48,11 @@ interface ChallengeService {
     suspend fun getBadgeList(
         @Query("walkieId") uid: Long
     ): Response<List<BadgeResponse>>
+
+    @POST(API.BadgeAPI.UPDATE_BADGE_INDICES)
+    suspend fun setBadgeList(
+        @Body badges: BadgeRequest
+    ): Response<Unit>
 
     @POST(API.CHALLENGE_CHANGE_STATUS)
     suspend fun changeChallengeStatus(

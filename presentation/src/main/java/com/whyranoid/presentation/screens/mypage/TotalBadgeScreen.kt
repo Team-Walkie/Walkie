@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -44,6 +46,7 @@ import com.whyranoid.presentation.reusable.DragTargetInfo
 import com.whyranoid.presentation.reusable.DropTarget
 import com.whyranoid.presentation.reusable.LongPressDraggable
 import com.whyranoid.presentation.reusable.MainBadgeItem
+import com.whyranoid.presentation.reusable.SingleToast
 import com.whyranoid.presentation.reusable.WalkieTitleBar
 import com.whyranoid.presentation.theme.WalkieTheme
 import com.whyranoid.presentation.theme.WalkieTypography
@@ -55,10 +58,18 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun TotalBadgeScreen(
     navController: NavController
 ) {
+    val context = LocalContext.current
     val viewModel = koinViewModel<TotalBadgeViewModel>()
     val state by viewModel.collectAsState()
 
     val dragTargetInfo = remember { DragTargetInfo() }
+    val badgeChangedMsg = stringResource(id = R.string.badge_changed_message)
+
+    LaunchedEffect(viewModel.setBadgeSuccessEvent) {
+        viewModel.setBadgeSuccessEvent.collect {
+            SingleToast.show(context, badgeChangedMsg)
+        }
+    }
 
     if (state.badges is UiState.Success) {
         val badges = state.badges.getDataOrNull() ?: emptyList()
@@ -69,12 +80,18 @@ fun TotalBadgeScreen(
 
         LongPressDraggable(state = dragTargetInfo) {
 
+            fun syncChangedBadgeOrder() {
+                viewModel.setBadges(mainBadgeList + subBadgeList)
+            }
+
             fun changeBadge(mainBadge: Badge, subBadge: Badge) {
                 val mainBadgeIndex = mainBadgeList.indexOf(mainBadge)
                 val badgeIndex = subBadgeList.indexOf(subBadge)
 
                 mainBadgeList[mainBadgeIndex] = subBadge
                 subBadgeList[badgeIndex] = mainBadge
+
+                syncChangedBadgeOrder()
             }
 
             LazyColumn(
