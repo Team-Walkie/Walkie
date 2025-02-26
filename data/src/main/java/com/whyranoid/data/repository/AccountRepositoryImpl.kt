@@ -104,7 +104,7 @@ class AccountRepositoryImpl(
                 nickName,
                 profileUrl
             ).onSuccess {
-                accountDataStore.updateProfileUrl(profileUrl ?: "")
+                accountDataStore.updateProfileUrl(profileUrl.orEmpty())
                 accountDataStore.updateNickName(nickName)
                 return@runCatching it
             }

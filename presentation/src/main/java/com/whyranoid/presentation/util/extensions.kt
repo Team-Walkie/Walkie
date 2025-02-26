@@ -80,12 +80,6 @@ fun Activity.openStatusBar() {
 }
 
 fun Context.createImageFile(): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    val imageFileName = "JPEG_${timeStamp}_"
-    return File.createTempFile(
-        imageFileName,
-        ".jpg",
-        storageDir
-    )
+    val storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    return File(storageDir, "image.jpeg")
 }

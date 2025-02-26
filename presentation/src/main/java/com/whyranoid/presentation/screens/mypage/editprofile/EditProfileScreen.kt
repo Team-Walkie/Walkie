@@ -24,7 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -39,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +71,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val viewModel = koinViewModel<EditProfileViewModel>()
@@ -83,7 +82,7 @@ fun EditProfileScreen(navController: NavController) {
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
         context,
-        "com.whyranoid.walkie.provider",
+        "${context.packageName}.provider",
         file
     )
 
@@ -174,6 +173,9 @@ fun EditProfileScreen(navController: NavController) {
                 WalkieBottomSheetButton(
                     buttonText = "현재 프로필 사진 삭제",
                     onClick = {
+                        if(viewModel.userInfoUiState.value?.profileUrl != null) {
+                            viewModel.isChangeButtonEnabled.value = true
+                        }
                         viewModel.setProfileUrl(null)
                         coroutineScope.launch {
                             bottomSheetState.hide()
@@ -195,7 +197,6 @@ fun EditProfileScreen(navController: NavController) {
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileContent(
     walkieId: Long,
@@ -236,7 +237,7 @@ fun EditProfileContent(
     if (userInfoUiState != null) {
         val name by remember { mutableStateOf(userInfoUiState?.name) }
         var nickname by remember { mutableStateOf(userInfoUiState?.nickname) }
-        val profileImg = userInfoUiState?.profileUrl
+        val profileImg by rememberUpdatedState(newValue = userInfoUiState?.profileUrl)
 
         Column(
             modifier = Modifier
@@ -274,8 +275,8 @@ fun EditProfileContent(
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(profileImg)
-                        .fallback(R.drawable.ic_default_profile)
-                        .error(R.drawable.ic_default_profile)
+                        .fallback(R.drawable.ic_walkie_logo)
+                        .error(R.drawable.ic_walkie_logo)
                         .build(),
                     onError = {
                         Log.d("sm.shin", "error: ${it.result.throwable.message}")
