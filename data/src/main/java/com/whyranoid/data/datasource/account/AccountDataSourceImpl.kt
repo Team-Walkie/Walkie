@@ -23,6 +23,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.util.Locale
+import kotlin.math.min
 
 class AccountDataSourceImpl(
     private val accountService: AccountService,
@@ -199,14 +200,14 @@ class AccountDataSourceImpl(
     }
 
     private fun makePartFromContentUri(uri: Uri, partName: String): MultipartBody.Part {
-        val bitmap = context.contentResolver.openInputStream(uri).use {
+        val bitmap: Bitmap = context.contentResolver.openInputStream(uri).use {
             BitmapFactory.decodeStream(it)
         }
 
         val tempFile = File.createTempFile("temp_upload", ".jpeg", context.cacheDir)
 
         FileOutputStream(tempFile).use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            resizeBitmap(bitmap).compress(Bitmap.CompressFormat.JPEG, 70, it)
         }
 
         val requestBody = tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
@@ -216,5 +217,12 @@ class AccountDataSourceImpl(
             tempFile.name,
             requestBody
         )
+    }
+
+    private fun resizeBitmap(bitmap: Bitmap, maxWidth: Int = 1080, maxHeight: Int = 1920): Bitmap {
+        val ratio = min(maxWidth.toFloat() / bitmap.width, maxHeight.toFloat() / bitmap.height)
+        val width = (bitmap.width * ratio).toInt()
+        val height = (bitmap.height * ratio).toInt()
+        return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
