@@ -158,7 +158,7 @@ class AccountDataSourceImpl(
 
         // 비트맵을 PNG 파일로 저장
         val outputStream = FileOutputStream(tempFile)
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        resizeBitmap(bitmap).compress(Bitmap.CompressFormat.PNG, 70, outputStream)
         outputStream.close()
 
         // MultipartBody.Part 생성
