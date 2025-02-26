@@ -3,6 +3,7 @@ package com.whyranoid.presentation.screens.mypage.editprofile
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -79,12 +80,7 @@ fun EditProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    val file = context.createImageFile()
-    val uri = FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        file
-    )
+    var uri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
     val cameraLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) { success ->
@@ -98,9 +94,10 @@ fun EditProfileScreen(navController: NavController) {
         ActivityResultContracts.RequestPermission()
     ) {
         if (it) {
-            uri?.let { uri ->
-                cameraLauncher.launch(uri)
-            }
+            val file = context.createImageFile()
+            val newUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+            uri = newUri
+            cameraLauncher.launch(newUri)
         } else {
             // 권한 거부시
         }
