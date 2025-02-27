@@ -34,7 +34,6 @@ fun <T> DragTarget(
 ) {
     var currentPosition by remember { mutableStateOf(Offset.Zero) }
     var isDragging by remember { mutableStateOf(false) }
-    Log.d("sm.shin", "dragtarget: $dataToDrop")
     currentState.dataToDrop = dataToDrop
 
     Box(
@@ -46,7 +45,6 @@ fun <T> DragTarget(
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = {
-                        Log.d("sm.shin", "onDragStart: $dataToDrop")
                         currentState.isDragging = true
                         currentState.dragPosition = currentPosition
                         currentState.draggableComposable = content

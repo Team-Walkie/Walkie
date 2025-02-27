@@ -295,18 +295,20 @@ fun UserPageContent(
                 Spacer(Modifier.height(12.dp))
             }
 
-            val badgeList = state.userBadgesState.getDataOrNull() ?: emptyList()
+            val badgeList =
+                state.userBadgesState.getDataOrNull()?.filter { it.isRepresentative } ?: emptyList()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(WalkieColor.GrayBackground)
-                    .padding(12.dp)
             ) {
+                Spacer(modifier = Modifier.width(13.dp))
+
                 repeat(minOf(badgeList.size, 5)) {
                     AsyncImage(
                         model = badgeList[it].imageUrl,
@@ -317,7 +319,11 @@ fun UserPageContent(
                             .size(56.dp),
                     )
                 }
-                repeat(5 - badgeList.size) { BadgePlaceHolder() }
+                repeat(5 - badgeList.size) {
+                    BadgePlaceHolder(modifier = Modifier.padding(vertical = 12.dp))
+                }
+
+                Spacer(modifier = Modifier.width(13.dp))
             }
 
             // 마이페이지인 경우
@@ -327,9 +333,9 @@ fun UserPageContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .clickable(enabled = true) {
+                        .clickable(enabled = badgeList.size >= 5) {
                             onTotalBadgePageClicked()
                         }
                         .background(WalkieColor.GrayBackground)

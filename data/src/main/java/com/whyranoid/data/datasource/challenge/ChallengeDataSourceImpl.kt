@@ -1,6 +1,7 @@
 package com.whyranoid.data.datasource.challenge
 
 import com.whyranoid.data.getResult
+import com.whyranoid.data.model.challenge.BadgeRequest
 import com.whyranoid.data.model.challenge.request.ChallengeChangeStatusRequest
 import com.whyranoid.data.model.challenge.request.ChallengeStartRequest
 import com.whyranoid.domain.datasource.ChallengeDataSource
@@ -63,6 +64,17 @@ class ChallengeDataSourceImpl(
                 .getResult { badgeList ->
                     badgeList.map { it.toBadge() }
                 }
+        }
+    }
+
+    override suspend fun setUserBadges(uid: Long, badges: List<Badge>): Result<Unit> {
+        return runCatching {
+            challengeService.setBadgeList(
+                BadgeRequest(
+                    walkieId = uid,
+                    badgeIdList = badges.map { it.id }
+                )
+            )
         }
     }
 
