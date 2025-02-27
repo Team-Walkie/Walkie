@@ -6,9 +6,10 @@ import com.whyranoid.domain.datasource.PostDataSource
 import com.whyranoid.domain.model.post.Comment
 import com.whyranoid.domain.model.post.Post
 import com.whyranoid.domain.model.post.PostPreview
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.util.Date
 
@@ -76,14 +77,14 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
         history: String,
         imagePath: String,
     ): Result<String> {
-        val uidBody = RequestBody.create(MediaType.parse("text/plain"), uid.toString())
-        val contentBody = RequestBody.create(MediaType.parse("text/plain"), content)
+        val uidBody = uid.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val contentBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
         val colorModeBody =
-            RequestBody.create(MediaType.parse("text/plain"), colorMode.toString())
-        val historyBody = RequestBody.create(MediaType.parse("text/plain"), history)
+            colorMode.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val historyBody = history.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val file = File(imagePath)
-        val fileBody = RequestBody.create(MediaType.parse("image/*"), file)
+        val fileBody = file.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("image", file.name, fileBody)
 
         return kotlin.runCatching {

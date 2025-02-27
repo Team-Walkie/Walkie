@@ -274,7 +274,7 @@ val networkModule =
                             Regex("/api/follow/(\\d+)/following"), // polling 방식 업데이트
                             Regex("/api/follow/(\\d+)/walking-followings"), // polling 방식 업데이트
                             Regex("/api/community/listup-post"), // 커뮤니티 탭, 자체 로딩바 있음
-                            Regex("/api/community/upload-post") // 게시글 업로드, 자체 로딩바 있음
+                            Regex("/api/community/upload-post"), // 게시글 업로드, 자체 로딩바 있음
                         )
                     )
                 )

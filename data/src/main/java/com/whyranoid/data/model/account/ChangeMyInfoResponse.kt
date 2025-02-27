@@ -1,7 +1,7 @@
 package com.whyranoid.data.model.account
 
 data class ChangeMyInfoResponse (
-    val nickname: String,
+    val profileImg: String?,
+    val nickName: String,
     val name: String,
-    val profileImg: String?
 )

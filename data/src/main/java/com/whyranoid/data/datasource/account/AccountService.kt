@@ -39,11 +39,13 @@ interface AccountService {
         @Query("uid") uid: String,
     ): Response<LoginDataResponse>
 
+    @Multipart
     @POST(API.WalkingControl.MY)
     suspend fun changeMyInfo(
-        @Part("walkieId") id: Long,
-        @Part profileImg: MultipartBody.Part?,
-        @Part("nickname") nickName: String,
+        @Part("nickname") nickName: RequestBody,
+        @Part("walkieId") id: RequestBody,
+        @Part("isImgDeleted") isImgDeleted: RequestBody,
+        @Part profileImg: MultipartBody.Part,
     ): Response<ChangeMyInfoResponse>
 
     @GET(API.WalkingControl.MY)

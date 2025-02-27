@@ -10,9 +10,6 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -80,12 +77,11 @@ fun Activity.openStatusBar() {
 }
 
 fun Context.createImageFile(): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    val imageFileName = "JPEG_${timeStamp}_"
-    return File.createTempFile(
-        imageFileName,
-        ".jpg",
-        storageDir
-    )
+    val storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+    val fileName = "image_${System.currentTimeMillis()}.jpeg"
+    val file = File(storageDir, fileName)
+    file.createNewFile()
+
+    return file
 }

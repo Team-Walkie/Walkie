@@ -3,7 +3,9 @@ package com.whyranoid.data.datasource.account
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.annotation.DrawableRes
+import androidx.core.net.toUri
 import com.whyranoid.data.R
 import com.whyranoid.data.getResult
 import com.whyranoid.data.model.account.toLoginData
@@ -13,13 +15,15 @@ import com.whyranoid.domain.model.account.LoginData
 import com.whyranoid.domain.model.account.UserInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.util.Locale
+import kotlin.math.min
 
 class AccountDataSourceImpl(
     private val accountService: AccountService,
@@ -33,17 +37,13 @@ class AccountDataSourceImpl(
         agreeGps: Boolean,
         agreeMarketing: Boolean,
     ): Result<Long> {
-        val userNameBody = RequestBody.create(MediaType.parse("text/plain"), nickName)
-        val nameBody = RequestBody.create(MediaType.parse("text/plain"), name)
-        val authIdBody = RequestBody.create(MediaType.parse("text/plain"), authId)
-        val agreeGpsBody = RequestBody.create(
-            MediaType.parse("text/plain"),
-            agreeGps.toString().lowercase(Locale.ROOT)
-        )
-        val agreeSubscriptionBody = RequestBody.create(
-            MediaType.parse("text/plain"),
-            agreeMarketing.toString().lowercase(Locale.ROOT)
-        )
+        val userNameBody = nickName.toRequestBody("text/plain".toMediaTypeOrNull())
+        val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val authIdBody = authId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val agreeGpsBody = agreeGps.toString().lowercase(Locale.ROOT)
+            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val agreeSubscriptionBody = agreeMarketing.toString().lowercase(Locale.ROOT)
+            .toRequestBody("text/plain".toMediaTypeOrNull())
         val profileImageBody = uploadImageFromUrl(profileUrl, "profileImg")
 
         return kotlin.runCatching {
@@ -90,23 +90,29 @@ class AccountDataSourceImpl(
         profileUrl: String?
     ): Result<Boolean> {
         return kotlin.runCatching {
-            var imagePart: MultipartBody.Part? = null
-
-            if (profileUrl != null) {
-                val file = File(profileUrl)
-                val fileBody = RequestBody.create(MediaType.parse("image/*"), file)
-                imagePart = MultipartBody.Part.createFormData("profileImg", file.name, fileBody)
-            }
+            val imageUrl:MultipartBody.Part = uploadImageFromUrl(
+                imageUrl = profileUrl,
+                partName = "profileImg",
+            )
+            val nickNameRequest = nickName
+                .toRequestBody("text/plain".toMediaTypeOrNull())
+            val walkieIdRequest = walkieId.toString()
+                .toRequestBody("text/plain".toMediaTypeOrNull())
+            val isImgDeletedRequest = (profileUrl == null).toString().lowercase(Locale.ROOT)
+                .toRequestBody("text/plain".toMediaTypeOrNull())
 
             val response = accountService.changeMyInfo(
-                walkieId,
-                imagePart,
-                nickName
+                nickName = nickNameRequest,
+                id = walkieIdRequest,
+                isImgDeleted = isImgDeletedRequest,
+                profileImg = imageUrl
             )
             if (response.isSuccessful) {
                 return Result.success(true)
             } else {
-                return Result.failure(Exception(response.message()))
+                return Result.failure(
+                    Exception(response.message())
+                )
             }
         }
     }
@@ -129,7 +135,11 @@ class AccountDataSourceImpl(
     ): MultipartBody.Part {
         return withContext(Dispatchers.IO) {
             imageUrl?.let { url ->
-                makePartFromUrl(url, partName)
+                if (url.startsWith("content://")) {
+                    makePartFromContentUri(url.toUri(), partName)
+                } else {
+                    makePartFromUrl(url, partName)
+                }
             } ?: kotlin.run {
                 makePartFromRes(R.drawable.ic_walkie_logo, partName)
             }
@@ -148,14 +158,12 @@ class AccountDataSourceImpl(
 
         // 비트맵을 PNG 파일로 저장
         val outputStream = FileOutputStream(tempFile)
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        resizeBitmap(bitmap).compress(Bitmap.CompressFormat.PNG, 70, outputStream)
         outputStream.close()
 
         // MultipartBody.Part 생성
-        val requestBody = RequestBody.create(
-            MediaType.parse("image/png"),
-            tempFile
-        )
+        val requestBody = tempFile
+            .asRequestBody("image/png".toMediaTypeOrNull())
 
         return MultipartBody.Part.createFormData(
             partName, // 서버에서 받을 파라미터 이름
@@ -181,15 +189,40 @@ class AccountDataSourceImpl(
         }
 
         // MultipartBody.Part 생성
-        val requestBody = RequestBody.create(
-            MediaType.parse("image/jpg"),
-            tempFile
-        )
+        val requestBody = tempFile
+            .asRequestBody("image/jpg".toMediaTypeOrNull())
 
         return MultipartBody.Part.createFormData(
             partName, // 서버에서 받을 파라미터 이름
             tempFile.name,
             requestBody
         )
+    }
+
+    private fun makePartFromContentUri(uri: Uri, partName: String): MultipartBody.Part {
+        val bitmap: Bitmap = context.contentResolver.openInputStream(uri).use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val tempFile = File.createTempFile("temp_upload", ".jpeg", context.cacheDir)
+
+        FileOutputStream(tempFile).use {
+            resizeBitmap(bitmap).compress(Bitmap.CompressFormat.JPEG, 70, it)
+        }
+
+        val requestBody = tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData(
+            partName,
+            tempFile.name,
+            requestBody
+        )
+    }
+
+    private fun resizeBitmap(bitmap: Bitmap, maxWidth: Int = 1080, maxHeight: Int = 1920): Bitmap {
+        val ratio = min(maxWidth.toFloat() / bitmap.width, maxHeight.toFloat() / bitmap.height)
+        val width = (bitmap.width * ratio).toInt()
+        val height = (bitmap.height * ratio).toInt()
+        return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
