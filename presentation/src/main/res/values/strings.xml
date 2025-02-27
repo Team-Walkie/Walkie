@@ -4,11 +4,6 @@
     <string name="community">커뮤니티</string>
     <string name="challenge_main">챌린지</string>
     <string name="my_page">마이페이지</string>
-    <string name="total_badge_title">전체 뱃지</string>
-    <string name="setting_main_badge_title">대표 뱃지 설정</string>
-    <string name="setting_main_badge_description">뱃지를 꾹 누르면 대표 뱃지를 편집할 수 있어요.</string>
-    <string name="current_badge_count">%d</string>
-    <string name="total_badge_count">개 획득</string>
 
     <!-- setting screen -->
     <string name="edit_profile">프로필 편집</string>
@@ -23,5 +18,13 @@
     <string name="customer_service_email_content">문제가 발생한 화면을 함께 첨부해주시면 더욱 빠른 처리가 가능합니다. 저희 서비스를 이용해주셔서 감사합니다.</string>
     <string name="customer_service_email_chooser">이메일 앱을 선택해주세요</string>
     <string name="open_source_license">오픈소스 라이센스</string>
+
+    <!-- total badge screen -->
+    <string name="total_badge_title">전체 뱃지</string>
+    <string name="setting_main_badge_title">대표 뱃지 설정</string>
+    <string name="setting_main_badge_description">뱃지를 꾹 누르면 대표 뱃지를 편집할 수 있어요.</string>
+    <string name="current_badge_count">%d</string>
+    <string name="total_badge_count">개 획득</string>
+    <string name="badge_changed_message">대표 뱃지가 변경되었어요</string>
 
 </resources>

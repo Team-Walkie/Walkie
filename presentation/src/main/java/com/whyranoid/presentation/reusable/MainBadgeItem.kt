@@ -1,7 +1,6 @@
 package com.whyranoid.presentation.reusable
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.whyranoid.domain.model.challenge.BadgeInfo
+import coil.compose.AsyncImage
+import com.whyranoid.domain.model.challenge.Badge
 import com.whyranoid.presentation.component.badge.BadgePlaceHolder
 
 @Composable
 fun MainBadgeItem(
-    badgeInfo: BadgeInfo,
+    badgeInfo: Badge,
     currentState: DragTargetInfo
 ) {
-    Log.d("sm.shin", "mainbadgeInfo: $badgeInfo")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -34,7 +32,7 @@ fun MainBadgeItem(
                 .size(54.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            if (badgeInfo.image == null) {
+            if (badgeInfo.imageUrl == null) {
                 BadgePlaceHolder(
                     modifier = Modifier
                         .size(45.dp)
@@ -49,8 +47,8 @@ fun MainBadgeItem(
                     dataToDrop = badgeInfo,
                     currentState = currentState,
                     content = {
-                        Image(
-                            painter = painterResource(id = badgeInfo.image),
+                        AsyncImage(
+                            model = badgeInfo.imageUrl,
                             contentDescription = null,
                             modifier = Modifier.size(54.dp)
                         )
