@@ -18,7 +18,7 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
     override suspend fun getPostPreviews(uid: Long): Result<List<PostPreview>> {
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getPosts(uid).body())
-            posts.map { it.toPostPreview() }
+            posts.mapNotNull { it.toPostPreview() }
         }
     }
 
@@ -40,15 +40,15 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
     // TODO 서버 내려갔을 때 앱이 죽지 않도록 예외처리만 했음, 추후 수정 필요
     override suspend fun getMyPostPreviews(uid: Long): Result<List<PostPreview>> {
         val response = postService.myPosts(uid)
-        response.body()?.map { it.toPostPreview() }
+        response.body()?.mapNotNull { it.toPostPreview() }
             ?: return Result.failure(Throwable(response.message().toString()))
-        return Result.success(response.body()?.map { it.toPostPreview() }!!)
+        return Result.success(response.body()?.mapNotNull { it.toPostPreview() }!!)
     }
 
     override suspend fun getMyPosts(uid: Long, myUid: Long): Result<List<Post>> {
         val response = postService.myPosts(uid)
         response.body() ?: return Result.failure(Throwable(response.message().toString()))
-        return Result.success(response.body()?.map { it.toPost(myUid) }!!)
+        return Result.success(response.body()?.mapNotNull { it.toPost(myUid) }!!)
     }
 
     override suspend fun getMyPostPreviews(
@@ -113,14 +113,14 @@ class PostDataSourceImpl(private val postService: PostService) : PostDataSource 
     override suspend fun getMyFollowingsPost(uid: Long): Result<List<Post>> {
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getPosts(uid).body())
-            posts.map { it.toPost(uid) }
+            posts.mapNotNull { it.toPost(uid) }
         }
     }
 
     override suspend fun getEveryPost(uid: Long): Result<List<Post>> {
         return kotlin.runCatching {
             val posts = requireNotNull(postService.getEveryPosts(uid).body())
-            posts.map { it.toPost(uid) }
+            posts.mapNotNull { it.toPost(uid) }
         }
     }
 

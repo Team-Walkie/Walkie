@@ -20,42 +20,47 @@ data class PostResponse(
     @SerializedName("historyContent") val historyContent: String,
     @SerializedName("commentCount") val commentCount: Long,
 ) {
-    fun toPostPreview(): PostPreview {
-        val destructedHistoryContent = historyContent.split('_')
-        return PostPreview(
-            author = poster.toUser(),
-            id = this.postId,
-            isLiked = this.liked,
-            likers = this.likers.map { it.toUser() },
-            imageUrl = this.photo,
-            date = dateFormatter.parse(this.date.replace("T", " ")).time,
-            textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
-            distanceText = destructedHistoryContent[2],
-            timeText = destructedHistoryContent[3],
-            paceText = destructedHistoryContent[4],
-            address = destructedHistoryContent[1],
-            commentCount = commentCount,
-        )
+    fun toPostPreview(): PostPreview? {
+        return kotlin.runCatching {
+            val destructedHistoryContent = historyContent.split('_')
+            return PostPreview(
+                author = poster.toUser(),
+                id = this.postId,
+                isLiked = this.liked,
+                likers = this.likers.map { it.toUser() },
+                imageUrl = this.photo,
+                date = dateFormatter.parse(this.date.replace("T", " ")).time,
+                textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
+                distanceText = destructedHistoryContent[2],
+                timeText = destructedHistoryContent[3],
+                paceText = destructedHistoryContent[4],
+                address = destructedHistoryContent[1],
+                commentCount = commentCount,
+            )
+        }.getOrNull()
     }
 
-    fun toPost(myUid: Long): Post {
-        val destructedHistoryContent = historyContent.split('_')
-        return Post(
-            id = this.postId,
-            imageUrl = this.photo,
-            likeCount = this.likers.size,
-            contents = this.content,
-            author = this.poster.toUser(),
-            isLiked = this.likers.firstOrNull { it.uid == myUid } != null,
-            date = dateFormatter.parse(this.date.replace("T", " ")).time,
-            likers = this.likers.map { it.toUser() },
-            textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
-            distanceText = destructedHistoryContent[2],
-            timeText = destructedHistoryContent[3],
-            paceText = destructedHistoryContent[4],
-            address = destructedHistoryContent[1],
-            commentCount = commentCount,
-        )
+    fun toPost(myUid: Long): Post? {
+        return kotlin.runCatching {
+            val destructedHistoryContent = historyContent.split('_')
+            Post(
+                id = this.postId,
+                imageUrl = this.photo,
+                likeCount = this.likers.size,
+                contents = this.content,
+                author = this.poster.toUser(),
+                isLiked = this.likers.firstOrNull { it.uid == myUid } != null,
+                date = dateFormatter.parse(this.date.replace("T", " ")).time,
+                likers = this.likers.map { it.toUser() },
+                textVisibleState = TextVisibleState.values()[this.colorMode.toInt()],
+                distanceText = destructedHistoryContent[2],
+                timeText = destructedHistoryContent[3],
+                paceText = destructedHistoryContent[4],
+                address = destructedHistoryContent[1],
+                commentCount = commentCount,
+            )
+        }.getOrNull()
+
     }
 
     private fun String.toRealUrl(): String {

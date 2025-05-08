@@ -41,13 +41,15 @@ fun PostItem(
             onClickMore
         )
 
-        PostImagePreview(
-            postPreview = post.toPostPreview(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-            onPostPreviewClicked = onPostPreviewClicked
-        )
+        post.toPostPreview()?.let {
+            PostImagePreview(
+                postPreview = it,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                onPostPreviewClicked = onPostPreviewClicked
+            )
+        }
 
         PostContentItem(
             post = post,
