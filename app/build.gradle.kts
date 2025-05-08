@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.firebase.crashlytics")
     id("com.google.android.gms.oss-licenses-plugin")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -15,8 +16,8 @@ android {
     defaultConfig {
         applicationId = "com.whyranoid.walkie"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 1
+        targetSdk = 34
+        versionCode = 2
         versionName = "1.0.19"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -32,11 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.VERSION_21.toString()
     }
 
     buildFeatures {
