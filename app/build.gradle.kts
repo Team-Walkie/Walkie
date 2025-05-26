@@ -11,14 +11,14 @@ plugins {
 
 android {
     namespace = "com.whyranoid.walkie"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.whyranoid.walkie"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.21"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.0.22"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
